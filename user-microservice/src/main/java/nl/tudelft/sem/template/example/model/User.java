@@ -7,16 +7,17 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.Valid;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -82,12 +83,15 @@ public class User {
     private String favoriteBook;
 
     @Valid
+    @ElementCollection
     private List<String> favoriteGenres;
 
     @Valid
+    @OneToMany
     private List<@Valid User> followers;
 
     @Valid
+    @OneToMany
     private List<@Valid User> following;
 
     public User username(String username) {
