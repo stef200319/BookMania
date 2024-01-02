@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController implements UserApi {
 
   public ResponseEntity<List<User>> searchUser(String query, String searchBy, Boolean isAuthor) {
+
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
