@@ -72,6 +72,8 @@ public class User {
 
     private Boolean isActive;
 
+    private Boolean isLoggedIn;
+
     private Boolean isBanned;
 
     private String bio;
@@ -232,6 +234,26 @@ public class User {
 
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    public User isLoggedIn(Boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
+        return this;
+    }
+
+    /**
+     * Whether the user is logged in the system
+     * @return isLoggedIn
+     */
+
+    @Schema(name = "isLoggedIn", example = "true", description = "Whether the user account is activated (not deactivated)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @JsonProperty("isLoggedIn")
+    public Boolean getIsLoggedIn() {
+        return isActive;
+    }
+
+    public void setIsLoggedIn(Boolean isLoggedIn) {
+        this.isLoggedIn = isLoggedIn;
     }
 
     public User isBanned(Boolean isBanned) {
