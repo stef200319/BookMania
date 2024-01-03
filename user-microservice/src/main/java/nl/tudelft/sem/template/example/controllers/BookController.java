@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.database.BookRepository;
-import nl.tudelft.sem.template.model.Book;
+import nl.tudelft.sem.template.example.model.Book;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ public class BookController {
 
     @Autowired
     UserRepository userRepo;
+    @Autowired
     BookRepository bookRepo;
 
     @PostMapping("/{username}")
