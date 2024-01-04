@@ -46,7 +46,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The user does not exist");
         }
         // Fetch the User instance from the DB
-        User currentUser = this.userRepo.getOne(username);
+        User currentUser = this.userRepo.findById(username).get();
         // Check whether the sender of the request is logged in
         if(currentUser.getIsLoggedIn()){
             // Perform modifications of the personal info of the user
@@ -59,7 +59,7 @@ public class UserController {
             currentUser.setPassword(modifiedUser.getPassword());
             currentUser.setFavoriteBook(modifiedUser.getFavoriteBook());
             currentUser.setFavoriteGenres(modifiedUser.getFavoriteGenres());
-            // Persist the changes to the DB
+            // Persist the changes in the DB
             this.userRepo.saveAndFlush(currentUser);
             return ResponseEntity.status(HttpStatus.OK).body("Account updated successfully");
         }
@@ -133,8 +133,8 @@ public class UserController {
         if(!currentUser.getIsActive()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User account is already inactive");
         }
-        // Modify the isActive field of the user
-        currentUser.setIsLoggedIn(false);
+        // Modify the activation status of the user
+        currentUser.setIsActive(false);
         // Persist the changes to the DB
         this.userRepo.saveAndFlush(currentUser);
         return ResponseEntity.status(HttpStatus.OK).body("User account deactivated successfully");
@@ -159,8 +159,8 @@ public class UserController {
         if(currentUser.getIsActive()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User account is already active");
         }
-        // Modify the isActive field of the user
-        currentUser.setIsLoggedIn(true);
+        // Modify the activation status of the user
+        currentUser.setIsActive(true);
         // Persist the changes to the DB
         this.userRepo.saveAndFlush(currentUser);
         return ResponseEntity.status(HttpStatus.OK).body("User account reactivated successfully");
