@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -102,16 +104,43 @@ public class UserController {
     }
 
 
-//    @GetMapping("/user/search")
+    @GetMapping("/search")
     ResponseEntity<List<User>> searchUser(
         String query,
         String searchBy,
         Boolean isAuthor
     ) {
-        System.out.println(query);
-        System.out.println(searchBy);
-        System.out.println(isAuthor);
-        return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
+        if(searchBy == null) searchBy = "name";
+        if(isAuthor == null) isAuthor = true;
+
+        List<User> foundUsers = new ArrayList<>();
+        switch(searchBy) {
+            case "name": {
+                User exampleUser = new User();
+                exampleUser.setFirstName(query);
+                exampleUser.setLastName(query);
+                exampleUser.setUsername(query);
+                exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
+
+                ExampleMatcher matcher = ExampleMatcher.matchingAny()
+                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+                    .withIgnoreCase()
+                    .withIgnoreNullValues();
+
+                Example<User> example = Example.of(exampleUser, matcher);
+
+                foundUsers = userRepo.findAll(example);
+                foundUsers = foundUsers.stream().filter(user -> user.getUserRole() == exampleUser.getUserRole()).collect(Collectors.toList());
+            }
+                break;
+            case "genre":
+            break;
+            case "favorite_book":
+                break;
+            case "follows":
+                break;
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(foundUsers);
     }
 
     /*
