@@ -1,9 +1,16 @@
 package nl.tudelft.sem.template.example.controllers;
 
 //import nl.tudelft.sem.template.api.UserApi;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -94,6 +101,18 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(fetchedUser);
     }
 
+
+//    @GetMapping("/user/search")
+    ResponseEntity<List<User>> searchUser(
+        String query,
+        String searchBy,
+        Boolean isAuthor
+    ) {
+        System.out.println(query);
+        System.out.println(searchBy);
+        System.out.println(isAuthor);
+        return ResponseEntity.status(HttpStatus.OK).body(new ArrayList<>());
+    }
 
     /*
     "/user/deactivate/{username}" route
