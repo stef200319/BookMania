@@ -96,11 +96,6 @@ public class User {
     @OneToMany
     private List<@Valid User> following;
 
-    public User username(String username) {
-        this.username = username;
-        return this;
-    }
-
     /**
      * Get username
      * @return username
@@ -114,11 +109,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public User firstName(String firstName) {
-        this.firstName = firstName;
-        return this;
     }
 
     /**
@@ -136,11 +126,6 @@ public class User {
         this.firstName = firstName;
     }
 
-    public User lastName(String lastName) {
-        this.lastName = lastName;
-        return this;
-    }
-
     /**
      * Get lastName
      * @return lastName
@@ -154,11 +139,6 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public User email(String email) {
-        this.email = email;
-        return this;
     }
 
     /**
@@ -176,11 +156,6 @@ public class User {
         this.email = email;
     }
 
-    public User password(String password) {
-        this.password = password;
-        return this;
-    }
-
     /**
      * Get password
      * @return password
@@ -194,11 +169,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public User userRole(UserRoleEnum userRole) {
-        this.userRole = userRole;
-        return this;
     }
 
     /**
@@ -216,11 +186,6 @@ public class User {
         this.userRole = userRole;
     }
 
-    public User isActive(Boolean isActive) {
-        this.isActive = isActive;
-        return this;
-    }
-
     /**
      * Whether the user account is activated (not deactivated)
      * @return isActive
@@ -236,11 +201,6 @@ public class User {
         this.isActive = isActive;
     }
 
-    public User isLoggedIn(Boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-        return this;
-    }
-
     /**
      * Whether the user is logged in the system
      * @return isLoggedIn
@@ -249,16 +209,11 @@ public class User {
     @Schema(name = "isLoggedIn", example = "true", description = "Whether the user account is activated (not deactivated)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("isLoggedIn")
     public Boolean getIsLoggedIn() {
-        return isActive;
+        return isLoggedIn;
     }
 
     public void setIsLoggedIn(Boolean isLoggedIn) {
         this.isLoggedIn = isLoggedIn;
-    }
-
-    public User isBanned(Boolean isBanned) {
-        this.isBanned = isBanned;
-        return this;
     }
 
     /**
@@ -276,11 +231,6 @@ public class User {
         this.isBanned = isBanned;
     }
 
-    public User bio(String bio) {
-        this.bio = bio;
-        return this;
-    }
-
     /**
      * User Bio
      * @return bio
@@ -294,11 +244,6 @@ public class User {
 
     public void setBio(String bio) {
         this.bio = bio;
-    }
-
-    public User location(String location) {
-        this.location = location;
-        return this;
     }
 
     /**
@@ -316,11 +261,6 @@ public class User {
         this.location = location;
     }
 
-    public User profilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-        return this;
-    }
-
     /**
      * URL of an image
      * @return profilePicture
@@ -336,11 +276,6 @@ public class User {
         this.profilePicture = profilePicture;
     }
 
-    public User favoriteBook(String favoriteBook) {
-        this.favoriteBook = favoriteBook;
-        return this;
-    }
-
     /**
      * Name of favorite book
      * @return favoriteBook
@@ -354,11 +289,6 @@ public class User {
 
     public void setFavoriteBook(String favoriteBook) {
         this.favoriteBook = favoriteBook;
-    }
-
-    public User favoriteGenres(List<String> favoriteGenres) {
-        this.favoriteGenres = favoriteGenres;
-        return this;
     }
 
     public User addFavoriteGenresItem(String favoriteGenresItem) {
@@ -384,11 +314,6 @@ public class User {
         this.favoriteGenres = favoriteGenres;
     }
 
-    public User followers(List<@Valid User> followers) {
-        this.followers = followers;
-        return this;
-    }
-
     public User addFollowersItem(User followersItem) {
         if (this.followers == null) {
             this.followers = new ArrayList<>();
@@ -410,11 +335,6 @@ public class User {
 
     public void setFollowers(List<@Valid User> followers) {
         this.followers = followers;
-    }
-
-    public User following(List<@Valid User> following) {
-        this.following = following;
-        return this;
     }
 
     public User addFollowingItem(User followingItem) {
@@ -455,6 +375,7 @@ public class User {
             Objects.equals(this.email, user.email) &&
             Objects.equals(this.password, user.password) &&
             Objects.equals(this.userRole, user.userRole) &&
+            Objects.equals(this.isLoggedIn, user.isLoggedIn) &&
             Objects.equals(this.isActive, user.isActive) &&
             Objects.equals(this.isBanned, user.isBanned) &&
             Objects.equals(this.bio, user.bio) &&
@@ -468,7 +389,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, firstName, lastName, email, password, userRole, isActive, isBanned, bio, location, profilePicture, favoriteBook, favoriteGenres, followers, following);
+        return Objects.hash(username, firstName, lastName, email, password, userRole, isLoggedIn, isActive, isBanned, bio, location, profilePicture, favoriteBook, favoriteGenres, followers, following);
     }
 
     @Override
@@ -481,6 +402,7 @@ public class User {
         sb.append("    email: ").append(toIndentedString(email)).append("\n");
         sb.append("    password: ").append(toIndentedString(password)).append("\n");
         sb.append("    userRole: ").append(toIndentedString(userRole)).append("\n");
+        sb.append("    isLoggedIn: ").append(toIndentedString(isLoggedIn)).append("\n");
         sb.append("    isActive: ").append(toIndentedString(isActive)).append("\n");
         sb.append("    isBanned: ").append(toIndentedString(isBanned)).append("\n");
         sb.append("    bio: ").append(toIndentedString(bio)).append("\n");
