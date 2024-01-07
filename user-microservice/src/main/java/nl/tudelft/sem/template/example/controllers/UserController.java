@@ -18,6 +18,68 @@ public class UserController {
     /*
     "/user/" route
      */
+    @PostMapping("/login")
+    public ResponseEntity loginUser(@RequestBody User loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        // Check if the username is valid
+        if (!userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password supplied");
+        }
+
+        // Fetch the User instance from the database
+        User currentUser = this.userRepo.findById(username).get();
+
+        // Check if the password is correct
+        if (!currentUser.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password supplied");
+        }
+
+        // Check if the user account is active
+        if (!currentUser.getIsActive()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User account is not active");
+        }
+
+        // Check if the user already logged in
+        if(!(currentUser.getIsLoggedIn() == null)){
+            if(currentUser.getIsLoggedIn()) {
+                return ResponseEntity.status(HttpStatus.OK).body("User already logged in");
+            }
+        }
+
+        // Set the user as logged in
+        currentUser.setIsLoggedIn(true);
+        this.userRepo.saveAndFlush(currentUser);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User logged in successfully");
+    }
+
+    @PostMapping("/logout/{username}")
+    public ResponseEntity logoutUser(@PathVariable String username) {
+        // Check if the username is valid
+        if (!userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        // Fetch the User instance from the DB
+        User currentUser = this.userRepo.findById(username).get();
+
+        // Check if the user not logged in
+        if (currentUser.getIsLoggedIn() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+        }
+
+        if (!currentUser.getIsLoggedIn()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+        }
+
+        // Set the user as logged out
+        currentUser.setIsLoggedIn(false);
+        this.userRepo.saveAndFlush(currentUser);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User logged out successfully");
+    }
     @PostMapping
     public ResponseEntity createUser(@RequestBody User newUser){
         String newUsername = newUser.getUsername();
