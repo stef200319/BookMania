@@ -116,7 +116,6 @@ public class UserControllerTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
         Mockito.verify(userRepository, Mockito.times(0)).findById("testUsername");
-
     }
 
     @Test
@@ -137,7 +136,6 @@ public class UserControllerTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
         Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
-
     }
 
     @Test
@@ -158,7 +156,6 @@ public class UserControllerTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
         Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
-
     }
 
     @Test
@@ -179,6 +176,5 @@ public class UserControllerTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
         Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
-
     }
 }
