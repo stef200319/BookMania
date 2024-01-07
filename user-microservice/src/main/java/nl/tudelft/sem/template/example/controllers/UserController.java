@@ -12,20 +12,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
+//    @Autowired
+//    UserRepository userRepo;
+    private final UserRepository userRepo;
+
     @Autowired
-    UserRepository userRepo;
+    public UserController(UserRepository userRepo) {
+        this.userRepo = userRepo;
+    }
 
     /*
     "/user/" route
      */
     @PostMapping("/login")
-    public ResponseEntity loginUser(@RequestBody User loginRequest) {
+    public ResponseEntity logInUser(@RequestBody User loginRequest) {
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
         // Check if the username is valid
         if (!userRepo.existsById(username)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password supplied");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
         // Fetch the User instance from the database
@@ -33,7 +39,7 @@ public class UserController {
 
         // Check if the password is correct
         if (!currentUser.getPassword().equals(password)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username/password supplied");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password supplied");
         }
 
         // Check if the user account is active
@@ -56,7 +62,7 @@ public class UserController {
     }
 
     @PostMapping("/logout/{username}")
-    public ResponseEntity logoutUser(@PathVariable String username) {
+    public ResponseEntity logOutUser(@PathVariable String username) {
         // Check if the username is valid
         if (!userRepo.existsById(username)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
