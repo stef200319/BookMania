@@ -25,6 +25,15 @@ public class Analytics {
 
     private Long followingNumber;
 
+    public Analytics(String userUsername, String lastLoginDate) {
+        this.userUsername = userUsername;
+        this.reviewsNumber = 0L;
+        this.commentsNumber = 0L;
+        this.lastLoginDate = lastLoginDate;
+        this.followersNumber = 0L;
+        this.followingNumber = 0L;
+    }
+
     public Analytics userUsername(String userUsername) {
         this.userUsername = userUsername;
         return this;
@@ -41,6 +50,10 @@ public class Analytics {
         return userUsername;
     }
 
+    /**
+     * Set username
+     * @param userUsername
+     */
     public void setUserUsername(String userUsername) {
         this.userUsername = userUsername;
     }
@@ -61,6 +74,10 @@ public class Analytics {
         return reviewsNumber;
     }
 
+    /**
+     * Set user's reviews number
+     * @param reviewsNumber
+     */
     public void setReviewsNumber(Long reviewsNumber) {
         this.reviewsNumber = reviewsNumber;
     }
@@ -185,7 +202,7 @@ public class Analytics {
      * Convert the given object to string with each line indented by 4 spaces
      * (except the first line).
      */
-    private String toIndentedString(Object o) {
+    public String toIndentedString(Object o) {
         if (o == null) {
             return "null";
         }
