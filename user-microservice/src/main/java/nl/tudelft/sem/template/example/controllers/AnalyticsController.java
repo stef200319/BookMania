@@ -38,6 +38,7 @@ public class AnalyticsController implements AnalyticsApi {
         if(!analyticsRepository.existsById(username)) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analytics entity does not exist.");
 
         Analytics currentAnalytics = this.analyticsRepository.findById(username).get();
+        currentAnalytics.setUserUsername(editedAnalytics.getUserUsername());
         currentAnalytics.setCommentsNumber(editedAnalytics.getCommentsNumber());
         currentAnalytics.setReviewsNumber(editedAnalytics.getReviewsNumber());
         currentAnalytics.setFollowingNumber(editedAnalytics.getFollowingNumber());

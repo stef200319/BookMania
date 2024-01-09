@@ -11,7 +11,10 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 public class AnalyticsControllerTest {
     private AnalyticsController analyticsController;
@@ -103,6 +106,88 @@ public class AnalyticsControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Analytics entity does not exist.", response.getBody());
 
+        Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
+    }
+
+    @Test
+    void createAnalyticsValidUserTest() {
+        String username = "testUsername";
+
+        Analytics analytics = new Analytics(username, "now");
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(false);
+        Mockito.when(analyticsRepository.saveAndFlush(any())).thenReturn(analytics);
+
+
+        ResponseEntity response = analyticsController.createAnalyticsEntity(username, analytics);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(analytics, response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).saveAndFlush(any());
+    }
+
+    @Test
+    void editAnalyticsTest() {
+        String username = "testUsername";
+
+        Analytics analytics = new Analytics(username, "now");
+        Analytics analytics1 = new Analytics("username1", "now");
+
+
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(analytics));
+        Mockito.when(analyticsRepository.saveAndFlush(any())).thenReturn(analytics1);
+
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, analytics1);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(analytics1, response.getBody());
+
+        Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).saveAndFlush(any());
+    }
+
+    @Test
+    void getAnalyticsTest() {
+        String username = "testUsername";
+
+        Analytics analytics = new Analytics(username, "now");
+
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(analytics));
+
+
+        ResponseEntity response = analyticsController.getAnalyticsEntity(username);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(analytics, response.getBody());
+
+        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
+    }
+
+    @Test
+    void deleteAnalyticsTest() {
+        String username = "testUsername";
+
+        Analytics analytics = new Analytics(username, "now");
+
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(analytics));
+
+
+        ResponseEntity response = analyticsController.deleteAnalyticsEntity(username);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(analytics, response.getBody());
+
+        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
         Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
     }
 }
