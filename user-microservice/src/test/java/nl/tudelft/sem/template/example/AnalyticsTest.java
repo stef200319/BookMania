@@ -149,4 +149,10 @@ public class AnalyticsTest {
                 "        followingNumber: 16\n" +
                 "    }", a1.toIndentedString(a1));
     }
+
+    @Test
+    void emptyAnalyticsTest() {
+        Analytics a3 = new Analytics();
+        assertNotNull(a3);
+    }
 }
