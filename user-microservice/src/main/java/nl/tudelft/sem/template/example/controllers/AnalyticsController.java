@@ -4,12 +4,10 @@ import nl.tudelft.sem.template.api.AnalyticsApi;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
-import nl.tudelft.sem.template.example.model.User;
-import nl.tudelft.sem.template.example.service.AnalyticsService;
+import nl.tudelft.sem.template.example.services.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

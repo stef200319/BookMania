@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.example.services;
 
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
-import nl.tudelft.sem.template.example.service.AnalyticsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
