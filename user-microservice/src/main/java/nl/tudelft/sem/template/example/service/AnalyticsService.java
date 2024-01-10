@@ -29,7 +29,6 @@ public class AnalyticsService {
         currentAnalytics.setFollowingNumber(editedAnalytics.getFollowingNumber());
         currentAnalytics.setFollowersNumber(editedAnalytics.getFollowersNumber());
         currentAnalytics.setLastLoginDate(editedAnalytics.getLastLoginDate());
-
         return analyticsRepository.saveAndFlush(currentAnalytics);
     }
 
