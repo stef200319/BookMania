@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
+import nl.tudelft.sem.template.example.service.AnalyticsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +18,13 @@ public class AnalyticsController implements AnalyticsApi {
     private final UserRepository userRepository;
     private final AnalyticsRepository analyticsRepository;
 
+    private final AnalyticsService analyticsService;
+
     @Autowired
-    public AnalyticsController(UserRepository userRepository, AnalyticsRepository analyticsRepository) {
+    public AnalyticsController(UserRepository userRepository, AnalyticsRepository analyticsRepository, AnalyticsService analyticsService) {
         this.userRepository = userRepository;
         this.analyticsRepository = analyticsRepository;
+        this.analyticsService = analyticsService;
     }
 
     @PostMapping("/{username}")
@@ -29,7 +33,7 @@ public class AnalyticsController implements AnalyticsApi {
 
         if(analyticsRepository.existsById(username)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Analytics entity already exists.");
 
-        Analytics savedAnalytics = analyticsRepository.saveAndFlush(analytics);
+        Analytics savedAnalytics = analyticsService.createAnalytics(analytics);
         return ResponseEntity.status(HttpStatus.OK).body(savedAnalytics);
     }
 
@@ -37,23 +41,15 @@ public class AnalyticsController implements AnalyticsApi {
     public ResponseEntity editAnalyticsEntity(@PathVariable String username, @RequestBody Analytics editedAnalytics) {
         if(!analyticsRepository.existsById(username)) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analytics entity does not exist.");
 
-        Analytics currentAnalytics = this.analyticsRepository.findById(username).get();
-        currentAnalytics.setUserUsername(editedAnalytics.getUserUsername());
-        currentAnalytics.setCommentsNumber(editedAnalytics.getCommentsNumber());
-        currentAnalytics.setReviewsNumber(editedAnalytics.getReviewsNumber());
-        currentAnalytics.setFollowingNumber(editedAnalytics.getFollowingNumber());
-        currentAnalytics.setFollowersNumber(editedAnalytics.getFollowersNumber());
-        currentAnalytics.setLastLoginDate(editedAnalytics.getLastLoginDate());
-        this.analyticsRepository.saveAndFlush(currentAnalytics);
-
-        return ResponseEntity.status(HttpStatus.OK).body(currentAnalytics);
+        Analytics analytics = analyticsService.editAnalytics(username, editedAnalytics);
+        return ResponseEntity.status(HttpStatus.OK).body(analytics);
     }
 
     @GetMapping("/{username}")
     public ResponseEntity getAnalyticsEntity(@PathVariable String username) {
         if(!analyticsRepository.existsById(username)) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analytics entity does not exist.");
 
-        Analytics analytics = this.analyticsRepository.findById(username).get();
+        Analytics analytics = analyticsService.getAnalytics(username);
         return ResponseEntity.status(HttpStatus.OK).body(analytics);
     }
 
@@ -61,8 +57,7 @@ public class AnalyticsController implements AnalyticsApi {
     public ResponseEntity deleteAnalyticsEntity(@PathVariable String username) {
         if(!analyticsRepository.existsById(username)) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Analytics entity does not exist.");
 
-        Analytics deletedAnalytics = this.analyticsRepository.findById(username).get();
-        this.userRepository.deleteById(username);
+        Analytics deletedAnalytics = analyticsService.deleteAnalytics(username);
         return ResponseEntity.status(HttpStatus.OK).body(deletedAnalytics);
     }
 }

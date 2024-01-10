@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.example.controllers.AnalyticsController;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
+import nl.tudelft.sem.template.example.service.AnalyticsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -20,11 +21,13 @@ public class AnalyticsControllerTest {
     private AnalyticsController analyticsController;
     private AnalyticsRepository analyticsRepository;
     private UserRepository userRepository;
+    private AnalyticsService analyticsService;
     @BeforeEach
     void setUp() {
         analyticsRepository = Mockito.mock(AnalyticsRepository.class);
         userRepository = Mockito.mock(UserRepository.class);
-        analyticsController = new AnalyticsController(userRepository, analyticsRepository);
+        analyticsService = Mockito.mock(AnalyticsService.class);
+        analyticsController = new AnalyticsController(userRepository, analyticsRepository, analyticsService);
     }
 
     @Test
@@ -118,7 +121,7 @@ public class AnalyticsControllerTest {
         Mockito.when(userRepository.existsById(username)).thenReturn(true);
         Mockito.when(analyticsRepository.existsById(username)).thenReturn(false);
         Mockito.when(analyticsRepository.saveAndFlush(any())).thenReturn(analytics);
-
+        Mockito.when(analyticsService.createAnalytics(any())).thenReturn(analytics);
 
         ResponseEntity response = analyticsController.createAnalyticsEntity(username, analytics);
 
@@ -127,7 +130,8 @@ public class AnalyticsControllerTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById(username);
         Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
-        Mockito.verify(analyticsRepository, Mockito.times(1)).saveAndFlush(any());
+        Mockito.verify(analyticsRepository, Mockito.times(0)).saveAndFlush(any());
+        Mockito.verify(analyticsService, Mockito.times(1)).createAnalytics(any());
     }
 
     @Test
@@ -141,6 +145,7 @@ public class AnalyticsControllerTest {
         Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
         Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(analytics));
         Mockito.when(analyticsRepository.saveAndFlush(any())).thenReturn(analytics1);
+        Mockito.when(analyticsService.editAnalytics(username, analytics1)).thenReturn(analytics1);
 
 
         ResponseEntity response = analyticsController.editAnalyticsEntity(username, analytics1);
@@ -149,8 +154,9 @@ public class AnalyticsControllerTest {
         assertEquals(analytics1, response.getBody());
 
         Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
-        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
-        Mockito.verify(analyticsRepository, Mockito.times(1)).saveAndFlush(any());
+        Mockito.verify(analyticsRepository, Mockito.times(0)).findById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(0)).saveAndFlush(any());
+        Mockito.verify(analyticsService, Mockito.times(1)).editAnalytics(username, analytics1);
     }
 
     @Test
@@ -161,15 +167,16 @@ public class AnalyticsControllerTest {
 
         Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
         Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(analytics));
-
+        Mockito.when(analyticsService.getAnalytics(username)).thenReturn(analytics);
 
         ResponseEntity response = analyticsController.getAnalyticsEntity(username);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(analytics, response.getBody());
 
-        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(0)).findById(username);
         Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
+        Mockito.verify(analyticsService, Mockito.times(1)).getAnalytics(username);
     }
 
     @Test
@@ -180,14 +187,15 @@ public class AnalyticsControllerTest {
 
         Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
         Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(analytics));
-
+        Mockito.when(analyticsService.deleteAnalytics(username)).thenReturn(analytics);
 
         ResponseEntity response = analyticsController.deleteAnalyticsEntity(username);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(analytics, response.getBody());
 
-        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(0)).findById(username);
         Mockito.verify(analyticsRepository, Mockito.times(1)).existsById(username);
+        Mockito.verify(analyticsService, Mockito.times(1)).deleteAnalytics(username);
     }
 }
