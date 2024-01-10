@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.example.controllers.UserController;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.User;
 
+import nl.tudelft.sem.template.example.services.UserService;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import org.mockito.Mockito;
@@ -11,17 +12,21 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 public class UserControllerTest {
 
     private UserRepository userRepository;
+    private UserService userService;
     private UserController userController;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userController = new UserController(userRepository);
+        userService = Mockito.mock(UserService.class);
+        userController = new UserController(userRepository, userService);
     }
     @Test
     public void testInvalidLogInWithInvalidUsername() {
@@ -176,5 +181,216 @@ public class UserControllerTest {
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
         Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
+    }
+
+    @Test
+    public void testFollowInvalidFirstUser() {
+        User user1 = new User();
+        user1.setUsername("user1");
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(false);
+
+        ResponseEntity response = userController.followUser("user1", "user2");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username of the user executing the action is not valid", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(0)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(0)).followUser(user1, user2);
+    }
+
+    @Test
+    public void testFollowInvalidSecondUser() {
+        User user1 = new User();
+        user1.setUsername("user1");
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(false);
+
+        ResponseEntity response = userController.followUser("user1", "user2");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username of the user being followed is not valid", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(0)).followUser(user1, user2);
+    }
+
+    @Test
+    public void testFollowNotLoggedIn() {
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setIsLoggedIn(false);
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(true);
+
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+        Mockito.when(userRepository.findById("user2")).thenReturn(Optional.of(user2));
+
+        ResponseEntity response = userController.followUser("user1", "user2");
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("User is not logged in", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(0)).followUser(user1, user2);
+    }
+
+    @Test
+    public void testFollowWorking() {
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setIsLoggedIn(true);
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(true);
+
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+        Mockito.when(userRepository.findById("user2")).thenReturn(Optional.of(user2));
+
+        ResponseEntity response = userController.followUser("user1", "user2");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("User account followed successfully", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(1)).followUser(user1, user2);
+    }
+
+    @Test
+    public void testUnfollowInvalidFirstUser() {
+        User user1 = new User();
+        user1.setUsername("user1");
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(false);
+
+        ResponseEntity response = userController.unfollowUser("user1", "user2");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username of the user executing the action is not valid", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(0)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(0)).unfollowUser(user1, user2);
+    }
+
+    @Test
+    public void testUnfollowInvalidSecondUser() {
+        User user1 = new User();
+        user1.setUsername("user1");
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(false);
+
+        ResponseEntity response = userController.unfollowUser("user1", "user2");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username of the user being unfollowed is not valid", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(0)).unfollowUser(user1, user2);
+    }
+
+    @Test
+    public void testUnfollowNotLoggedIn() {
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setIsLoggedIn(false);
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(true);
+
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+        Mockito.when(userRepository.findById("user2")).thenReturn(Optional.of(user2));
+
+        ResponseEntity response = userController.unfollowUser("user1", "user2");
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("User is not logged in", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(0)).unfollowUser(user1, user2);
+    }
+
+    @Test
+    public void testUnfollowNotFollowing() {
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setIsLoggedIn(true);
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(true);
+
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+        Mockito.when(userRepository.findById("user2")).thenReturn(Optional.of(user2));
+
+        Mockito.when(userService.unfollowUser(user1, user2)).thenReturn(null);
+
+        ResponseEntity response = userController.unfollowUser("user1", "user2");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("User does not follow the second user", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(1)).unfollowUser(user1, user2);
+    }
+
+    @Test
+    public void testUnfollowWorking() {
+        User user1 = new User();
+        user1.setUsername("user1");
+        user1.setIsLoggedIn(true);
+
+        User user2 = new User();
+        user2.setUsername("user2");
+
+        Mockito.when(userRepository.existsById("user1")).thenReturn(true);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(true);
+
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+        Mockito.when(userRepository.findById("user2")).thenReturn(Optional.of(user2));
+
+        Mockito.when(userService.unfollowUser(user1, user2)).thenReturn(user1);
+
+        ResponseEntity response = userController.unfollowUser("user1", "user2");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("User account unfollowed successfully", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
+        Mockito.verify(userService, Mockito.times(1)).unfollowUser(user1, user2);
     }
 }
