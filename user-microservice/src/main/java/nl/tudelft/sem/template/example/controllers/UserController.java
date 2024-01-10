@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -318,5 +320,27 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not follow the second user");
 
         return ResponseEntity.status(HttpStatus.OK).body("User account unfollowed successfully");
+    }
+
+    @GetMapping("/followers/{username}")
+    public ResponseEntity getFollowers(@PathVariable String username) {
+        if(!this.userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is not valid");
+        }
+
+        User user = userRepo.findById(username).get();
+        List<User> followers = user.getFollowers();
+        return ResponseEntity.status(HttpStatus.OK).body(followers);
+    }
+
+    @GetMapping("/following/{username}")
+    public ResponseEntity getFollowing(@PathVariable String username) {
+        if(!this.userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is not valid");
+        }
+
+        User user = userRepo.findById(username).get();
+        List<User> following = user.getFollowing();
+        return ResponseEntity.status(HttpStatus.OK).body(following);
     }
 }

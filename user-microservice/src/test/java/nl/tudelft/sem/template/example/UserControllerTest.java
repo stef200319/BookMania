@@ -393,4 +393,66 @@ public class UserControllerTest {
         Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
         Mockito.verify(userService, Mockito.times(1)).unfollowUser(user1, user2);
     }
+
+    @Test
+    public void testGetFollowingNotExistent() {
+        Mockito.when(userRepository.existsById("user")).thenReturn(false);
+
+        ResponseEntity response = userController.getFollowing("user");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username is not valid", response.getBody());
+    }
+
+    @Test
+    public void testGetFollowingWorking() {
+        User user = new User();
+        User user2 = new User();
+        user2.setUsername("test");
+
+        List<User> foll = new LinkedList<>();
+        foll.add(user2);
+
+        user.setUsername("user");
+        user.setFollowing(foll);
+
+        Mockito.when(userRepository.existsById("user")).thenReturn(true);
+        Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+
+        ResponseEntity response = userController.getFollowing("user");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(foll, response.getBody());
+    }
+
+    @Test
+    public void testGetFollowersNotExistent() {
+        Mockito.when(userRepository.existsById("user")).thenReturn(false);
+
+        ResponseEntity response = userController.getFollowers("user");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Username is not valid", response.getBody());
+    }
+
+    @Test
+    public void testGetFollowersWorking() {
+        User user = new User();
+        User user2 = new User();
+        user2.setUsername("test");
+
+        List<User> foll = new LinkedList<>();
+        foll.add(user2);
+
+        user.setUsername("user");
+        user.setFollowers(foll);
+
+        Mockito.when(userRepository.existsById("user")).thenReturn(true);
+        Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+
+        ResponseEntity response = userController.getFollowers("user");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(foll, response.getBody());
+    }
 }
