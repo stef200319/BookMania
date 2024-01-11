@@ -15,8 +15,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-//    @Autowired
-//    UserRepository userRepo;
     private final UserRepository userRepo;
     private final UserService userService;
 
@@ -94,16 +92,32 @@ public class UserController {
     @PostMapping
     public ResponseEntity createUser(@RequestBody User newUser){
         String newUsername = newUser.getUsername();
+        String newEmail = newUser.getEmail();
+
+        // Check if the chosen username is available
         if(userRepo.existsById(newUsername)){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already in use");
         }
+
+        // Check if the username format is valid
+        if(!newUsername.matches("^[a-zA-Z][a-zA-Z0-9]*")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username format. The username must contain only alphanumeric characters.");
+        }
+
+        // Check if the email address is valid
+        if(!newEmail.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
+        }
+
         // Check if the User object is valid
         if(!newUser.getIsActive() || newUser.getIsBanned()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user object");
         }
+
         User savedUser = userRepo.saveAndFlush(newUser);
         return ResponseEntity.status(HttpStatus.OK).body(savedUser);
     }
+
     @PutMapping
     public ResponseEntity updateUserInfo(@RequestBody User modifiedUser){
         String username = modifiedUser.getUsername();
