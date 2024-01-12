@@ -206,7 +206,7 @@ public class UserController {
                 foundUsers = userService.findUsersByFavoriteBook(query, isAuthor);
             }
             case "follows" -> {
-                return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
+                foundUsers = userService.findUsersByFollows(query, isAuthor);
             }
 
             default -> {
