@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
 
-<<<<<<< user-microservice/src/main/java/nl/tudelft/sem/template/example/controllers/UserController.java
 //import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
