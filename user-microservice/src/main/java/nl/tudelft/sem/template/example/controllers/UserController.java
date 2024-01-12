@@ -1,10 +1,15 @@
 package nl.tudelft.sem.template.example.controllers;
 
-//import nl.tudelft.sem.template.api.UserApi;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -185,6 +190,37 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(fetchedUser);
     }
 
+
+    @GetMapping("/search")
+    ResponseEntity<List<User>> searchUser(
+        String query,
+        String searchBy,
+        Boolean isAuthor
+    ) {
+        if(searchBy == null) searchBy = "name";
+        if(isAuthor == null) isAuthor = true;
+
+        List<User> foundUsers;
+        switch (searchBy) {
+            case "name" -> {
+                foundUsers = userService.findUsersByName(query, isAuthor);
+            }
+            case "genre" -> {
+                foundUsers = userService.findUsersByGenre(query, isAuthor);
+            }
+            case "favorite_book" -> {
+                foundUsers = userService.findUsersByFavoriteBook(query, isAuthor);
+            }
+            case "follows" -> {
+                foundUsers = userService.findUsersByFollows(query, isAuthor);
+            }
+
+            default -> {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(foundUsers);
+    }
 
     /*
     "/user/deactivate/{username}" route
