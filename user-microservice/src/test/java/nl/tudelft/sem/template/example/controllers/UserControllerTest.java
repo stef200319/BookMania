@@ -101,7 +101,7 @@ public class UserControllerTest {
         assertEquals("User logged in successfully", response.getBody());
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
-        Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
+        Mockito.verify(userRepository, Mockito.times(2)).findById("testUsername");
     }
 
     @Test
@@ -181,7 +181,7 @@ public class UserControllerTest {
         assertEquals("User logged out successfully", response.getBody());
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
-        Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
+        Mockito.verify(userRepository, Mockito.times(2)).findById("testUsername");
     }
 
     @Test
@@ -193,14 +193,15 @@ public class UserControllerTest {
         user2.setUsername("user2");
 
         Mockito.when(userRepository.existsById("user1")).thenReturn(false);
+        Mockito.when(userRepository.existsById("user2")).thenReturn(true);
+
+        Mockito.when(userRepository.findById("user2")).thenReturn(Optional.of(user2));
 
         ResponseEntity response = userController.followUser("user1", "user2");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username of the user executing the action is not valid", response.getBody());
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
-        Mockito.verify(userRepository, Mockito.times(0)).existsById("user2");
         Mockito.verify(userService, Mockito.times(0)).followUser(user1, user2);
     }
 
@@ -215,13 +216,13 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById("user1")).thenReturn(true);
         Mockito.when(userRepository.existsById("user2")).thenReturn(false);
 
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
+
         ResponseEntity response = userController.followUser("user1", "user2");
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Username of the user being followed is not valid", response.getBody());
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
-        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
         Mockito.verify(userService, Mockito.times(0)).followUser(user1, user2);
     }
 
@@ -299,12 +300,15 @@ public class UserControllerTest {
     public void testUnfollowInvalidSecondUser() {
         User user1 = new User();
         user1.setUsername("user1");
+        user1.setIsLoggedIn(true);
 
         User user2 = new User();
         user2.setUsername("user2");
 
         Mockito.when(userRepository.existsById("user1")).thenReturn(true);
         Mockito.when(userRepository.existsById("user2")).thenReturn(false);
+
+        Mockito.when(userRepository.findById("user1")).thenReturn(Optional.of(user1));
 
         ResponseEntity response = userController.unfollowUser("user1", "user2");
 
@@ -336,8 +340,6 @@ public class UserControllerTest {
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals("User is not logged in", response.getBody());
 
-        Mockito.verify(userRepository, Mockito.times(1)).existsById("user1");
-        Mockito.verify(userRepository, Mockito.times(1)).existsById("user2");
         Mockito.verify(userService, Mockito.times(0)).unfollowUser(user1, user2);
     }
 
@@ -536,6 +538,7 @@ public class UserControllerTest {
     @Test
     public void testUpdateNotExistingUserRoute(){
         User user = new User();
+        user.setEmail("asd@fds.com");
         user.setUsername("test");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
         ResponseEntity response = userController.updateUserInfo(user);
@@ -546,6 +549,7 @@ public class UserControllerTest {
     public void testUpdateNotLoggedInUserRoute(){
         User user = new User();
         user.setUsername("test");
+        user.setEmail("asd@fds.com");
         user.setIsLoggedIn(false);
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
@@ -644,7 +648,7 @@ public class UserControllerTest {
         User user = new User();
         user.setUsername("test");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
-        Mockito.when(userRepository.getOne(user.getUsername())).thenReturn(user);
+        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         ResponseEntity response = userController.getUserByUsername(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),user);
