@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
 
-import nl.tudelft.sem.template.api.AnalyticsApi;
 import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsIDExistsValidator;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
@@ -15,7 +14,7 @@ import java.util.logging.Handler;
 
 @RestController
 @RequestMapping("/analytics")
-public class AnalyticsController implements AnalyticsApi {
+public class AnalyticsController {
     private final UserRepository userRepository;
     private final AnalyticsRepository analyticsRepository;
 
