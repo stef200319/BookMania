@@ -1,13 +1,9 @@
 package nl.tudelft.sem.template.example.controllers;
 
-//import nl.tudelft.sem.template.api.UserApi;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
