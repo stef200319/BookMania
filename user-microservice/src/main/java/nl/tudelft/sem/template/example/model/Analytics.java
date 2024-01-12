@@ -58,10 +58,6 @@ public class Analytics {
         this.userUsername = userUsername;
     }
 
-    public Analytics reviewsNumber(Long reviewsNumber) {
-        this.reviewsNumber = reviewsNumber;
-        return this;
-    }
 
     /**
      * Get reviewsNumber
@@ -82,11 +78,6 @@ public class Analytics {
         this.reviewsNumber = reviewsNumber;
     }
 
-    public Analytics commentsNumber(Long commentsNumber) {
-        this.commentsNumber = commentsNumber;
-        return this;
-    }
-
     /**
      * Get commentsNumber
      * @return commentsNumber
@@ -102,10 +93,6 @@ public class Analytics {
         this.commentsNumber = commentsNumber;
     }
 
-    public Analytics lastLoginDate(String lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-        return this;
-    }
 
     /**
      * Get lastLoginDate
@@ -122,10 +109,6 @@ public class Analytics {
         this.lastLoginDate = lastLoginDate;
     }
 
-    public Analytics followersNumber(Long followersNumber) {
-        this.followersNumber = followersNumber;
-        return this;
-    }
 
     /**
      * Get followersNumber
@@ -142,10 +125,6 @@ public class Analytics {
         this.followersNumber = followersNumber;
     }
 
-    public Analytics followingNumber(Long followingNumber) {
-        this.followingNumber = followingNumber;
-        return this;
-    }
 
     /**
      * Get followingNumber
