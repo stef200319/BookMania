@@ -5,8 +5,10 @@ import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
 import nl.tudelft.sem.template.example.model.Analytics;
 
 public class AnalyticsIDExistsValidator extends BaseAnalyticsValidator{
+
+    private final AnalyticsRepository analyticsRepository;
     public AnalyticsIDExistsValidator(AnalyticsRepository analyticsRepository) {
-        super(analyticsRepository);
+        this.analyticsRepository = analyticsRepository;
     }
 
     @Override

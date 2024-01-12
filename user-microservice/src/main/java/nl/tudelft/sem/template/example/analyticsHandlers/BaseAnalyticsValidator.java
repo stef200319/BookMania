@@ -7,8 +7,8 @@ import nl.tudelft.sem.template.example.model.Analytics;
 public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
     private AnalyticsValidator next;
     protected AnalyticsRepository analyticsRepository;
-    public BaseAnalyticsValidator(AnalyticsRepository analyticsRepository) {
-        this.analyticsRepository = analyticsRepository;
+    public BaseAnalyticsValidator() {
+        this.next = null;
     }
     public void setNext(AnalyticsValidator handler) {
         this.next = handler;
