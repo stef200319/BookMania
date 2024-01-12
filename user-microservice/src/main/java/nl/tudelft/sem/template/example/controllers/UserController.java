@@ -135,6 +135,10 @@ public class UserController {
             currentUser.setLastName(modifiedUser.getLastName());
             currentUser.setProfilePicture(modifiedUser.getProfilePicture());
             currentUser.setLocation(modifiedUser.getLocation());
+            // Check if the email address is valid
+            if(!modifiedUser.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
+            }
             currentUser.setEmail(modifiedUser.getEmail());
             currentUser.setPassword(modifiedUser.getPassword());
             currentUser.setFavoriteBook(modifiedUser.getFavoriteBook());
