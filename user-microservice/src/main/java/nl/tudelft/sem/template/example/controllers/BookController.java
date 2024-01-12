@@ -4,6 +4,8 @@ import nl.tudelft.sem.template.example.database.BookRepository;
 import nl.tudelft.sem.template.example.model.Book;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
+import nl.tudelft.sem.template.example.services.BookService;
+import nl.tudelft.sem.template.example.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,13 @@ public class BookController {
     UserRepository userRepo;
     @Autowired
     BookRepository bookRepo;
+    BookService bookService;
+
+    @Autowired
+    public BookController(BookRepository bookRepo, BookService bookService) {
+        this.bookRepo = bookRepo;
+        this.bookService = bookService;
+    }
 
     @PostMapping("/{username}")
     public ResponseEntity createBook(@PathVariable String username, @RequestBody Book newBook){
@@ -55,19 +64,8 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
         }
 
-        // Fetch book from database
-        Book opBook = this.bookRepo.getOne(id);
+        bookService.updateBook(updatedBook, id);
 
-        // Update the book
-        opBook.setAuthor(updatedBook.getAuthor());
-        opBook.setTitle(updatedBook.getTitle());
-        opBook.setDescription(updatedBook.getDescription());
-        opBook.setReads(updatedBook.getReads());
-        opBook.setSeries(updatedBook.getSeries());
-        opBook.setGenres(updatedBook.getGenres());
-
-        // Save the changes
-        this.bookRepo.saveAndFlush(opBook);
         return ResponseEntity.status(HttpStatus.OK).body("Book updated successfully");
     }
 
@@ -109,29 +107,12 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
         }
 
-        Book bookToRead = bookRepo.getOne(id);
-        bookToRead.setReads(bookToRead.getReads() + 1);
-        this.bookRepo.saveAndFlush(bookToRead);
+        bookService.readBook(id);
         return ResponseEntity.status(HttpStatus.OK).body("Book successfully read");
     }
 
     @GetMapping("")
     public ResponseEntity getBooks(@RequestBody List<String> ids) {
-
-        List<Book> books = new ArrayList<>();
-
-        for (int i = 0; i < ids.size(); i++) {
-            try {
-                Long id = Long.parseLong(ids.get(i));
-                if (bookRepo.existsById(id)) {
-                    books.add(bookRepo.getOne(id));
-                }
-            }
-            catch (NumberFormatException e) {
-                System.out.println("invalid id");
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(books);
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.getBooks(ids));
     }
 }
