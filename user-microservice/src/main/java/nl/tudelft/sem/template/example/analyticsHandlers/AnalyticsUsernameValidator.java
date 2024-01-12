@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.example.analyticsHandlers;
 
-import nl.tudelft.sem.template.api.AnalyticsApi;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
 import nl.tudelft.sem.template.example.exceptions.InvalidDataException;
