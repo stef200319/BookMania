@@ -89,7 +89,9 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body("User logged out successfully");
     }
-    @PostMapping
+
+
+    @PostMapping("/")
     public ResponseEntity createUser(@RequestBody User newUser){
         String newUsername = newUser.getUsername();
         String newEmail = newUser.getEmail();
