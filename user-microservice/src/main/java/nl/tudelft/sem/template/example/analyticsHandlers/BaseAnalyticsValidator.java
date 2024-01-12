@@ -12,7 +12,7 @@ public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
         this.next = handler;
     }
 
-    public boolean handle(String username) throws Exception{
+    public boolean handle(String username) throws IllegalAccessException{
         if(next == null)
             return true;
         return next.handle(username);

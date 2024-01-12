@@ -8,8 +8,8 @@ public class AnalyticsIDExistsValidator extends BaseAnalyticsValidator{
     }
 
     @Override
-    public boolean handle(String username) throws Exception{
-        if(analyticsRepository.findById(username).isEmpty()) throw new Exception();
+    public boolean handle(String username) throws IllegalAccessException{
+        if(analyticsRepository.findById(username).isEmpty()) throw new IllegalAccessException();
 
         return super.handle(username);
     }
