@@ -58,8 +58,7 @@ public class UserController {
         }
 
         // Set the user as logged in
-        currentUser.setIsLoggedIn(true);
-        this.userRepo.saveAndFlush(currentUser);
+        userService.logInUser(currentUser);
 
         return ResponseEntity.status(HttpStatus.OK).body("User logged in successfully");
     }
@@ -84,8 +83,7 @@ public class UserController {
         }
 
         // Set the user as logged out
-        currentUser.setIsLoggedIn(false);
-        this.userRepo.saveAndFlush(currentUser);
+        userService.logOutUser(currentUser);
 
         return ResponseEntity.status(HttpStatus.OK).body("User logged out successfully");
     }
