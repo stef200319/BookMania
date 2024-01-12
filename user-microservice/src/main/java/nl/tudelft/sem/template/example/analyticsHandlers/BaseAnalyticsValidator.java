@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.example.analyticsHandlers;
 
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
+import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
+import nl.tudelft.sem.template.example.model.Analytics;
 
 public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
     private AnalyticsValidator next;
@@ -12,9 +14,9 @@ public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
         this.next = handler;
     }
 
-    public boolean handle(String username) throws IllegalAccessException{
+    public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
         if(next == null)
             return true;
-        return next.handle(username);
+        return next.handle(analytics);
     }
 }

@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.example.analyticsHandlers;
 
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
+import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
+import nl.tudelft.sem.template.example.model.Analytics;
 
 public class AnalyticsIDExistsValidator extends BaseAnalyticsValidator{
     public AnalyticsIDExistsValidator(AnalyticsRepository analyticsRepository) {
@@ -8,9 +10,9 @@ public class AnalyticsIDExistsValidator extends BaseAnalyticsValidator{
     }
 
     @Override
-    public boolean handle(String username) throws IllegalAccessException{
-        if(analyticsRepository.findById(username).isEmpty()) throw new IllegalAccessException();
+    public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
+        if(analyticsRepository.findById(analytics.getUserUsername()).isEmpty()) throw new InvalidAnalyticsException("The database does not contain any entity with this ID.");
 
-        return super.handle(username);
+        return super.handle(analytics);
     }
 }
