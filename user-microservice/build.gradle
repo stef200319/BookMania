@@ -49,7 +49,6 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
 
 	// Local test database (in-memory)
 	implementation 'com.h2database:h2'
@@ -175,29 +174,29 @@ pitest {
 	timestampedReports = false
 }
 
-apply plugin: 'org.openapi.generator'
-openApiGenerate {
-	generatorName.set("spring")
-	inputSpec.set("$rootDir/user-microservice/src/main/resources/openapi.yaml")
-	outputDir.set("$buildDir/generated")
-	apiPackage.set("nl.tudelft.sem.template.api")
-	modelPackage.set("nl.tudelft.sem.template.model")
-	configOptions.set([
-			dateLibrary: "java15"
-	])
-
-	// Exclude controller generation
-	configOptions = [
-			interfaceOnly: 'true'
-	]
-}
-
-compileJava.dependsOn tasks.named("openApiGenerate")
-
-sourceSets {
-	getByName("main") {
-		java {
-			srcDir("$buildDir/generated/src/main/java")
-		}
-	}
-}
+//apply plugin: 'org.openapi.generator'
+//openApiGenerate {
+//	generatorName.set("spring")
+//	inputSpec.set("$rootDir/user-microservice/src/main/resources/openapi.yaml")
+//	outputDir.set("$buildDir/generated")
+//	apiPackage.set("nl.tudelft.sem.template.api")
+//	modelPackage.set("nl.tudelft.sem.template.model")
+//	configOptions.set([
+//			dateLibrary: "java15"
+//	])
+//
+//	// Exclude controller generation
+//	configOptions = [
+//			interfaceOnly: 'true'
+//	]
+//}
+//
+//compileJava.dependsOn tasks.named("openApiGenerate")
+//
+//sourceSets {
+//	getByName("main") {
+//		java {
+//			srcDir("$buildDir/generated/src/main/java")
+//		}
+//	}
+//}
