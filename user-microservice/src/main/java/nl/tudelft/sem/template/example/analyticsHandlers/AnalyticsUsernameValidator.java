@@ -9,11 +9,22 @@ public class AnalyticsUsernameValidator extends BaseAnalyticsValidator{
     private final String actualUsername;
     private final UserRepository userRepository;
 
+    /**
+     * Creates an instance of this class
+     */
     public AnalyticsUsernameValidator(String actualUsername, UserRepository userRepository) {
         this.actualUsername = actualUsername;
         this.userRepository = userRepository;
     }
 
+    /**
+     * Handles the request given as a parameter, in this case checks if a condition for
+     * the analytics is met.
+     *
+     * @param analytics
+     * @return
+     * @throws InvalidAnalyticsException
+     */
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
         if(!userRepository.existsById(analytics.getUserUsername())) throw new InvalidDataException("The username of the edited data does not exist in the database.");

@@ -7,10 +7,21 @@ import nl.tudelft.sem.template.example.model.Analytics;
 public class AnalyticsCreationUsernameValidator extends BaseAnalyticsValidator{
     private final AnalyticsRepository analyticsRepository;
 
+    /**
+     * Creates an instance of this class
+     */
     public AnalyticsCreationUsernameValidator(AnalyticsRepository analyticsRepository) {
         this.analyticsRepository = analyticsRepository;
     }
 
+    /**
+     * Handles the request given as a parameter, in this case checks if a condition for
+     * the analytics is met.
+     *
+     * @param analytics
+     * @return
+     * @throws InvalidAnalyticsException
+     */
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
         if(analyticsRepository.findById(analytics.getUserUsername()).isPresent()) throw new InvalidAnalyticsException("The analytics entity of this user already exists.");

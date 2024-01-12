@@ -10,8 +10,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class AnalyticsLoginDateValidator extends BaseAnalyticsValidator{
+    /**
+     * Creates an instance of this class
+     */
     public  AnalyticsLoginDateValidator() {}
 
+    /**
+     * Handles the request given as a parameter, in this case checks if a condition for
+     * the analytics is met.
+     *
+     * @param analytics
+     * @return
+     * @throws InvalidAnalyticsException
+     */
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
         SimpleDateFormat sdformat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
