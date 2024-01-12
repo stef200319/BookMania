@@ -194,55 +194,23 @@ public class UserController {
         if(searchBy == null) searchBy = "name";
         if(isAuthor == null) isAuthor = true;
 
-        List<User> foundUsers = new ArrayList<>();
-        switch(searchBy) {
-            case "name": {
-                User exampleUser = new User();
-                exampleUser.setFirstName(query);
-                exampleUser.setLastName(query);
-                exampleUser.setUsername(query);
-                exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
-
-                ExampleMatcher matcher = ExampleMatcher.matchingAny()
-                    .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
-                    .withIgnoreCase()
-                    .withIgnoreNullValues();
-
-                Example<User> example = Example.of(exampleUser, matcher);
-
-                foundUsers = userRepo.findAll(example);
-                foundUsers = foundUsers.stream().filter(user -> user.getUserRole() == exampleUser.getUserRole()).collect(Collectors.toList());
+        List<User> foundUsers;
+        switch (searchBy) {
+            case "name" -> {
+                foundUsers = userService.findUsersByName(query, isAuthor);
             }
-                break;
-            case "genre": {
-                User exampleUser = new User();
-                exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
-
-                ExampleMatcher matcher = ExampleMatcher.matching()
-                    .withIgnoreNullValues();
-
-                Example<User> example = Example.of(exampleUser, matcher);
-
-                foundUsers = userRepo.findAll(example);
-                foundUsers = foundUsers.stream().filter(user -> user.getFavoriteGenres().contains(query)).collect(Collectors.toList());
-                break;
+            case "genre" -> {
+                foundUsers = userService.findUsersByGenre(query, isAuthor);
             }
-            case "favorite_book": {
-                User exampleUser = new User();
-                exampleUser.setFavoriteBook(query);
-                exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
-
-                ExampleMatcher matcher = ExampleMatcher.matching()
-                    .withIgnoreNullValues();
-
-                Example<User> example = Example.of(exampleUser, matcher);
-
-                foundUsers = userRepo.findAll(example);
-                break;
+            case "favorite_book" -> {
+                foundUsers = userService.findUsersByFavoriteBook(query, isAuthor);
             }
-            case "follows": {
+            case "follows" -> {
                 return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build();
-                // break;
+            }
+
+            default -> {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(foundUsers);

@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.example.services;
 
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.User;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -55,6 +58,52 @@ public class UserService {
         userRepository.saveAndFlush(user2);
 
         return user1;
+    }
+
+    public List<User> findUsersByName(String name, boolean isAuthor) {
+        User exampleUser = new User();
+        exampleUser.setFirstName(name);
+        exampleUser.setLastName(name);
+        exampleUser.setUsername(name);
+        exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
+
+        ExampleMatcher matcher = ExampleMatcher.matchingAny()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+            .withIgnoreCase()
+            .withIgnoreNullValues();
+
+        Example<User> example = Example.of(exampleUser, matcher);
+
+        return userRepository.findAll(example).stream()
+            .filter(user -> user.getUserRole() == exampleUser.getUserRole())
+            .collect(Collectors.toList());
+    }
+
+    public List<User> findUsersByGenre(String genre, boolean isAuthor) {
+        User exampleUser = new User();
+        exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreNullValues();
+
+        Example<User> example = Example.of(exampleUser, matcher);
+
+        return userRepository.findAll(example).stream()
+            .filter(user -> user.getFavoriteGenres().contains(genre))
+            .collect(Collectors.toList());
+    }
+
+    public List<User> findUsersByFavoriteBook(String bookName, boolean isAuthor) {
+        User exampleUser = new User();
+        exampleUser.setFavoriteBook(bookName);
+        exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+            .withIgnoreNullValues();
+
+        Example<User> example = Example.of(exampleUser, matcher);
+
+        return userRepository.findAll(example);
     }
 
 
