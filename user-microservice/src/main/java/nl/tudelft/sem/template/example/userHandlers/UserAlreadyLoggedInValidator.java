@@ -6,23 +6,17 @@ import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.model.User;
 
-public class UserExistingValidator extends BaseUserValidator {
-
-    public UserExistingValidator(
-        UserRepository userRepository) {
+public class UserAlreadyLoggedInValidator extends BaseUserValidator {
+    public UserAlreadyLoggedInValidator(UserRepository userRepository) {
         super(userRepository);
     }
 
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        String username = user.getUsername();
+        if(user.getIsLoggedIn()!=null && user.getIsLoggedIn())
+            throw new InvalidUserException("User is logged in");
 
-
-        if(!userRepository.existsById(username))
-            throw new InvalidUserException("User does not exist");
-        User userInRepo = userRepository.findById(username).get();
-
-        return super.checkNext(userInRepo);
+        return super.checkNext(user);
     }
 }
