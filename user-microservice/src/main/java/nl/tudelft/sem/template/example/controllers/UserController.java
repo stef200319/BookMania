@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
+import nl.tudelft.sem.template.example.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -13,29 +14,113 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
 
+    private final UserRepository userRepo;
+    private final UserService userService;
+
     @Autowired
-    UserRepository userRepo;
+    public UserController(UserRepository userRepo, UserService userService) {
+        this.userRepo = userRepo;
+        this.userService = userService;
+    }
 
     /*
     "/user/" route
      */
+    @PostMapping("/login")
+    public ResponseEntity logInUser(@RequestBody User loginRequest) {
+        String username = loginRequest.getUsername();
+        String password = loginRequest.getPassword();
+
+        // Check if the username is valid
+        if (!userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        // Fetch the User instance from the database
+        User currentUser = this.userRepo.findById(username).get();
+
+        // Check if the password is correct
+        if (!currentUser.getPassword().equals(password)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid password supplied");
+        }
+
+        // Check if the user account is active
+        if (!currentUser.getIsActive()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User account is not active");
+        }
+
+        // Check if the user already logged in
+        if(!(currentUser.getIsLoggedIn() == null)){
+            if(currentUser.getIsLoggedIn()) {
+                return ResponseEntity.status(HttpStatus.OK).body("User already logged in");
+            }
+        }
+
+        // Set the user as logged in
+        userService.logInUser(currentUser);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User logged in successfully");
+    }
+
+    @PostMapping("/logout/{username}")
+    public ResponseEntity logOutUser(@PathVariable String username) {
+        // Check if the username is valid
+        if (!userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        // Fetch the User instance from the DB
+        User currentUser = this.userRepo.findById(username).get();
+
+        // Check if the user not logged in
+        if (currentUser.getIsLoggedIn() == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+        }
+
+        if (!currentUser.getIsLoggedIn()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+        }
+
+        // Set the user as logged out
+        userService.logOutUser(currentUser);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User logged out successfully");
+    }
     @PostMapping
     public ResponseEntity createUser(@RequestBody User newUser){
         String newUsername = newUser.getUsername();
+        String newEmail = newUser.getEmail();
+
+        // Check if the chosen username is available
         if(userRepo.existsById(newUsername)){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already in use");
         }
+
+        // Check if the username format is valid
+        if(!newUsername.matches("^[a-zA-Z][a-zA-Z0-9]*")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username format. The username must contain only alphanumeric characters.");
+        }
+
+        // Check if the email address is valid
+        if(!newEmail.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
+        }
+
         // Check if the User object is valid
         if(!newUser.getIsActive() || newUser.getIsBanned()){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user object");
         }
+
         User savedUser = userRepo.saveAndFlush(newUser);
         return ResponseEntity.status(HttpStatus.OK).body(savedUser);
     }
+
     @PutMapping
     public ResponseEntity updateUserInfo(@RequestBody User modifiedUser){
         String username = modifiedUser.getUsername();
@@ -270,5 +355,72 @@ public class UserController {
         // Delete the user account
         userRepo.deleteById(username);
         return ResponseEntity.status(HttpStatus.OK).body("User account deleted successfully");
+    }
+
+    @PostMapping("/follow/{username1}/{username2}")
+    public ResponseEntity followUser(@PathVariable String username1, @PathVariable String username2) {
+        if(!this.userRepo.existsById(username1)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the user executing the action is not valid");
+        }
+
+        if(!this.userRepo.existsById(username2)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the user being followed is not valid");
+        }
+
+        User user1 = userRepo.findById(username1).get();
+        User user2 = userRepo.findById(username2).get();
+
+        if(!user1.getIsLoggedIn())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
+
+        userService.followUser(user1, user2);
+
+        return ResponseEntity.status(HttpStatus.OK).body("User account followed successfully");
+    }
+
+    @DeleteMapping("/follow/{username1}/{username2}")
+    public ResponseEntity unfollowUser(@PathVariable String username1, @PathVariable String username2) {
+        if(!this.userRepo.existsById(username1)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the user executing the action is not valid");
+        }
+
+        if(!this.userRepo.existsById(username2)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the user being unfollowed is not valid");
+        }
+
+        User user1 = userRepo.findById(username1).get();
+        User user2 = userRepo.findById(username2).get();
+
+        if(!user1.getIsLoggedIn())
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
+
+        User newUser1 = userService.unfollowUser(user1, user2);
+
+        if(newUser1 == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not follow the second user");
+
+        return ResponseEntity.status(HttpStatus.OK).body("User account unfollowed successfully");
+    }
+
+    @GetMapping("/followers/{username}")
+    public ResponseEntity getFollowers(@PathVariable String username) {
+        if(!this.userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is not valid");
+        }
+
+        User user = userRepo.findById(username).get();
+        List<User> followers = user.getFollowers();
+        return ResponseEntity.status(HttpStatus.OK).body(followers);
+    }
+
+    @GetMapping("/following/{username}")
+    public ResponseEntity getFollowing(@PathVariable String username) {
+        if(!this.userRepo.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is not valid");
+        }
+
+        User user = userRepo.findById(username).get();
+        List<User> following = user.getFollowing();
+        return ResponseEntity.status(HttpStatus.OK).body(following);
     }
 }
