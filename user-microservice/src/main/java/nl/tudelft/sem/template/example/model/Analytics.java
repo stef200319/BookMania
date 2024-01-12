@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +27,14 @@ public class Analytics {
 
     private Long followingNumber;
 
+    public Analytics(String userUsername) {
+        this.userUsername = userUsername;
+        this.reviewsNumber = 0L;
+        this.commentsNumber = 0L;
+        this.lastLoginDate = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
+        this.followersNumber = 0L;
+        this.followingNumber = 0L;
+    }
     public Analytics(String userUsername, String lastLoginDate) {
         this.userUsername = userUsername;
         this.reviewsNumber = 0L;

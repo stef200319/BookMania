@@ -4,17 +4,16 @@ import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
 import nl.tudelft.sem.template.example.model.Analytics;
 
-public class AnalyticsIDExistsValidator extends BaseAnalyticsValidator{
-
+public class AnalyticsCreationUsernameValidator extends BaseAnalyticsValidator{
     private final AnalyticsRepository analyticsRepository;
-    public AnalyticsIDExistsValidator(AnalyticsRepository analyticsRepository) {
+
+    public AnalyticsCreationUsernameValidator(AnalyticsRepository analyticsRepository) {
         this.analyticsRepository = analyticsRepository;
     }
 
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
-        if(!analyticsRepository.existsById(analytics.getUserUsername())) throw new InvalidAnalyticsException("The database does not contain any entity with this ID.");
-
+        if(analyticsRepository.findById(analytics.getUserUsername()).isPresent()) throw new InvalidAnalyticsException("The analytics entity of this user already exists.");
         return super.handle(analytics);
     }
 }

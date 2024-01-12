@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.example.model.Analytics;
 public class AnalyticsUsernameValidator extends BaseAnalyticsValidator{
     private final String actualUsername;
     private final UserRepository userRepository;
+
     public AnalyticsUsernameValidator(String actualUsername, UserRepository userRepository) {
         this.actualUsername = actualUsername;
         this.userRepository = userRepository;
@@ -15,7 +16,7 @@ public class AnalyticsUsernameValidator extends BaseAnalyticsValidator{
 
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
-        if(userRepository.findById(analytics.getUserUsername()).isEmpty()) throw new InvalidDataException("The username of the edited data does not exist in the database.");
+        if(!userRepository.existsById(analytics.getUserUsername())) throw new InvalidDataException("The username of the edited data does not exist in the database.");
 
         if(!actualUsername.equals(analytics.getUserUsername())) throw new InvalidAnalyticsException("The username of the analytics entity does not match with the one passed as a parameter.");
 
