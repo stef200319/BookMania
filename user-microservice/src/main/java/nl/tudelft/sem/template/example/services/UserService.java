@@ -15,6 +15,18 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public User logInUser(User user1) {
+        user1.setIsLoggedIn(true);
+        userRepository.saveAndFlush(user1);
+        return user1;
+    }
+
+    public User logOutUser(User user1) {
+        user1.setIsLoggedIn(false);
+        userRepository.saveAndFlush(user1);
+        return user1;
+    }
+
     public User followUser(User user1, User user2) {
         user1.addFollowingItem(user2);
         user2.addFollowersItem(user1);
