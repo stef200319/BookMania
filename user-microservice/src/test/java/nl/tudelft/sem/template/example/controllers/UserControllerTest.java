@@ -595,19 +595,16 @@ public class UserControllerTest {
         ResponseEntity response = userController.updateUserInfo(modifiedUser);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),"Account updated successfully");
-        assertEquals(currentUser.getBio(),modifiedUser.getBio());
-        assertEquals(currentUser.getEmail(),modifiedUser.getEmail());
-        assertEquals(currentUser.getFirstName(),modifiedUser.getFirstName());
-        assertEquals(currentUser.getLastName(), modifiedUser.getLastName());
+        Mockito.verify(userService,Mockito.times(1)).updateUserInfo(modifiedUser);
     }
     @Test
     public void testSelfDeleteNotExistingUserRoute(){
         User user = new User();
         user.setUsername("test");
-        Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
         ResponseEntity response = userController.deleteSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"Username is not valid");
+        Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
     }
     @Test
     public void testSelfDeleteUserNotLoggedInRoute(){
@@ -619,7 +616,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deleteSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.UNAUTHORIZED);
         assertEquals(response.getBody(),"User is not logged in");
-        Mockito.verify(userRepository, Mockito.times(1)).findById(user.getUsername());
+        Mockito.verify(userService, Mockito.times(0)).deleteUser(user.getUsername());
     }
     @Test
     public void testSelfDeleteUserRoute(){
@@ -631,9 +628,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deleteSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),"Account deleted successfully");
-        Mockito.verify(userRepository, Mockito.times(1)).findById(user.getUsername());
-
-
+        Mockito.verify(userService, Mockito.times(1)).deleteUser(user.getUsername());
     }
 
     @Test
@@ -642,6 +637,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.getUserByUsername("test");
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"User not found");
+        Mockito.verify(userService,Mockito.times(0)).fetchUser("test");
     }
     @Test
     public void testGetUserRoute(){
@@ -649,9 +645,11 @@ public class UserControllerTest {
         user.setUsername("test");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userService.fetchUser(user.getUsername())).thenReturn(user);
         ResponseEntity response = userController.getUserByUsername(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),user);
+        Mockito.verify(userService,Mockito.times(1)).fetchUser(user.getUsername());
     }
     @Test
     public void testSelfDeactivateNotExistentRoute(){
@@ -661,6 +659,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deactivateSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"Username is not valid");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testSelfDeactivateNotLoggedInUserRoute(){
@@ -672,6 +671,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deactivateSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.UNAUTHORIZED);
         assertEquals(response.getBody(),"User is not logged in");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testSelfDeactivateNotActiveUserRoute(){
@@ -684,6 +684,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deactivateSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
         assertEquals(response.getBody(),"User account is already inactive");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
 
     @Test
@@ -695,10 +696,9 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         ResponseEntity response = userController.deactivateSelf(user.getUsername());
-        assertEquals(user.getIsActive(),false);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),"User account deactivated successfully");
-        Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
+        Mockito.verify(userService,Mockito.times(1)).modifyUserActivationStatus(user.getUsername(),false);
     }
 
     @Test
@@ -709,6 +709,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.reactivateSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"Username is not valid");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testSelfActivateNotLoggedInUserRoute(){
@@ -720,6 +721,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.reactivateSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.UNAUTHORIZED);
         assertEquals(response.getBody(),"User is not logged in");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testSelfActivateActiveUserRoute(){
@@ -732,6 +734,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.reactivateSelf(user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
         assertEquals(response.getBody(),"User account is already active");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
 
     @Test
@@ -743,10 +746,9 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         ResponseEntity response = userController.reactivateSelf(user.getUsername());
-        assertEquals(user.getIsActive(),true);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),"User account reactivated successfully");
-        Mockito.verify(userRepository, Mockito.times(1)).saveAndFlush(user);
+        Mockito.verify(userService,Mockito.times(1)).modifyUserActivationStatus(user.getUsername(),true);
     }
     @Test
     public void testAdminActivateRoute(){
@@ -762,10 +764,9 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
-        assertEquals(user.getIsActive(),true);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),"Activation status changed successfully");
-        Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testNotLoggedInAdminActivateRoute(){
@@ -781,6 +782,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
         assertEquals(response.getStatusCode(),HttpStatus.UNAUTHORIZED);
         assertEquals(response.getBody(),"Admin is not logged in");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testNotValidAdminActivateRoute(){
@@ -798,6 +800,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
         assertEquals(response.getBody(),"Username of the admin is not valid");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testNotAdminActivateRoute(){
@@ -813,6 +816,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
         assertEquals(response.getStatusCode(),HttpStatus.FORBIDDEN);
         assertEquals(response.getBody(),"Only an admin can perform this operation");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testAdminActivateNotValidUserRoute(){
@@ -830,6 +834,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"User not found");
+        Mockito.verify(userService,Mockito.times(0)).modifyUserActivationStatus(user.getUsername(),false);
     }
     @Test
     public void testAdminDeleteRoute(){
@@ -846,7 +851,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),"User account deleted successfully");
-        Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
+        Mockito.verify(userService,Mockito.times(1)).deleteUser(user.getUsername());
     }
     @Test
     public void testNotLoggedInAdminDeleteRoute(){
@@ -861,6 +866,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.UNAUTHORIZED);
         assertEquals(response.getBody(),"Admin is not logged in");
+        Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
     }
     @Test
     public void testNotValidAdminDeleteRoute(){
@@ -874,6 +880,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
         assertEquals(response.getBody(),"Username of the admin is not valid");
+        Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
     }
     @Test
     public void testNotAdminDeleteRoute(){
@@ -888,6 +895,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
         assertEquals(response.getStatusCode(),HttpStatus.FORBIDDEN);
         assertEquals(response.getBody(),"Only an admin can perform this operation");
+        Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
     }
     @Test
     public void testAdminDeleteNotValidUserRoute(){
@@ -903,6 +911,7 @@ public class UserControllerTest {
         ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"User not found");
+        Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
     }
 
 
