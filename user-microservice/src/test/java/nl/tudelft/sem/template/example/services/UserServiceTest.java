@@ -179,8 +179,61 @@ public class UserServiceTest {
     public void testDeleteUser(){
         User user = new User();
         user.setUsername("test");
+        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         userService.deleteUser(user.getUsername());
         Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
+    }
+
+    @Test
+    public void testDeleteUserAndFollowing(){
+        User user = new User();
+        user.setUsername("test");
+
+        User user2 = new User();
+        user2.setUsername("123");
+
+        List<String> following = new LinkedList<>();
+        following.add("123");
+        user.setFollowing(following);
+
+        List<String> followers = new LinkedList<>();
+        followers.add("test");
+        user2.setFollowers(followers);
+
+        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsById(user2.getUsername())).thenReturn(true);
+        Mockito.when(userRepository.findById(user2.getUsername())).thenReturn(Optional.of(user2));
+
+        userService.deleteUser(user.getUsername());
+
+        Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
+        Mockito.verify(userRepository, Mockito.times(1)).findById("123");
+    }
+
+    @Test
+    public void testDeleteUserAndFollowers(){
+        User user = new User();
+        user.setUsername("test");
+
+        User user2 = new User();
+        user2.setUsername("123");
+
+        List<String> followers = new LinkedList<>();
+        followers.add("123");
+        user.setFollowers(followers);
+
+        List<String> following = new LinkedList<>();
+        following.add("test");
+        user2.setFollowing(followers);
+
+        Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsById(user2.getUsername())).thenReturn(true);
+        Mockito.when(userRepository.findById(user2.getUsername())).thenReturn(Optional.of(user2));
+
+        userService.deleteUser(user.getUsername());
+
+        Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
+        Mockito.verify(userRepository, Mockito.times(1)).findById("123");
     }
 
     @Test

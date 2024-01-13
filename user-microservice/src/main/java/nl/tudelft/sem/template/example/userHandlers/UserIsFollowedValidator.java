@@ -22,12 +22,10 @@ public class UserIsFollowedValidator extends BaseUserValidator {
         List<String> following = user.getFollowing();
         if(following == null || !following.contains(followedUser.getUsername()))
             throw new InvalidUserException("User does not follow other user");
-        following.remove(followedUser.getUsername());
 
         List<String> followers = followedUser.getFollowers();
         if(followers == null || !followers.contains(user.getUsername()))
             throw new InvalidUserException("User does not follow other user");
-        followers.remove(user.getUsername());
 
         return super.checkNext(user);
     }

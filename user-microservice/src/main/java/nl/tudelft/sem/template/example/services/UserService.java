@@ -230,6 +230,37 @@ public class UserService {
      * @param username - the username of the User instance to be deleted
      */
     public void deleteUser(String username){
+        User user = userRepository.findById(username).get();
+
+        //deleting user from following / follower lists
+        List<String> following = user.getFollowing();
+
+        if(following!=null) {
+            for(String i : following) {
+                if(userRepository.existsById(i)) {
+                    User u = userRepository.findById(i).get();
+                    List<String> list = u.getFollowers();
+                    list.remove(username);
+                    u.setFollowers(list);
+                    userRepository.saveAndFlush(u);
+                }
+            }
+        }
+
+        List<String> followers = user.getFollowers();
+
+        if(followers!=null) {
+            for(String i : followers) {
+                if(userRepository.existsById(i)) {
+                    User u = userRepository.findById(i).get();
+                    List<String> list = u.getFollowing();
+                    list.remove(username);
+                    u.setFollowing(list);
+                    userRepository.saveAndFlush(u);
+                }
+            }
+        }
+
         userRepository.deleteById(username);
     }
 
