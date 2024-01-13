@@ -1,7 +1,13 @@
 package nl.tudelft.sem.template.example.services;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.BookRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Book;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -65,5 +71,38 @@ public class BookService {
 
     public void deleteBook(long id) {
         this.bookRepository.deleteById(id);
+    }
+
+    public List<Book> findBook(String author, String genre, String title, String description, String series, String sortBy) {
+        Book exampleBook = new Book();
+        exampleBook.setAuthor(author);
+        exampleBook.setGenres(Collections.singletonList(genre));
+        exampleBook.setTitle(title);
+        exampleBook.setDescription(description);
+        exampleBook.setSeries(series);
+
+        ExampleMatcher matcher = ExampleMatcher.matchingAny()
+            .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
+            .withIgnoreCase()
+            .withIgnoreNullValues();
+
+        Example<Book> example = Example.of(exampleBook, matcher);
+        List<Book> books = bookRepository.findAll(example);
+        switch (sortBy) {
+            case "read_count" -> {
+                books.sort(Comparator.comparing(Book::getReads));
+            }
+            case "alphabetical" -> {
+                books.sort(Comparator.comparing(Book::getTitle));
+            }
+            case "read_count_reversed" -> {
+                books.sort(Comparator.comparing(Book::getReads).reversed());
+            }
+            case "alphabetical_reversed" -> {
+                books.sort(Comparator.comparing(Book::getTitle).reversed());
+            }
+        }
+        return books;
+
     }
 }
