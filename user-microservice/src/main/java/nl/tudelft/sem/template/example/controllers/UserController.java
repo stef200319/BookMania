@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.model.User;
@@ -409,18 +410,7 @@ public class UserController {
 
     @DeleteMapping("/follow/{username1}/{username2}")
     public ResponseEntity unfollowUser(@PathVariable String username1, @PathVariable String username2) {
-//        if(!this.userRepo.existsById(username1)) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the user executing the action is not valid");
-//        }
-//
-//        if(!this.userRepo.existsById(username2)) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the user being unfollowed is not valid");
-//        }
-//
 
-//
-//        if(!user1.getIsLoggedIn())
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
         User u1 = new User();
         u1.setUsername(username1);
 
@@ -473,7 +463,8 @@ public class UserController {
         }
 
         User user = userRepo.findById(username).get();
-        List<User> followers = user.getFollowers();
+        List<User> followers = userService.getFollowers(user);
+
         return ResponseEntity.status(HttpStatus.OK).body(followers);
     }
 
@@ -491,8 +482,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is not valid");
         }
 
+        ;
+
         User user = userRepo.findById(username).get();
-        List<User> following = user.getFollowing();
+        List<User> following = userService.getFollowing(user);
+
         return ResponseEntity.status(HttpStatus.OK).body(following);
     }
 }

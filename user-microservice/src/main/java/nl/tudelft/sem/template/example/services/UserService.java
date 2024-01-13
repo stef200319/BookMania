@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.example.services;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.UserRepository;
@@ -59,15 +60,15 @@ public class UserService {
     }
 
     public User unfollowUser(User user1, User user2) {
-        List<User> following = user1.getFollowing();
-        if(following == null || !following.contains(user2))
+        List<String> following = user1.getFollowing();
+        if(following == null || !following.contains(user2.getUsername()))
             return null;
-        following.remove(user2);
+        following.remove(user2.getUsername());
 
-        List<User> followers = user2.getFollowers();
-        if(followers == null || !followers.contains(user1))
+        List<String> followers = user2.getFollowers();
+        if(followers == null || !followers.contains(user1.getUsername()))
             return null;
-        followers.remove(user1);
+        followers.remove(user1.getUsername());
 
         user1.setFollowing(following);
         user2.setFollowers(followers);
@@ -166,7 +167,13 @@ public class UserService {
             .filter(user -> user.getUserRole() == exampleUser.getUserRole())
             .findFirst();
         if(userOptional.isPresent()) {
-            return userOptional.get().getFollowing();
+            List<String> follow = userOptional.get().getFollowing();
+            List<User> ans = new LinkedList<>();
+            for(String i : follow) {
+                if(userRepository.existsById(i))
+                    ans.add(userRepository.findById(i).get());
+            }
+            return ans;
         } else {
             return new ArrayList<>();
         }
@@ -231,6 +238,34 @@ public class UserService {
         Analytics analytics = new Analytics(saved.getUsername());
         analyticsService.createAnalytics(analytics);
         return saved;
+    }
+
+    public List<User> getFollowers(User user) {
+        List<String> followers = user.getFollowers();
+
+        if(followers == null)
+            return new LinkedList<User>();
+
+        List<User> ans = new LinkedList<>();
+        for(String i : followers) {
+            if(userRepository.existsById(i))
+                ans.add(userRepository.findById(i).get());
+        }
+        return ans;
+    }
+
+    public List<User> getFollowing(User user) {
+        List<String> following = user.getFollowing();
+
+        if(following == null)
+            return new LinkedList<User>();
+
+        List<User> ans = new LinkedList<>();
+        for(String i : following) {
+            if(userRepository.existsById(i))
+                ans.add(userRepository.findById(i).get());
+        }
+        return ans;
     }
 
 }

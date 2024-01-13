@@ -411,21 +411,27 @@ public class UserControllerTest {
     public void testGetFollowingWorking() {
         User user = new User();
         User user2 = new User();
+        user.setUsername("user");
         user2.setUsername("test");
 
-        List<User> foll = new LinkedList<>();
-        foll.add(user2);
+        List<String> foll = new LinkedList<>();
+        foll.add(user2.getUsername());
 
-        user.setUsername("user");
         user.setFollowing(foll);
+
+        List<User> ans = new LinkedList<>();
+        ans.add(user2);
 
         Mockito.when(userRepository.existsById("user")).thenReturn(true);
         Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsById("test")).thenReturn(true);
+        Mockito.when(userRepository.findById("test")).thenReturn(Optional.of(user2));
+        Mockito.when(userService.getFollowing(user)).thenReturn(ans);
 
         ResponseEntity response = userController.getFollowing("user");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(foll, response.getBody());
+        assertEquals(ans, response.getBody());
     }
 
     @Test
@@ -444,19 +450,25 @@ public class UserControllerTest {
         User user2 = new User();
         user2.setUsername("test");
 
-        List<User> foll = new LinkedList<>();
-        foll.add(user2);
+        List<String> foll = new LinkedList<>();
+        foll.add("test");
+
+        List<User> ans = new LinkedList<>();
+        ans.add(user2);
 
         user.setUsername("user");
         user.setFollowers(foll);
 
         Mockito.when(userRepository.existsById("user")).thenReturn(true);
         Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsById("test")).thenReturn(true);
+        Mockito.when(userRepository.findById("test")).thenReturn(Optional.of(user2));
+        Mockito.when(userService.getFollowers(user)).thenReturn(ans);
 
         ResponseEntity response = userController.getFollowers("user");
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(foll, response.getBody());
+        assertEquals(ans, response.getBody());
     }
 
     @Test

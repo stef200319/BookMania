@@ -2,9 +2,9 @@ package nl.tudelft.sem.template.example.model;
 
 import java.net.URI;
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+
+import com.fasterxml.jackson.annotation.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
@@ -89,12 +89,12 @@ public class User {
     private List<String> favoriteGenres;
 
     @Valid
-    @OneToMany
-    private List<@Valid User> followers;
+    @ElementCollection
+    private List<String> followers;
 
     @Valid
-    @OneToMany
-    private List<@Valid User> following;
+    @ElementCollection
+    private List<String> following;
 
     /**
      * Get username
@@ -318,7 +318,7 @@ public class User {
         if (this.followers == null) {
             this.followers = new ArrayList<>();
         }
-        this.followers.add(followersItem);
+        this.followers.add(followersItem.getUsername());
         return this;
     }
 
@@ -329,11 +329,11 @@ public class User {
     @Valid
     @Schema(name = "followers", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("followers")
-    public List<@Valid User> getFollowers() {
+    public List<String> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<@Valid User> followers) {
+    public void setFollowers(List<String> followers) {
         this.followers = followers;
     }
 
@@ -341,7 +341,7 @@ public class User {
         if (this.following == null) {
             this.following = new ArrayList<>();
         }
-        this.following.add(followingItem);
+        this.following.add(followingItem.getUsername());
         return this;
     }
 
@@ -352,11 +352,11 @@ public class User {
     @Valid
     @Schema(name = "following", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("following")
-    public List<@Valid User> getFollowing() {
+    public List<String> getFollowing() {
         return following;
     }
 
-    public void setFollowing(List<@Valid User> following) {
+    public void setFollowing(List<String> following) {
         this.following = following;
     }
 

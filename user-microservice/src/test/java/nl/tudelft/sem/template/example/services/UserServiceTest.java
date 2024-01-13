@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -43,8 +45,8 @@ public class UserServiceTest {
 
         User newUser1 = userService.followUser(user1, user2);
 
-        List<User> ans = new LinkedList<>();
-        ans.add(user2);
+        List<String> ans = new LinkedList<>();
+        ans.add(user2.getUsername());
 
         assertEquals(ans, newUser1.getFollowing());
         Mockito.verify(userRepository, Mockito.times(1)).saveAndFlush(user1);
@@ -74,8 +76,8 @@ public class UserServiceTest {
         User user2 = new User();
         user2.setUsername("user2");
 
-        List<User> following = new LinkedList<>();
-        following.add(user2);
+        List<String> following = new LinkedList<>();
+        following.add(user2.getUsername());
         user1.setFollowing(following);
 
         User newUser1 = userService.unfollowUser(user1, user2);
@@ -93,12 +95,12 @@ public class UserServiceTest {
         User user2 = new User();
         user2.setUsername("user2");
 
-        List<User> following = new LinkedList<>();
-        following.add(user2);
+        List<String> following = new LinkedList<>();
+        following.add(user2.getUsername());
         user1.setFollowing(following);
 
-        List<User> followers = new LinkedList<>();
-        followers.add(user1);
+        List<String> followers = new LinkedList<>();
+        followers.add(user1.getUsername());
         user2.setFollowers(followers);
 
         Analytics a1 = new Analytics("user1");
@@ -109,7 +111,7 @@ public class UserServiceTest {
         Mockito.when(analyticsService.getAnalytics("user1")).thenReturn(a1);
         Mockito.when(analyticsService.getAnalytics("user2")).thenReturn(a2);
 
-        List<User> ans = new LinkedList<>();
+        List<String> ans = new LinkedList<>();
 
         User newUser1 = userService.unfollowUser(user1, user2);
 
@@ -179,6 +181,78 @@ public class UserServiceTest {
         user.setUsername("test");
         userService.deleteUser(user.getUsername());
         Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
+    }
+
+    @Test
+    public void testGetFollowing() {
+        User user = new User();
+        User user2 = new User();
+        user.setUsername("user");
+        user2.setUsername("test");
+
+        List<String> foll = new LinkedList<>();
+        foll.add(user2.getUsername());
+
+        user.setFollowing(foll);
+
+        List<User> ans = new LinkedList<>();
+        ans.add(user2);
+
+        Mockito.when(userRepository.existsById("user")).thenReturn(true);
+        Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsById("test")).thenReturn(true);
+        Mockito.when(userRepository.findById("test")).thenReturn(Optional.of(user2));
+
+        assertEquals(ans, userService.getFollowing(user));
+    }
+
+    @Test
+    public void testGetFollowingEmpty() {
+        User user = new User();
+        user.setUsername("user");
+
+        List<User> ans = new LinkedList<>();
+
+        Mockito.when(userRepository.existsById("user")).thenReturn(true);
+        Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+
+        assertEquals(ans, userService.getFollowing(user));
+    }
+
+    @Test
+    public void testGetFollowersWorking() {
+        User user = new User();
+        User user2 = new User();
+        user2.setUsername("test");
+
+        List<String> foll = new LinkedList<>();
+        foll.add("test");
+
+        List<User> ans = new LinkedList<>();
+        ans.add(user2);
+
+        user.setUsername("user");
+        user.setFollowers(foll);
+
+        Mockito.when(userRepository.existsById("user")).thenReturn(true);
+        Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.existsById("test")).thenReturn(true);
+        Mockito.when(userRepository.findById("test")).thenReturn(Optional.of(user2));
+
+        assertEquals(ans, userService.getFollowers(user));
+    }
+
+    @Test
+    public void testGetFollowersEmpty() {
+        User user = new User();
+        user.setUsername("user");
+
+        List<User> ans = new LinkedList<>();
+
+        Mockito.when(userRepository.existsById("user")).thenReturn(true);
+        Mockito.when(userRepository.findById("user")).thenReturn(Optional.of(user));
+
+        assertEquals(ans, userService.getFollowers(user));
     }
 
 }

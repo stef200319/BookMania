@@ -19,15 +19,15 @@ public class UserIsFollowedValidator extends BaseUserValidator {
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        List<User> following = user.getFollowing();
-        if(following == null || !following.contains(followedUser))
+        List<String> following = user.getFollowing();
+        if(following == null || !following.contains(followedUser.getUsername()))
             throw new InvalidUserException("User does not follow other user");
-        following.remove(followedUser);
+        following.remove(followedUser.getUsername());
 
-        List<User> followers = followedUser.getFollowers();
-        if(followers == null || !followers.contains(user))
+        List<String> followers = followedUser.getFollowers();
+        if(followers == null || !followers.contains(user.getUsername()))
             throw new InvalidUserException("User does not follow other user");
-        followers.remove(user);
+        followers.remove(user.getUsername());
 
         return super.checkNext(user);
     }
