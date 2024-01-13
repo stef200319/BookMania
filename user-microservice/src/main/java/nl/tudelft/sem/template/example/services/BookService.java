@@ -54,4 +54,16 @@ public class BookService {
 
         return books;
     }
+
+    public Book createBook(Book book) {
+        return bookRepository.saveAndFlush(book);
+    }
+
+    public Book getBook(long id) {
+        return bookRepository.getOne(id);
+    }
+
+    public void deleteBook(long id) {
+        this.bookRepository.deleteById(id);
+    }
 }
