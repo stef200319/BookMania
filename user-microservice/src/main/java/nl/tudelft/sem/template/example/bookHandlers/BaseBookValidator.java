@@ -6,7 +6,7 @@ import nl.tudelft.sem.template.example.model.Book;
 
 public abstract class BaseBookValidator implements BookValidator{
     private BookValidator next;
-    private BookRepository bookRepository;
+    protected BookRepository bookRepository;
 
     public BaseBookValidator(BookRepository bookRepository){
         this.bookRepository=bookRepository;
