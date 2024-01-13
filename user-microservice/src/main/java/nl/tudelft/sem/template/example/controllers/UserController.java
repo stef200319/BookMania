@@ -97,28 +97,6 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity createUser(@RequestBody User newUser){
-//        String newUsername = newUser.getUsername();
-//        String newEmail = newUser.getEmail();
-//
-//        // Check if the chosen username is available
-//        if(userRepo.existsById(newUsername)){
-//            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already in use");
-//        }
-//
-//        // Check if the username format is valid
-//        if(!newUsername.matches("^[a-zA-Z][a-zA-Z0-9]*")){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid username format. The username must contain only alphanumeric characters.");
-//        }
-//
-//        // Check if the email address is valid
-//        if(!newEmail.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
-//        }
-//
-//        // Check if the User object is valid
-//        if(!newUser.getIsActive() || newUser.getIsBanned()){
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user object");
-//        }
 
         UsernameValidator handler = new UsernameValidator(userRepo);
         EmailValidator ev = new EmailValidator(userRepo);
@@ -148,37 +126,6 @@ public class UserController {
 
     @PutMapping
     public ResponseEntity updateUserInfo(@RequestBody User modifiedUser){
-//        String username = modifiedUser.getUsername();
-//        // Check whether the username is valid
-//        if(!userRepo.existsById(username)){
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The user does not exist");
-//        }
-//        // Fetch the User instance from the DB
-//        User currentUser = this.userRepo.findById(username).get();
-//        // Check whether the sender of the request is logged in
-//        if(currentUser.getIsLoggedIn()){
-//            // Perform modifications of the personal info of the user
-//            currentUser.setBio(modifiedUser.getBio());
-//            currentUser.setFirstName(modifiedUser.getFirstName());
-//            currentUser.setLastName(modifiedUser.getLastName());
-//            currentUser.setProfilePicture(modifiedUser.getProfilePicture());
-//            currentUser.setLocation(modifiedUser.getLocation());
-//            // Check if the email address is valid
-//            if(!modifiedUser.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")){
-//                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
-//            }
-//            currentUser.setEmail(modifiedUser.getEmail());
-//            currentUser.setPassword(modifiedUser.getPassword());
-//            currentUser.setFavoriteBook(modifiedUser.getFavoriteBook());
-//            currentUser.setFavoriteGenres(modifiedUser.getFavoriteGenres());
-//            // Persist the changes in the DB
-//            this.userRepo.saveAndFlush(currentUser);
-//            return ResponseEntity.status(HttpStatus.OK).body("Account updated successfully");
-//        }
-//        else{
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
-//        }
-
         EmailValidator handler = new EmailValidator(userRepo);
         UserExistingValidator ev =  new UserExistingValidator(userRepo);
         ev.setNext(new UserLoggedInValidator(userRepo));
@@ -195,24 +142,7 @@ public class UserController {
         catch (InvalidEmailException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
         }
-
-        User currentUser = this.userRepo.findById(modifiedUser.getUsername()).get();
-        // Perform modifications of the personal info of the user
-        currentUser.setBio(modifiedUser.getBio());
-        currentUser.setFirstName(modifiedUser.getFirstName());
-        currentUser.setLastName(modifiedUser.getLastName());
-        currentUser.setProfilePicture(modifiedUser.getProfilePicture());
-        currentUser.setLocation(modifiedUser.getLocation());
-        // Check if the email address is valid
-        if(!modifiedUser.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
-        }
-        currentUser.setEmail(modifiedUser.getEmail());
-        currentUser.setPassword(modifiedUser.getPassword());
-        currentUser.setFavoriteBook(modifiedUser.getFavoriteBook());
-        currentUser.setFavoriteGenres(modifiedUser.getFavoriteGenres());
-        // Persist the changes in the DB
-        this.userRepo.saveAndFlush(currentUser);
+        userService.updateUserInfo(modifiedUser);
         return ResponseEntity.status(HttpStatus.OK).body("Account updated successfully");
     }
 
@@ -239,7 +169,7 @@ public class UserController {
         }
 
         // Remove the User entity from the DB
-        this.userRepo.deleteById(username);
+        userService.deleteUser(username);
         return ResponseEntity.status(HttpStatus.OK).body("Account deleted successfully");
 
     }
@@ -261,7 +191,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
 
-        User fetchedUser = userRepo.findById(username).get();
+        User fetchedUser = userService.fetchUser(username);
         return ResponseEntity.status(HttpStatus.OK).body(fetchedUser);
     }
 
@@ -323,12 +253,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User account is already inactive");
         }
 
-        User currentUser = userRepo.findById(username).get();
-
-        // Modify the activation status of the user
-        currentUser.setIsActive(false);
-        // Persist the changes to the DB
-        this.userRepo.saveAndFlush(currentUser);
+        userService.modifyUserActivationStatus(username,false);
         return ResponseEntity.status(HttpStatus.OK).body("User account deactivated successfully");
     }
 
@@ -358,11 +283,7 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User account is already active");
         }
 
-        User currentUser = this.userRepo.findById(username).get();
-        // Modify the activation status of the user
-        currentUser.setIsActive(true);
-        // Persist the changes to the DB
-        this.userRepo.saveAndFlush(currentUser);
+        userService.modifyUserActivationStatus(username,true);
         return ResponseEntity.status(HttpStatus.OK).body("User account reactivated successfully");
     }
 
@@ -404,9 +325,7 @@ public class UserController {
         }
 
         // Modify the activation status of the user
-        User currentUser = userRepo.findById(username).get();
-        currentUser.setIsActive(flag);
-        userRepo.saveAndFlush(currentUser);
+        userService.modifyUserActivationStatus(username,flag);
         return ResponseEntity.status(HttpStatus.OK).body("Activation status changed successfully");
     }
 
@@ -447,7 +366,7 @@ public class UserController {
         }
 
         // Delete the user account
-        userRepo.deleteById(username);
+        userService.deleteUser(username);
         return ResponseEntity.status(HttpStatus.OK).body("User account deleted successfully");
     }
 
