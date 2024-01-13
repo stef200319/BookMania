@@ -43,8 +43,7 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
 
-        Book savedBook = bookRepo.saveAndFlush(newBook);
-        return ResponseEntity.status(HttpStatus.OK).body(savedBook);
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.createBook(newBook));
     }
     @PutMapping("/{id}/{username}")
     public ResponseEntity updateBook(@PathVariable Long id, @PathVariable String username, @RequestBody Book updatedBook){
@@ -76,8 +75,7 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
         }
 
-        Book bookToGet = bookRepo.getOne(id);
-        return ResponseEntity.status(HttpStatus.OK).body(bookToGet);
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.getBook(id));
     }
 
     @DeleteMapping("/{id}/{username}")
@@ -96,7 +94,7 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
         }
 
-        this.bookRepo.deleteById(id);
+        bookService.deleteBook(id);
         return ResponseEntity.status(HttpStatus.OK).body("Book deleted succesfully");
     }
 
