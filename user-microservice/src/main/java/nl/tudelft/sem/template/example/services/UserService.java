@@ -148,5 +148,59 @@ public class UserService {
         }
     }
 
+    /**
+     * Update the values of the fields of an existing User instance
+     * @param modifiedUser - the modified corresponding User instance
+     * @return - the updated User instance that is persisted in the DB
+     */
+    public User updateUserInfo(User modifiedUser){
+        User currentUser = userRepository.findById(modifiedUser.getUsername()).get();
+        // Perform modifications of the personal info of the user
+        currentUser.setBio(modifiedUser.getBio());
+        currentUser.setFirstName(modifiedUser.getFirstName());
+        currentUser.setLastName(modifiedUser.getLastName());
+        currentUser.setProfilePicture(modifiedUser.getProfilePicture());
+        currentUser.setLocation(modifiedUser.getLocation());
+        currentUser.setPassword(modifiedUser.getPassword());
+        currentUser.setFavoriteBook(modifiedUser.getFavoriteBook());
+        currentUser.setFavoriteGenres(modifiedUser.getFavoriteGenres());
+        currentUser.setEmail(modifiedUser.getEmail());
+        userRepository.saveAndFlush(currentUser);
+        return currentUser;
+    }
+
+    /**
+     * Modify the activation status of a User instance
+     * @param currentUsername - the username corresponding to the modified User instance
+     * @param flag - new value of the activation status
+     * @return - the modified User instance
+     */
+    public User modifyUserActivationStatus(String currentUsername, boolean flag){
+        // Fetch the User instance from the DB
+        User currentUser = userRepository.findById(currentUsername).get();
+        // Modify the activation status of the user
+        currentUser.setIsActive(flag);
+        // Persist the changes to the DB
+        userRepository.saveAndFlush(currentUser);
+        return currentUser;
+    }
+
+    /**
+     * Fetch a specific User instance from the DB
+     * @param username - the username of the desired User instance
+     * @return - the desired User instance
+     */
+    public User fetchUser(String username){
+        return userRepository.findById(username).get();
+    }
+
+    /**
+     * Delete a User instance with the respective username
+     * @param username - the username of the User instance to be deleted
+     */
+    public void deleteUser(String username){
+        userRepository.deleteById(username);
+    }
+
 
 }
