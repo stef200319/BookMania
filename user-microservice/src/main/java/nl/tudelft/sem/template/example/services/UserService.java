@@ -1,9 +1,12 @@
 package nl.tudelft.sem.template.example.services;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.UserRepository;
+import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -15,14 +18,19 @@ import java.util.List;
 public class UserService {
 
     private UserRepository userRepository;
+    private AnalyticsService analyticsService;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AnalyticsService analyticsService) {
         this.userRepository = userRepository;
+        this.analyticsService = analyticsService;
     }
 
     public User logInUser(User user1) {
         user1.setIsLoggedIn(true);
         userRepository.saveAndFlush(user1);
+        Analytics analytics = analyticsService.getAnalytics(user1.getUsername());
+        analytics.setLastLoginDate(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
+        analyticsService.editAnalytics(user1.getUsername(), analytics);
         return user1;
     }
 
@@ -38,6 +46,14 @@ public class UserService {
 
         userRepository.saveAndFlush(user1);
         userRepository.saveAndFlush(user2);
+
+        Analytics analytics1 = analyticsService.getAnalytics(user1.getUsername());
+        Analytics analytics2 = analyticsService.getAnalytics(user2.getUsername());
+
+        analytics1.setFollowingNumber(analytics1.getFollowingNumber() + 1);
+        analytics2.setFollowersNumber(analytics2.getFollowersNumber() + 1);
+        analyticsService.editAnalytics(user1.getUsername(), analytics1);
+        analyticsService.editAnalytics(user2.getUsername(), analytics2);
 
         return user1;
     }
@@ -58,6 +74,14 @@ public class UserService {
 
         userRepository.saveAndFlush(user1);
         userRepository.saveAndFlush(user2);
+
+        Analytics analytics1 = analyticsService.getAnalytics(user1.getUsername());
+        Analytics analytics2 = analyticsService.getAnalytics(user2.getUsername());
+
+        analytics1.setFollowingNumber(analytics1.getFollowingNumber() - 1);
+        analytics2.setFollowersNumber(analytics2.getFollowersNumber() - 1);
+        analyticsService.editAnalytics(user1.getUsername(), analytics1);
+        analyticsService.editAnalytics(user2.getUsername(), analytics2);
 
         return user1;
     }
@@ -202,5 +226,11 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
+    public User createUser(User user) {
+        User saved = userRepository.saveAndFlush(user);
+        Analytics analytics = new Analytics(saved.getUsername());
+        analyticsService.createAnalytics(analytics);
+        return saved;
+    }
 
 }
