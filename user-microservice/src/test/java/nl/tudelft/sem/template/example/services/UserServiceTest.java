@@ -329,4 +329,14 @@ public class UserServiceTest {
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
     }
 
+    @Test
+    public void createUser(){
+        User user = new User();
+        user.setUsername("test");
+        Analytics analytics = new Analytics(user.getUsername());
+        Mockito.when(userRepository.saveAndFlush(user)).thenReturn(user);
+        userService.createUser(user);
+        Mockito.verify(analyticsService,Mockito.times(1)).createAnalytics(analytics);
+    }
+
 }
