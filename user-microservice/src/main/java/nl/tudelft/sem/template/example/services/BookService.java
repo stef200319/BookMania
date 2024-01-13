@@ -90,13 +90,13 @@ public class BookService {
         List<Book> books = bookRepository.findAll(example);
         switch (sortBy) {
             case "read_count" -> {
-                books.sort(Comparator.comparing(Book::getReads));
+                books.sort(Comparator.comparing(Book::getReads).reversed());
             }
             case "alphabetical" -> {
                 books.sort(Comparator.comparing(Book::getTitle));
             }
             case "read_count_reversed" -> {
-                books.sort(Comparator.comparing(Book::getReads).reversed());
+                books.sort(Comparator.comparing(Book::getReads));
             }
             case "alphabetical_reversed" -> {
                 books.sort(Comparator.comparing(Book::getTitle).reversed());
