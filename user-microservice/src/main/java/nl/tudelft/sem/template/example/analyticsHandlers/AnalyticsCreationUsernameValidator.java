@@ -2,14 +2,17 @@ package nl.tudelft.sem.template.example.analyticsHandlers;
 
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
-import nl.tudelft.sem.template.example.exceptions.InvalidDataException;
 import nl.tudelft.sem.template.example.model.Analytics;
 
-public class AnalyticsReviewValidator extends BaseAnalyticsValidator{
+public class AnalyticsCreationUsernameValidator extends BaseAnalyticsValidator{
+    private final AnalyticsRepository analyticsRepository;
+
     /**
      * Creates an instance of this class
      */
-    public AnalyticsReviewValidator() {}
+    public AnalyticsCreationUsernameValidator(AnalyticsRepository analyticsRepository) {
+        this.analyticsRepository = analyticsRepository;
+    }
 
     /**
      * Handles the request given as a parameter, in this case checks if a condition for
@@ -21,8 +24,7 @@ public class AnalyticsReviewValidator extends BaseAnalyticsValidator{
      */
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
-        if(analytics.getReviewsNumber() < 0) throw new InvalidDataException("The number of reviews cannot be lesser than 0.");
-
+        if(analyticsRepository.findById(analytics.getUserUsername()).isPresent()) throw new InvalidAnalyticsException("The analytics entity of this user already exists.");
         return super.handle(analytics);
     }
 }

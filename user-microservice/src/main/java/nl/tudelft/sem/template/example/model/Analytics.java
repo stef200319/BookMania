@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +27,26 @@ public class Analytics {
 
     private Long followingNumber;
 
+    /**
+     * Constructs a new Analytics instance with default values besides username.
+     *
+     * @param userUsername The username of the user.
+     */
+    public Analytics(String userUsername) {
+        this.userUsername = userUsername;
+        this.reviewsNumber = 0L;
+        this.commentsNumber = 0L;
+        this.lastLoginDate = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now());
+        this.followersNumber = 0L;
+        this.followingNumber = 0L;
+    }
+    
+    /**
+     * Constructs a new Analytics instance with default values besides username and lastLoginDate.
+     *
+     * @param userUsername   The username of the user.
+     * @param lastLoginDate  The date and time of the user's last login.
+     */
     public Analytics(String userUsername, String lastLoginDate) {
         this.userUsername = userUsername;
         this.reviewsNumber = 0L;
@@ -34,10 +56,6 @@ public class Analytics {
         this.followingNumber = 0L;
     }
 
-    public Analytics userUsername(String userUsername) {
-        this.userUsername = userUsername;
-        return this;
-    }
 
     /**
      * Get userUsername
@@ -58,10 +76,6 @@ public class Analytics {
         this.userUsername = userUsername;
     }
 
-    public Analytics reviewsNumber(Long reviewsNumber) {
-        this.reviewsNumber = reviewsNumber;
-        return this;
-    }
 
     /**
      * Get reviewsNumber
@@ -82,10 +96,6 @@ public class Analytics {
         this.reviewsNumber = reviewsNumber;
     }
 
-    public Analytics commentsNumber(Long commentsNumber) {
-        this.commentsNumber = commentsNumber;
-        return this;
-    }
 
     /**
      * Get commentsNumber
@@ -98,14 +108,14 @@ public class Analytics {
         return commentsNumber;
     }
 
+    /**
+     * Set user's commentsNumber
+     * @param commentsNumber
+     */
     public void setCommentsNumber(Long commentsNumber) {
         this.commentsNumber = commentsNumber;
     }
 
-    public Analytics lastLoginDate(String lastLoginDate) {
-        this.lastLoginDate = lastLoginDate;
-        return this;
-    }
 
     /**
      * Get lastLoginDate
@@ -118,14 +128,14 @@ public class Analytics {
         return lastLoginDate;
     }
 
+    /**
+     * Set user's lastLoginDate
+     * @param lastLoginDate
+     */
     public void setLastLoginDate(String lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
     }
 
-    public Analytics followersNumber(Long followersNumber) {
-        this.followersNumber = followersNumber;
-        return this;
-    }
 
     /**
      * Get followersNumber
@@ -138,14 +148,14 @@ public class Analytics {
         return followersNumber;
     }
 
+    /**
+     * Set user's followers number
+     * @param followersNumber
+     */
     public void setFollowersNumber(Long followersNumber) {
         this.followersNumber = followersNumber;
     }
 
-    public Analytics followingNumber(Long followingNumber) {
-        this.followingNumber = followingNumber;
-        return this;
-    }
 
     /**
      * Get followingNumber
@@ -158,10 +168,20 @@ public class Analytics {
         return followingNumber;
     }
 
+    /**
+     * Set user's following number
+     * @param followingNumber
+     */
     public void setFollowingNumber(Long followingNumber) {
         this.followingNumber = followingNumber;
     }
 
+    /**
+     * Checks if this Analytics}object is equal to another object.
+     *
+     * @param o The object to compare.
+     * @return true if the objects are equal, false otherwise.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -179,11 +199,21 @@ public class Analytics {
                 Objects.equals(this.followingNumber, analytics.followingNumber);
     }
 
+    /**
+     * Generates a hash code for this Analytics object.
+     *
+     * @return The hash code value.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(userUsername, reviewsNumber, commentsNumber, lastLoginDate, followersNumber, followingNumber);
     }
 
+    /**
+     * Returns a string representation of this Analytics object.
+     *
+     * @return A string representation.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

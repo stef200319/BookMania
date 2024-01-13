@@ -12,8 +12,18 @@ public class AnalyticsTest {
     private Analytics a2;
     @BeforeEach
     void setUp() {
-        a1 = new Analytics().userUsername("u1").commentsNumber(6L).followersNumber(10L).followingNumber(16L).lastLoginDate("2023-01-01").reviewsNumber(10L);
-        a2 = new Analytics().userUsername("u2").commentsNumber(10L).followersNumber(5L).followingNumber(200L).lastLoginDate("2024-01-01").reviewsNumber(0L);
+        a1 = new Analytics("u1", "2023-01-01");
+        a1.setFollowingNumber(16L);
+        a1.setFollowersNumber(10L);
+        a1.setCommentsNumber(6L);
+        a1.setReviewsNumber(10L);
+        //a1 = new Analytics().userUsername("u1").commentsNumber(6L).followersNumber(10L).followingNumber(16L).lastLoginDate("2023-01-01").reviewsNumber(10L);
+        a2 = new Analytics("u2", "2024-01-01");
+        a2.setFollowingNumber(200L);
+        a2.setFollowersNumber(5L);
+        a2.setCommentsNumber(10L);
+        a2.setReviewsNumber(0L);
+        //a2 = new Analytics().userUsername("u2").commentsNumber(10L).followersNumber(5L).followingNumber(200L).lastLoginDate("2024-01-01").reviewsNumber(0L);
     }
 
     @Test
