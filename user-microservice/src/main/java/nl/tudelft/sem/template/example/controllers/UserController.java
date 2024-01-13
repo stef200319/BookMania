@@ -120,8 +120,8 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user object");
         }
 
-        User savedUser = userRepo.saveAndFlush(newUser);
-        return ResponseEntity.status(HttpStatus.OK).body(savedUser);
+        User saved = userService.createUser(newUser);
+        return ResponseEntity.status(HttpStatus.OK).body(saved);
     }
 
     @PutMapping
