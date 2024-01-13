@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.services;
 
 import nl.tudelft.sem.template.example.database.UserRepository;
+import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,11 +19,13 @@ import java.util.Optional;
 public class UserServiceTest {
     private UserRepository userRepository;
     private UserService userService;
+    private AnalyticsService analyticsService;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userService = new UserService(userRepository);
+        analyticsService = Mockito.mock(AnalyticsService.class);
+        userService = new UserService(userRepository, analyticsService);
     }
 
     @Test
@@ -32,6 +35,11 @@ public class UserServiceTest {
 
         User user2 = new User();
         user2.setUsername("user2");
+
+        Analytics a1 = new Analytics("user1");
+        Analytics a2 = new Analytics("user2");
+        Mockito.when(analyticsService.getAnalytics("user1")).thenReturn(a1);
+        Mockito.when(analyticsService.getAnalytics("user2")).thenReturn(a2);
 
         User newUser1 = userService.followUser(user1, user2);
 
@@ -92,6 +100,14 @@ public class UserServiceTest {
         List<User> followers = new LinkedList<>();
         followers.add(user1);
         user2.setFollowers(followers);
+
+        Analytics a1 = new Analytics("user1");
+        a1.setFollowingNumber(1L);
+        Analytics a2 = new Analytics("user2");
+        a2.setFollowersNumber(1L);
+
+        Mockito.when(analyticsService.getAnalytics("user1")).thenReturn(a1);
+        Mockito.when(analyticsService.getAnalytics("user2")).thenReturn(a2);
 
         List<User> ans = new LinkedList<>();
 

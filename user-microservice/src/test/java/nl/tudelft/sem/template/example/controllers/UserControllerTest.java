@@ -530,10 +530,11 @@ public class UserControllerTest {
         user.setIsBanned(false);
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
         Mockito.when(userRepository.saveAndFlush(user)).thenReturn(user);
+        Mockito.when(userService.createUser(user)).thenReturn(user);
         ResponseEntity response = userController.createUser(user);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),user);
-        Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
+        Mockito.verify(userService,Mockito.times(1)).createUser(user);
     }
     @Test
     public void testUpdateNotExistingUserRoute(){

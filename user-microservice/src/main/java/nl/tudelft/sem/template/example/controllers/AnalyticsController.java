@@ -44,7 +44,7 @@ public class AnalyticsController {
         return ResponseEntity.status(HttpStatus.OK).body(savedAnalytics);
     }
 
-    @PostMapping("/{username}")
+    @PostMapping("/{username}/new")
     public ResponseEntity createAnalyticsEntityNew(@PathVariable String username) {
         UserExistingValidator h1 = new UserExistingValidator(userRepository);
         User dummy = new User();
