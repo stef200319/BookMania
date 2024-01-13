@@ -17,7 +17,8 @@ import javax.persistence.Id;
 import javax.validation.Valid;
 
 @Entity
-public class Book {
+public class
+Book {
     @Id
     private Long id;
     private String title;

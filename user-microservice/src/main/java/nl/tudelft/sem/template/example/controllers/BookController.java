@@ -1,6 +1,9 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.bookHandlers.BookExistingValidator;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import javax.validation.Valid;
 import nl.tudelft.sem.template.example.database.BookRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidBookException;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
@@ -209,5 +212,19 @@ public class BookController {
     @GetMapping("")
     public ResponseEntity getBooks(@RequestBody List<String> ids) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBooks(ids));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> bookSearchGet(
+        String author,
+        String genre,
+        String title,
+        String description,
+        String series,
+        String sortBy
+    ) {
+        if(author == null && genre == null && title == null && description == null && series == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.findBook(author, genre, title, description, series, sortBy));
     }
 }
