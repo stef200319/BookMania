@@ -308,4 +308,25 @@ public class UserServiceTest {
         assertEquals(ans, userService.getFollowers(user));
     }
 
+    @Test
+    public void testLogInUser(){
+        User user = new User();
+        user.setUsername("test");
+        user.setIsLoggedIn(false);
+        Analytics analytics = new Analytics();
+        Mockito.when(analyticsService.getAnalytics(user.getUsername())).thenReturn(analytics);
+        userService.logInUser(user);
+        assertEquals(true,user.getIsLoggedIn());
+        Mockito.verify(analyticsService,Mockito.times(1)).editAnalytics(user.getUsername(),analytics);
+    }
+    @Test
+    public void testLogOutUser(){
+        User user = new User();
+        user.setUsername("test");
+        user.setIsLoggedIn(true);
+        userService.logOutUser(user);
+        assertEquals(false,user.getIsLoggedIn());
+        Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
+    }
+
 }
