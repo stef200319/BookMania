@@ -222,9 +222,10 @@ public class UserTest {
     @Test
     public void testSetFollowers() {
         User f = new User();
+        f.setUsername("a");
 
-        List<User> followers = new LinkedList<>();
-        followers.add(f);
+        List<String> followers = new LinkedList<>();
+        followers.add(f.getUsername());
 
         user.setFollowers(followers);
 
@@ -234,9 +235,10 @@ public class UserTest {
     @Test
     public void testAddFirstFollower() {
         User f = new User();
+        f.setUsername("a");
 
-        List<User> followers = new LinkedList<>();
-        followers.add(f);
+        List<String> followers = new LinkedList<>();
+        followers.add(f.getUsername());
 
         user.addFollowersItem(f);
 
@@ -246,18 +248,20 @@ public class UserTest {
     @Test
     public void testAddMoreFollower() {
         User f = new User();
+        f.setUsername("a");
 
-        List<User> followers = new LinkedList<>();
-        followers.add(f);
+        List<String> followers = new LinkedList<>();
+        followers.add(f.getUsername());
 
         user.setFollowers(followers);
 
         User f2 = new User();
+        f2.setUsername("b");
 
-        List<User> ans = new LinkedList<>();
+        List<String> ans = new LinkedList<>();
 
-        ans.add(f);
-        ans.add(f2);
+        ans.add(f.getUsername());
+        ans.add(f2.getUsername());
 
         user.addFollowersItem(f2);
 
@@ -272,9 +276,10 @@ public class UserTest {
     @Test
     public void testSetFollowing() {
         User f = new User();
+        f.setUsername("a");
 
-        List<User> following = new LinkedList<>();
-        following.add(f);
+        List<String> following = new LinkedList<>();
+        following.add(f.getUsername());
 
         user.setFollowing(following);
 
@@ -284,9 +289,10 @@ public class UserTest {
     @Test
     public void testAddFirstFollowing() {
         User f = new User();
+        f.setUsername("a");
 
-        List<User> following = new LinkedList<>();
-        following.add(f);
+        List<String> following = new LinkedList<>();
+        following.add(f.getUsername());
 
         user.addFollowingItem(f);
 
@@ -296,18 +302,19 @@ public class UserTest {
     @Test
     public void testAddMoreFollowing() {
         User f = new User();
+        f.setUsername("a");
 
-        List<User> following = new LinkedList<>();
-        following.add(f);
+        List<String> following = new LinkedList<>();
+        following.add(f.getUsername());
 
         user.setFollowing(following);
 
         User f2 = new User();
 
-        List<User> ans = new LinkedList<>();
+        List<String> ans = new LinkedList<>();
 
-        ans.add(f);
-        ans.add(f2);
+        ans.add(f.getUsername());
+        ans.add(f2.getUsername());
 
         user.addFollowingItem(f2);
 
