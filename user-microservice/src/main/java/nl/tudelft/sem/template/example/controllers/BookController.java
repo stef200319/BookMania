@@ -62,6 +62,15 @@ public class BookController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             }
         }
+
+        BookExistingValidator bookHandler = new BookExistingValidator(bookRepo);
+        try {
+            bookHandler.handle(newBook);
+        }
+        catch(InvalidBookException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
+        }
+
 //        if(userRepo.findByUsername(username).isPresent()){
 //            User user = userRepo.findByUsername(username).get();
 //            if(!user.getUserRole().equals(User.UserRoleEnum.ADMIN)) {
