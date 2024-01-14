@@ -10,6 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -140,7 +144,7 @@ public class UserServiceTest {
         modifiedUser.setFavoriteBook("Crime and Punishment");
         modifiedUser.setFavoriteGenres(new ArrayList<>());
         Mockito.when(userRepository.findById(modifiedUser.getUsername())).thenReturn(Optional.of(currentUser));
-        userService.updateUserInfo(modifiedUser);
+        User u = userService.updateUserInfo(modifiedUser);
         assertEquals(currentUser.getEmail(),modifiedUser.getEmail());
         assertEquals(currentUser.getFirstName(),modifiedUser.getFirstName());
         assertEquals(currentUser.getLastName(),modifiedUser.getLastName());
@@ -150,6 +154,7 @@ public class UserServiceTest {
         assertEquals(currentUser.getPassword(),modifiedUser.getPassword());
         assertEquals(currentUser.getFavoriteBook(),modifiedUser.getFavoriteBook());
         assertEquals(currentUser.getFavoriteGenres(),modifiedUser.getFavoriteGenres());
+        assertEquals(modifiedUser, u);
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(currentUser);
     }
 
@@ -159,8 +164,9 @@ public class UserServiceTest {
         user.setUsername("test");
         user.setIsActive(false);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
-        userService.modifyUserActivationStatus(user.getUsername(),true);
+        User u = userService.modifyUserActivationStatus(user.getUsername(),true);
         assertEquals(user.getIsActive(),true);
+        assertEquals(user, u);
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
     }
 
@@ -208,6 +214,7 @@ public class UserServiceTest {
 
         Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1)).findById("123");
+        assertEquals(new LinkedList<>(), user2.getFollowers());
     }
 
     @Test
@@ -224,7 +231,7 @@ public class UserServiceTest {
 
         List<String> following = new LinkedList<>();
         following.add("test");
-        user2.setFollowing(followers);
+        user2.setFollowing(following);
 
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.existsById(user2.getUsername())).thenReturn(true);
@@ -234,6 +241,7 @@ public class UserServiceTest {
 
         Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1)).findById("123");
+        assertEquals(new LinkedList<>(), user2.getFollowing());
     }
 
     @Test
@@ -315,8 +323,9 @@ public class UserServiceTest {
         user.setIsLoggedIn(false);
         Analytics analytics = new Analytics();
         Mockito.when(analyticsService.getAnalytics(user.getUsername())).thenReturn(analytics);
-        userService.logInUser(user);
+        User u = userService.logInUser(user);
         assertEquals(true,user.getIsLoggedIn());
+        assertEquals(user, u);
         Mockito.verify(analyticsService,Mockito.times(1)).editAnalytics(user.getUsername(),analytics);
     }
     @Test
@@ -324,8 +333,9 @@ public class UserServiceTest {
         User user = new User();
         user.setUsername("test");
         user.setIsLoggedIn(true);
-        userService.logOutUser(user);
+        User u = userService.logOutUser(user);
         assertEquals(false,user.getIsLoggedIn());
+        assertEquals(user, u);
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
     }
 
@@ -335,7 +345,8 @@ public class UserServiceTest {
         user.setUsername("test");
         Analytics analytics = new Analytics(user.getUsername());
         Mockito.when(userRepository.saveAndFlush(user)).thenReturn(user);
-        userService.createUser(user);
+        User u = userService.createUser(user);
+        assertEquals(user, u);
         Mockito.verify(analyticsService,Mockito.times(1)).createAnalytics(analytics);
     }
 
