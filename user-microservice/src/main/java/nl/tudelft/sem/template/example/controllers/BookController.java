@@ -74,16 +74,7 @@ public class BookController {
         try{
             bookHandler.handle(newBook);
         }
-        catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            if(e.getMessage().equals("Book must have an id")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
-            }
-            if(e.getMessage().equals("Book must have an author")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            }
-            if(e.getMessage().equals("The author name contains illegal characters.")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
-            }
+        catch (InvalidBookException e){
             if(e.getMessage().equals("Book must have a description")){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
             }
@@ -95,6 +86,17 @@ public class BookController {
             }
             if(e.getMessage().equals("Book must have a title")){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a title");
+            }
+        }
+        catch (InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
+        }
+        catch (InvalidAuthorException e){
+            if(e.getMessage().equals("Book must have an author")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
+            }
+            if(e.getMessage().equals("The author name contains illegal characters.")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
             }
         }
 
@@ -144,19 +146,11 @@ public class BookController {
         v3.setNext(v4);
         v2.setNext(v3);
         bookHandler2.setNext(v2);
+
         try{
             bookHandler2.handle(updatedBook);
         }
-        catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            if(e.getMessage().equals("Book must have an id")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
-            }
-            if(e.getMessage().equals("Book must have an author")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            }
-            if(e.getMessage().equals("The author name contains illegal characters.")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
-            }
+        catch (InvalidBookException e){
             if(e.getMessage().equals("Book must have a description")){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
             }
@@ -169,7 +163,17 @@ public class BookController {
             if(e.getMessage().equals("Book must have a title")){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a title");
             }
-
+        }
+        catch (InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
+        }
+        catch (InvalidAuthorException e) {
+            if (e.getMessage().equals("Book must have an author")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
+            }
+            if (e.getMessage().equals("The author name contains illegal characters.")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
+            }
         }
 
         bookService.updateBook(updatedBook, id);
@@ -188,13 +192,11 @@ public class BookController {
         try {
             bookHandler.handle(book);
         }
-        catch(InvalidBookException | InvalidBookIdException | InvalidAuthorException e){
-            if(e.getMessage().equals("Book does not exist")){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
-            }
-            if(e.getMessage().equals("Book must have an id")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
-            }
+        catch(InvalidBookException | InvalidAuthorException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
+        }
+        catch (InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBook(id));
@@ -227,13 +229,11 @@ public class BookController {
         try {
             bookHandler.handle(book);
         }
-        catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            if(e.getMessage().equals("Book does not exist")){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book does not exist");
-            }
-            if(e.getMessage().equals("Book must have an id")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
-            }
+        catch (InvalidBookException | InvalidAuthorException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book does not exist");
+        }
+        catch (InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
         }
 
         bookService.deleteBook(id);
@@ -251,13 +251,11 @@ public class BookController {
         try {
             bookHandler.handle(book);
         }
-        catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            if(e.getMessage().equals("Book does not exist")){
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book does not exist");
-            }
-            if(e.getMessage().equals("Book must have an id")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
-            }
+        catch (InvalidBookException | InvalidAuthorException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book does not exist");
+        }
+        catch (InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
         }
 
         bookService.readBook(id);
@@ -298,13 +296,7 @@ public class BookController {
         try {
             bookHandler.handle(book);
         }
-        catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            if(e.getMessage().equals("Book must have an author")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            }
-            if(e.getMessage().equals("The author name contains illegal characters.")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
-            }
+        catch (InvalidBookException | InvalidBookIdException e){
             if(e.getMessage().equals("Book must have a description")){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
             }
@@ -316,6 +308,14 @@ public class BookController {
             }
             if(e.getMessage().equals("Book must have a title")){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a title");
+            }
+        }
+        catch (InvalidAuthorException e){
+            if(e.getMessage().equals("Book must have an author")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
+            }
+            if(e.getMessage().equals("The author name contains illegal characters.")){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
             }
         }
 
