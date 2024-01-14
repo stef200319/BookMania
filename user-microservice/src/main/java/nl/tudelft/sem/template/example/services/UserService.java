@@ -275,7 +275,7 @@ public class UserService {
         List<String> followers = user.getFollowers();
 
         if(followers == null)
-            return new LinkedList<User>();
+            return new LinkedList<>();
 
         List<User> ans = new LinkedList<>();
         for(String i : followers) {
@@ -289,7 +289,7 @@ public class UserService {
         List<String> following = user.getFollowing();
 
         if(following == null)
-            return new LinkedList<User>();
+            return new LinkedList<>();
 
         List<User> ans = new LinkedList<>();
         for(String i : following) {
