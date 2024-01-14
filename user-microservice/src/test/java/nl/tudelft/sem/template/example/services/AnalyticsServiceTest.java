@@ -48,6 +48,22 @@ public class AnalyticsServiceTest {
     }
 
     @Test
+    void editAnalyticsTestBetter() {
+        String username = "user123";
+        Analytics currentAnalytics = new Analytics(username, 5L, 3L, "2021-12-01", 10L, 20L);
+        Analytics editAnalytics = new Analytics(username, 7L, 10L, "2021-12-03", 50L, 2L);
+
+        Mockito.when(analyticsRepository.findById("user123")).thenReturn(Optional.of(currentAnalytics));
+        Mockito.when(analyticsRepository.saveAndFlush(currentAnalytics)).thenReturn(editAnalytics);
+
+        Analytics result = analyticsService.editAnalytics("user123", editAnalytics);
+
+        assertEquals(result, editAnalytics);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).saveAndFlush(editAnalytics);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).findById("user123");
+    }
+
+    @Test
     void getAnalyticsTest() {
         Analytics a = new Analytics("test", "now");
         Mockito.when(analyticsRepository.findById("test")).thenReturn(Optional.of(a));

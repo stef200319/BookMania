@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.example.config;
 
 import javax.sql.DataSource;
+
+import lombok.Generated;
 import lombok.Getter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * The H2 config.
  */
 @Configuration
+@Generated
 @EnableJpaRepositories("nl.tudelft.sem.template.example.database")
 @PropertySource("classpath:application-dev.properties")
 @EnableTransactionManagement

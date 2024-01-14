@@ -12,7 +12,10 @@ import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -310,5 +313,182 @@ public class AnalyticsControllerTest {
         assertEquals("Username does not exist.", response.getBody());
 
         Mockito.verify(userRepository, Mockito.times(1)).existsById(username);
+    }
+
+    @Test
+    void editTest() {
+        String username = "username";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String validLoginDate = formatter.format(LocalDateTime.now()); // One day ago
+        Analytics a1 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+        Analytics a2 = new Analytics(username, -1L, 1L, validLoginDate, 2L, 2L);
+
+        User dummy = new User();
+        dummy.setUsername(username);
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dummy));
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a1));
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, a2);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("A field of the analytics entity passed as a parameter is illegal.", response.getBody());
+    }
+
+    @Test
+    void editTestTwo() {
+        String username = "username";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String validLoginDate = formatter.format(LocalDateTime.now()); // One day ago
+        Analytics a1 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+        Analytics a2 = new Analytics(username, 1L, -1L, validLoginDate, 2L, 2L);
+
+        User dummy = new User();
+        dummy.setUsername(username);
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dummy));
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a1));
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, a2);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("A field of the analytics entity passed as a parameter is illegal.", response.getBody());
+    }
+
+    @Test
+    void editTestThree() {
+        String username = "username";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String validLoginDate = formatter.format(LocalDateTime.now().plusDays(1L)); // One day ago
+        Analytics a1 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+        Analytics a2 = new Analytics(username, 1L, 1L, formatter.format(LocalDateTime.now().plusDays(1L)), 2L, 2L);
+
+        User dummy = new User();
+        dummy.setUsername(username);
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dummy));
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a1));
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, a2);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("A field of the analytics entity passed as a parameter is illegal.", response.getBody());
+    }
+
+    @Test
+    void editTestFour() {
+        String username = "username";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String validLoginDate = formatter.format(LocalDateTime.now()); // One day ago
+        Analytics a1 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+        Analytics a2 = new Analytics(username, 1L, 1L, validLoginDate, -2L, 2L);
+
+        User dummy = new User();
+        dummy.setUsername(username);
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dummy));
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a1));
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, a2);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("A field of the analytics entity passed as a parameter is illegal.", response.getBody());
+    }
+
+    @Test
+    void editTestFive() {
+        String username = "username";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String validLoginDate = formatter.format(LocalDateTime.now()); // One day ago
+        Analytics a1 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+        Analytics a2 = new Analytics(username, 1L, 1L, validLoginDate, 2L, -2L);
+
+        User dummy = new User();
+        dummy.setUsername(username);
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dummy));
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a1));
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, a2);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("A field of the analytics entity passed as a parameter is illegal.", response.getBody());
+    }
+    @Test
+    void editTestSix() {
+        String username = "username";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        String validLoginDate = formatter.format(LocalDateTime.now()); // One day ago
+        Analytics a1 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+        Analytics a2 = new Analytics(username, 1L, 1L, validLoginDate, 2L, 2L);
+
+        User dummy = new User();
+        dummy.setUsername(username);
+
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dummy));
+        Mockito.when(analyticsRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a1));
+
+        ResponseEntity response = analyticsController.editAnalyticsEntity(username, a2);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        Mockito.verify(analyticsService, Mockito.times(1)).editAnalytics(username, a2);
+        assertEquals(a2, response.getBody());
+    }
+
+    @Test
+    void createNewTestTwo() {
+        String username = "testusername";
+
+        Analytics a = new Analytics(username);
+        User dum = new User();
+        dum.setUsername(username);
+
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dum));
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.of(a));
+
+        Analytics analytics = new Analytics(username);
+
+        ResponseEntity response = analyticsController.createAnalyticsEntityNew(username);
+
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertEquals("Analytics entity already exists.", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById(username);
+    }
+
+    @Test
+    void createNewTestThree() {
+        String username = "testusername";
+
+        Analytics a = new Analytics(username);
+        User dum = new User();
+        dum.setUsername(username);
+
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(dum));
+        Mockito.when(userRepository.existsById(username)).thenReturn(true);
+        Mockito.when(analyticsRepository.findById(username)).thenReturn(Optional.empty());
+
+        Analytics analytics = new Analytics(username);
+
+        ResponseEntity response = analyticsController.createAnalyticsEntityNew(username);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(analytics, response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById(username);
+        Mockito.verify(analyticsRepository, Mockito.times(1)).findById(username);
     }
 }

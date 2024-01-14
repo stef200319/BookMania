@@ -66,7 +66,7 @@ public class AnalyticsController {
         }
 
         Analytics savedAnalytics = analyticsService.createAnalytics(analytics);
-        return ResponseEntity.status(HttpStatus.OK).body(savedAnalytics);
+        return ResponseEntity.status(HttpStatus.OK).body(analytics);
     }
 
     @PutMapping("/{username}")
@@ -116,8 +116,8 @@ public class AnalyticsController {
             }
         }
 
-        Analytics analytics = analyticsService.editAnalytics(username, editedAnalytics);
-        return ResponseEntity.status(HttpStatus.OK).body(analytics);
+        analyticsService.editAnalytics(username, editedAnalytics);
+        return ResponseEntity.status(HttpStatus.OK).body(editedAnalytics);
     }
 
     @GetMapping("/{username}")

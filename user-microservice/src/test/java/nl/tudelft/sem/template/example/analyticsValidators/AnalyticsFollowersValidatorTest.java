@@ -10,9 +10,8 @@ import org.mockito.Mockito;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnalyticsFollowersValidatorTest {
     @Test
@@ -27,6 +26,19 @@ public class AnalyticsFollowersValidatorTest {
             return;
         }
         assertTrue(result);
+    }
+    @Test
+    void handle_validFollowersNumber_shouldReturnTrueZero() {
+        AnalyticsFollowersValidator followersValidator = new AnalyticsFollowersValidator();
+        Analytics analytics = new Analytics("testUser");
+        analytics.setFollowersNumber(0L);
+        boolean result;
+        try {
+            result = followersValidator.handle(analytics);
+            assertTrue(result);
+        } catch (InvalidAnalyticsException e) {
+            fail();
+        }
     }
 
     @Test
