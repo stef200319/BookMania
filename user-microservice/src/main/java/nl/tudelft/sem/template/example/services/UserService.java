@@ -21,9 +21,12 @@ public class UserService {
     private UserRepository userRepository;
     private AnalyticsService analyticsService;
 
-    public UserService(UserRepository userRepository, AnalyticsService analyticsService) {
+    private UserStatusService userStatusService;
+
+    public UserService(UserRepository userRepository, AnalyticsService analyticsService, UserStatusService userStatusService) {
         this.userRepository = userRepository;
         this.analyticsService = analyticsService;
+        this.userStatusService = userStatusService;
     }
 
     public User logInUser(User user1) {
@@ -266,6 +269,7 @@ public class UserService {
 
     public User createUser(User user) {
         User saved = userRepository.saveAndFlush(user);
+
         Analytics analytics = new Analytics(saved.getUsername());
         analyticsService.createAnalytics(analytics);
         return saved;

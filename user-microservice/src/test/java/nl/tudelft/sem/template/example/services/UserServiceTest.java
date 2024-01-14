@@ -22,12 +22,14 @@ public class UserServiceTest {
     private UserRepository userRepository;
     private UserService userService;
     private AnalyticsService analyticsService;
+    private UserStatusService userStatusService;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         analyticsService = Mockito.mock(AnalyticsService.class);
-        userService = new UserService(userRepository, analyticsService);
+        userStatusService = Mockito.mock(UserStatusService.class);
+        userService = new UserService(userRepository, analyticsService, userStatusService);
     }
 
     @Test
