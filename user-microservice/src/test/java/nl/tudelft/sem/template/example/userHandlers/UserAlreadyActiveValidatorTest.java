@@ -17,7 +17,7 @@ class UserAlreadyActiveValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setIsActive(false);
+        user.getUserStatus().setIsActive(false);
 
         UserAlreadyActiveValidator validator = new UserAlreadyActiveValidator(userRepository);
 
@@ -31,7 +31,7 @@ class UserAlreadyActiveValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setIsActive(true);
+        user.getUserStatus().setIsActive(true);
 
         UserAlreadyActiveValidator validator = new UserAlreadyActiveValidator(userRepository);
 

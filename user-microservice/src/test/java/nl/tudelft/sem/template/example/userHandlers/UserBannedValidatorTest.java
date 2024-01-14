@@ -17,7 +17,7 @@ class UserBannedValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setIsBanned(false);
+        user.getUserStatus().setIsBanned(false);
 
         UserBannedValidator validator = new UserBannedValidator(userRepository);
 
@@ -31,7 +31,7 @@ class UserBannedValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setIsBanned(true);
+        user.getUserStatus().setIsBanned(true);
 
         UserBannedValidator validator = new UserBannedValidator(userRepository);
 

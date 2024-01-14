@@ -18,7 +18,6 @@ import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 @Data
 @Entity
 @AllArgsConstructor
-@NoArgsConstructor
 public class User {
 
     @Id
@@ -97,6 +96,10 @@ public class User {
      * Get username
      * @return username
      */
+
+    public User() {
+        this.userStatus = new UserStatus();
+    }
 
     @Schema(name = "username", example = "theUser", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("username")

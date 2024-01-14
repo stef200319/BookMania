@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
+import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
@@ -30,8 +31,9 @@ public class UserService {
     }
 
     public User logInUser(User user1) {
-        user1.setIsLoggedIn(true);
+        user1.getUserStatus().setIsLoggedIn(true);
         userRepository.saveAndFlush(user1);
+        userStatusService.editUserStatus(user1.getUserStatus());
         Analytics analytics = analyticsService.getAnalytics(user1.getUsername());
         analytics.setLastLoginDate(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss").format(LocalDateTime.now()));
         analyticsService.editAnalytics(user1.getUsername(), analytics);
@@ -39,7 +41,9 @@ public class UserService {
     }
 
     public User logOutUser(User user1) {
-        user1.setIsLoggedIn(false);
+        user1.getUserStatus().setIsLoggedIn(false);
+        userRepository.saveAndFlush(user1);
+        userStatusService.editUserStatus(user1.getUserStatus());
         userRepository.saveAndFlush(user1);
         return user1;
     }
@@ -110,7 +114,7 @@ public class UserService {
         Example<User> example = Example.of(exampleUser, matcher);
 
         return userRepository.findAll(example).stream()
-            .filter(user -> user.getUserRole() == exampleUser.getUserRole())
+            .filter(user -> user.getUserStatus().getUserRole() == exampleUser.getUserStatus().getUserRole())
             .collect(Collectors.toList());
     }
 
@@ -122,7 +126,7 @@ public class UserService {
      */
     public List<User> findUsersByGenre(String genre, boolean isAuthor) {
         User exampleUser = new User();
-        exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
+        exampleUser.getUserStatus().setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
             .withIgnoreNullValues();
@@ -137,7 +141,7 @@ public class UserService {
     public List<User> findUsersByFavoriteBook(String bookName, boolean isAuthor) {
         User exampleUser = new User();
         exampleUser.setFavoriteBook(bookName);
-        exampleUser.setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
+        exampleUser.getUserStatus().setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
             .withIgnoreNullValues();
@@ -167,7 +171,7 @@ public class UserService {
 
         Example<User> example = Example.of(exampleUser, matcher);
         Optional<User> userOptional = userRepository.findAll(example).stream()
-            .filter(user -> user.getUserRole() == exampleUser.getUserRole())
+            .filter(user -> user.getUserStatus().getUserRole() == exampleUser.getUserStatus().getUserRole())
             .findFirst();
         if(userOptional.isPresent()) {
             List<String> follow = userOptional.get().getFollowing();
@@ -213,7 +217,9 @@ public class UserService {
         // Fetch the User instance from the DB
         User currentUser = userRepository.findById(currentUsername).get();
         // Modify the activation status of the user
-        currentUser.setIsActive(flag);
+        currentUser.getUserStatus().setIsActive(flag);
+        UserStatus status = currentUser.getUserStatus();
+        userStatusService.editUserStatus(status);
         // Persist the changes to the DB
         userRepository.saveAndFlush(currentUser);
         return currentUser;
@@ -265,11 +271,12 @@ public class UserService {
         }
 
         userRepository.deleteById(username);
+        userStatusService.deleteUserStatus(username);
     }
 
     public User createUser(User user) {
+        userStatusService.createUserStatus(user.getUserStatus());
         User saved = userRepository.saveAndFlush(user);
-
         Analytics analytics = new Analytics(saved.getUsername());
         analyticsService.createAnalytics(analytics);
         return saved;

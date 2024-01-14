@@ -17,7 +17,7 @@ class UserAlreadyLoggedInTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setIsLoggedIn(false);
+        user.getUserStatus().setIsLoggedIn(false);
 
         UserAlreadyLoggedInValidator validator = new UserAlreadyLoggedInValidator(userRepository);
 
@@ -31,7 +31,7 @@ class UserAlreadyLoggedInTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setIsLoggedIn(true);
+        user.getUserStatus().setIsLoggedIn(true);
 
         UserAlreadyLoggedInValidator validator = new UserAlreadyLoggedInValidator(userRepository);
 

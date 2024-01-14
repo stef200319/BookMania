@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.model;
 
+import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,8 @@ public class UserTest {
     public void setUp() {
         List<String> favGenres = new LinkedList<>();
         favGenres.add("SF");
-
-        user = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        UserStatus status = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
+        user = new User("username", "Surname", "Name", "email", "password", status, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
     }
 
     @Test
@@ -86,46 +87,46 @@ public class UserTest {
 
     @Test
     public void testGetRole() {
-        assertEquals(User.UserRoleEnum.REGULAR, user.getUserRole());
+        assertEquals(User.UserRoleEnum.REGULAR, user.getUserStatus().getUserRole());
     }
 
     @Test
     public void testSetRole() {
-        user.setUserRole(User.UserRoleEnum.AUTHOR);
-        assertEquals(User.UserRoleEnum.AUTHOR, user.getUserRole());
+        user.getUserStatus().setUserRole(User.UserRoleEnum.AUTHOR);
+        assertEquals(User.UserRoleEnum.AUTHOR, user.getUserStatus().getUserRole());
     }
 
     @Test
     public void testGetLoggedIn() {
-        assertEquals(true, user.getIsLoggedIn());
+        assertEquals(true, user.getUserStatus().getIsLoggedIn());
     }
 
     @Test
     public void testSetLoggedIn() {
-        user.setIsLoggedIn(false);
-        assertEquals(false, user.getIsLoggedIn());
+        user.getUserStatus().setIsLoggedIn(false);
+        assertEquals(false, user.getUserStatus().getIsLoggedIn());
     }
 
     @Test
     public void testGetActive() {
-        assertEquals(true, user.getIsActive());
+        assertEquals(true, user.getUserStatus().getIsActive());
     }
 
     @Test
     public void testSetActive() {
-        user.setIsActive(false);
-        assertEquals(false, user.getIsActive());
+        user.getUserStatus().setIsActive(false);
+        assertEquals(false, user.getUserStatus().getIsActive());
     }
 
     @Test
     public void testGetBanned() {
-        assertEquals(false, user.getIsBanned());
+        assertEquals(false, user.getUserStatus().getIsBanned());
     }
 
     @Test
     public void testSetBanned() {
-        user.setIsBanned(true);
-        assertEquals(true, user.getIsBanned());
+        user.getUserStatus().setIsBanned(true);
+        assertEquals(true, user.getUserStatus().getIsBanned());
     }
 
     @Test
@@ -340,16 +341,22 @@ public class UserTest {
         List<String> favGenres = new LinkedList<>();
         favGenres.add("SF");
 
-        User u1 = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
+        User user1 = new User("username", "Surname", "Name", "email", "password", status1, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
 
-        assertEquals(true, u1.equals(user));
+        //User u1 = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+
+        assertEquals(true, user1.equals(user));
     }
 
     @Test
     public void testEqualsNotEqual() {
-        User u1 = new User("usernameeee", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", null, null, null);
+        List<String> favGenres = new LinkedList<>();
+        favGenres.add("SF");
 
-        assertEquals(false, u1.equals(user));
+        UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
+        User user1 = new User("usernameeee", "Surname", "Name", "email", "password", status1, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        assertEquals(false, user1.equals(user));
     }
 
     @Test
@@ -357,31 +364,18 @@ public class UserTest {
         List<String> favGenres = new LinkedList<>();
         favGenres.add("SF");
 
-        User u1 = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        //User u1 = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
 
-        assertEquals(u1.hashCode(), user.hashCode());
+        UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
+        User user1 = new User("username", "Surname", "Name", "email", "password", status1, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+
+
+        assertEquals(user1.hashCode(), user.hashCode());
     }
 
     @Test
     public void testToString() {
-        assertEquals("class User {\n" +
-            "    username: username\n" +
-            "    firstName: Surname\n" +
-            "    lastName: Name\n" +
-            "    email: email\n" +
-            "    password: password\n" +
-            "    userRole: Regular\n" +
-            "    isLoggedIn: true\n" +
-            "    isActive: true\n" +
-            "    isBanned: false\n" +
-            "    bio: bio\n" +
-            "    location: location\n" +
-            "    profilePicture: picture\n" +
-            "    favoriteBook: favoriteBook\n" +
-            "    favoriteGenres: [SF]\n" +
-            "    followers: null\n" +
-            "    following: null\n" +
-            "}", user.toString());
+        assertEquals("User{username='username', firstName='Surname', lastName='Name', email='email', password='password', userStatus=UserStatus{username='username', isActive=true, isLoggedIn=true, isBanned=false, userRole=Regular}, bio='bio', location='location', profilePicture='picture', favoriteBook='favoriteBook', favoriteGenres=[SF], followers=null, following=null}", user.toString());
     }
 
     @Test

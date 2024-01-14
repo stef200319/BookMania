@@ -126,12 +126,12 @@ public class UserServiceTest {
     public void testUpdateUserInfo(){
         User currentUser = new User();
         currentUser.setUsername("test");
-        currentUser.setIsLoggedIn(true);
+        currentUser.getUserStatus().setIsLoggedIn(true);
         currentUser.setEmail("email@tud.com");
 
         User modifiedUser = new User();
         modifiedUser.setUsername("test");
-        modifiedUser.setIsLoggedIn(true);
+        modifiedUser.getUserStatus().setIsLoggedIn(true);
         modifiedUser.setEmail("email2@tud.com");
         modifiedUser.setFirstName("bob");
         modifiedUser.setLastName("bobby");
@@ -159,10 +159,10 @@ public class UserServiceTest {
     public void testModifyActivationStatus(){
         User user = new User();
         user.setUsername("test");
-        user.setIsActive(false);
+        user.getUserStatus().setIsActive(false);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         userService.modifyUserActivationStatus(user.getUsername(),true);
-        assertEquals(user.getIsActive(),true);
+        assertEquals(user.getUserStatus().getIsActive(),true);
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
     }
 
@@ -170,10 +170,10 @@ public class UserServiceTest {
     public void testFetchUser(){
         User user = new User();
         user.setUsername("test");
-        user.setUserRole(User.UserRoleEnum.REGULAR);
+        user.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         User fetchedUser = userService.fetchUser(user.getUsername());
-        assertEquals(user.getUserRole(),fetchedUser.getUserRole());
+        assertEquals(user.getUserStatus().getUserRole(),fetchedUser.getUserStatus().getUserRole());
         Mockito.verify(userRepository,Mockito.times(1)).findById(user.getUsername());
     }
 
@@ -314,21 +314,21 @@ public class UserServiceTest {
     public void testLogInUser(){
         User user = new User();
         user.setUsername("test");
-        user.setIsLoggedIn(false);
+        user.getUserStatus().setIsLoggedIn(false);
         Analytics analytics = new Analytics();
         Mockito.when(analyticsService.getAnalytics(user.getUsername())).thenReturn(analytics);
         userService.logInUser(user);
-        assertEquals(true,user.getIsLoggedIn());
+        assertEquals(true,user.getUserStatus().getIsLoggedIn());
         Mockito.verify(analyticsService,Mockito.times(1)).editAnalytics(user.getUsername(),analytics);
     }
     @Test
     public void testLogOutUser(){
         User user = new User();
         user.setUsername("test");
-        user.setIsLoggedIn(true);
+        user.getUserStatus().setIsLoggedIn(true);
         userService.logOutUser(user);
-        assertEquals(false,user.getIsLoggedIn());
-        Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
+        assertEquals(false,user.getUserStatus().getIsLoggedIn());
+        Mockito.verify(userRepository,Mockito.times(2)).saveAndFlush(user);
     }
 
     @Test

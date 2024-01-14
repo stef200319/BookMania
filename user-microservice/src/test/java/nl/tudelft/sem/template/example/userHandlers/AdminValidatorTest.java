@@ -17,7 +17,7 @@ class AdminValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User adminUser = new User();
-        adminUser.setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
 
         AdminValidator adminValidator = new AdminValidator(userRepository);
 
@@ -31,7 +31,7 @@ class AdminValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setUserRole(User.UserRoleEnum.REGULAR);
+        user.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
 
         AdminValidator adminValidator = new AdminValidator(userRepository);
 
