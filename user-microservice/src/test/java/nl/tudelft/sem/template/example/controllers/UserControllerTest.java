@@ -66,6 +66,30 @@ public class UserControllerTest {
     }
 
     @Test
+    public void testInvalidLogInWithInvalidPassword() {
+        User validUser = new User();
+        validUser.setUsername("testUsername");
+        validUser.setPassword("testPassword");
+        validUser.setIsActive(true);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser));
+
+        User user2 = new User();
+        user2.setUsername("testUsername");
+        user2.setPassword("wrongPassword");
+        user2.setIsActive(true);
+
+        ResponseEntity response = userController.logInUser(user2);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("Invalid password supplied", response.getBody());
+
+        Mockito.verify(userRepository, Mockito.times(1)).existsById("testUsername");
+        Mockito.verify(userRepository, Mockito.times(1)).findById("testUsername");
+    }
+
+    @Test
     public void testAlreadyLoggedIn() {
         User validUser = new User();
         validUser.setUsername("testUsername");
@@ -890,7 +914,7 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(false);
         User user = new User();
         user.setUsername("user");
-        ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
+        ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
         assertEquals(response.getBody(),"Username of the admin is not valid");
         Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
@@ -905,7 +929,7 @@ public class UserControllerTest {
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
         User user = new User();
         user.setUsername("user");
-        ResponseEntity response = userController.changeActivation(admin.getUsername(),user.getUsername(),true);
+        ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
         assertEquals(response.getStatusCode(),HttpStatus.FORBIDDEN);
         assertEquals(response.getBody(),"Only an admin can perform this operation");
         Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
@@ -925,6 +949,109 @@ public class UserControllerTest {
         assertEquals(response.getStatusCode(),HttpStatus.NOT_FOUND);
         assertEquals(response.getBody(),"User not found");
         Mockito.verify(userService,Mockito.times(0)).deleteUser(user.getUsername());
+    }
+
+    @Test
+    public void testSearchUserNull() {
+        String query = "q";
+        String searchBy = null;
+        Boolean isAuthor = null;
+
+        User u = new User();
+        List<User> ans = new LinkedList<>();
+        ans.add(u);
+
+        Mockito.when(userService.findUsersByName(query, true)).thenReturn(ans);
+
+        ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+        assertEquals(response.getBody(),ans);
+    }
+
+    @Test
+    public void testSearchUserBad() {
+        String query = "q";
+        String searchBy = "abc";
+        Boolean isAuthor = null;
+
+        User u = new User();
+        List<User> ans = new LinkedList<>();
+        ans.add(u);
+
+        ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
+        assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testSearchByName() {
+        String query = "q";
+        String searchBy = "name";
+        Boolean isAuthor = true;
+
+        User u = new User();
+        List<User> ans = new LinkedList<>();
+        ans.add(u);
+
+        Mockito.when(userService.findUsersByName(query, true)).thenReturn(ans);
+
+        ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+        assertEquals(response.getBody(),ans);
+        Mockito.verify(userService,Mockito.times(1)).findUsersByName(query, true);
+    }
+
+    @Test
+    public void testSearchByGenre() {
+        String query = "q";
+        String searchBy = "genre";
+        Boolean isAuthor = true;
+
+        User u = new User();
+        List<User> ans = new LinkedList<>();
+        ans.add(u);
+
+        Mockito.when(userService.findUsersByGenre(query, true)).thenReturn(ans);
+
+        ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+        assertEquals(response.getBody(),ans);
+        Mockito.verify(userService,Mockito.times(1)).findUsersByGenre(query, true);
+    }
+
+    @Test
+    public void testSearchByBook() {
+        String query = "q";
+        String searchBy = "favorite_book";
+        Boolean isAuthor = true;
+
+        User u = new User();
+        List<User> ans = new LinkedList<>();
+        ans.add(u);
+
+        Mockito.when(userService.findUsersByFavoriteBook(query, true)).thenReturn(ans);
+
+        ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+        assertEquals(response.getBody(),ans);
+        Mockito.verify(userService,Mockito.times(1)).findUsersByFavoriteBook(query, true);
+    }
+
+    @Test
+    public void testSearchByFollows() {
+        String query = "q";
+        String searchBy = "follows";
+        Boolean isAuthor = true;
+
+        User u = new User();
+        List<User> ans = new LinkedList<>();
+        ans.add(u);
+
+        Mockito.when(userService.findUsersByFollows(query, true)).thenReturn(ans);
+
+        ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
+        assertEquals(response.getStatusCode(),HttpStatus.OK);
+        assertEquals(response.getBody(),ans);
+        Mockito.verify(userService,Mockito.times(1)).findUsersByFollows(query, true);
     }
 
 
