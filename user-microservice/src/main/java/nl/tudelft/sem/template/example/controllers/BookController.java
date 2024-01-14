@@ -36,12 +36,23 @@ public class BookController {
     BookRepository bookRepo;
     BookService bookService;
 
+    /**
+     * Create a new book controller.
+     * @param bookRepo The repository that stores the books.
+     * @param bookService The service that handles book logic.
+     */
     @Autowired
     public BookController(BookRepository bookRepo, BookService bookService) {
         this.bookRepo = bookRepo;
         this.bookService = bookService;
     }
 
+    /**
+     * Create a book.
+     * @param username The user who is creating the book.
+     * @param newBook The book to create.
+     * @return Either an error or the book that is created.
+     */
     @PostMapping("/{username}")
     public ResponseEntity createBook(@PathVariable String username, @RequestBody Book newBook){
         UserExistingValidator userHandler = new UserExistingValidator(userRepo);
@@ -74,6 +85,14 @@ public class BookController {
 
         return ResponseEntity.status(HttpStatus.OK).body(bookService.createBook(newBook));
     }
+
+    /**
+     * Update an existing book.
+     * @param id The book's id.
+     * @param username The username of the user performing the action.
+     * @param updatedBook The changes to the book.
+     * @return The updated book.
+     */
     @PutMapping("/{id}/{username}")
     public ResponseEntity updateBook(@PathVariable Long id, @PathVariable String username, @RequestBody Book updatedBook){
 
@@ -127,6 +146,11 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body("Book updated successfully");
     }
 
+    /**
+     * Get an existing book.
+     * @param id The id of the book.
+     * @return The book or an error if it doesn't exist.
+     */
     @GetMapping("/{id}")
     public ResponseEntity getBook(@PathVariable Long id){
 
@@ -143,6 +167,12 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBook(id));
     }
 
+    /**
+     * Delete an existing book.
+     * @param id The id of the book.
+     * @param username The username of the user performing the action.
+     * @return The deleted book.
+     */
     @DeleteMapping("/{id}/{username}")
     public ResponseEntity deleteBook(@PathVariable Long id, @PathVariable String username){
 
@@ -189,6 +219,11 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body("Book deleted succesfully");
     }
 
+    /**
+     * Read a book (this increments the reads of the book).
+     * @param id The book to read.
+     * @return "Book successfully read".
+     */
     @PutMapping("/read/{id}")
     public ResponseEntity readBook(@PathVariable Long id){
 
@@ -209,11 +244,28 @@ public class BookController {
         return ResponseEntity.status(HttpStatus.OK).body("Book successfully read");
     }
 
+    /**
+     * Gets many books from a list of ids.
+     * @param ids The list of ids.
+     * @return The list of books.
+     */
     @GetMapping("")
     public ResponseEntity getBooks(@RequestBody List<String> ids) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBooks(ids));
     }
 
+    /**
+     * Search the book repository.
+     * Matches any of the following fields partially.
+     * At least one of the optional fields has to be filled.
+     * @param author (Optional) The author of the book.
+     * @param genre (Optional) The genre of the book.
+     * @param title (Optional) The title of the book.
+     * @param description (Optional) The description of the book.
+     * @param series (Optional) The series the book is in.
+     * @param sortBy (Required) The way to sort the results.
+     * @return The search results.
+     */
     @GetMapping("/search")
     public ResponseEntity<List<Book>> bookSearchGet(
         String author,
