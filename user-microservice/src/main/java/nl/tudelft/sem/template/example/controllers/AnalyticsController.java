@@ -27,6 +27,12 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
+    /**
+     * Creates an analytics controller.
+     * @param userRepository The user repository.
+     * @param analyticsRepository The analytics repository.
+     * @param analyticsService The analytics service to handle all the logic.
+     */
     @Autowired
     public AnalyticsController(UserRepository userRepository, AnalyticsRepository analyticsRepository, AnalyticsService analyticsService) {
         this.userRepository = userRepository;
@@ -34,6 +40,12 @@ public class AnalyticsController {
         this.analyticsService = analyticsService;
     }
 
+    /**
+     * Creates an analytics entity from an existing entity.
+     * @param username The user for which to create the analytics entity.
+     * @param analytics The entity to create.
+     * @return Either an error message or the created entity.
+     */
     @PostMapping("/{username}")
     public ResponseEntity createAnalyticsEntity(@PathVariable String username, @RequestBody Analytics analytics) {
         if(!userRepository.existsById(username)) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
@@ -44,6 +56,11 @@ public class AnalyticsController {
         return ResponseEntity.status(HttpStatus.OK).body(savedAnalytics);
     }
 
+    /**
+     * Creates a new analytics entity.
+     * @param username The user for which to create the analytics entity.
+     * @return Either an error message or the created entity.
+     */
     @PostMapping("/{username}/new")
     public ResponseEntity createAnalyticsEntityNew(@PathVariable String username) {
         UserExistingValidator h1 = new UserExistingValidator(userRepository);
@@ -69,6 +86,12 @@ public class AnalyticsController {
         return ResponseEntity.status(HttpStatus.OK).body(analytics);
     }
 
+    /**
+     * Edit an existing analytics entity.
+     * @param username The user for which the entity exists.
+     * @param editedAnalytics The modified version of the entity.
+     * @return The new entity values.
+     */
     @PutMapping("/{username}")
     public ResponseEntity editAnalyticsEntity(@PathVariable String username, @RequestBody Analytics editedAnalytics) {
         UserExistingValidator h1 = new UserExistingValidator(userRepository);
@@ -105,21 +128,25 @@ public class AnalyticsController {
         try {
             h2.handle(editedAnalytics);
         } catch (InvalidAnalyticsException e) {
-            switch(e.getMessage()) {
-                case "The username of the edited data does not exist in the database.":
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
-                case "The username of the analytics entity does not match with the one passed as a parameter.":
-                    return ResponseEntity.status(HttpStatus.CONFLICT).body("The username of the analytics entity does not match with the one passed as a parameter.");
-                default:
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A field of the analytics entity passed as a parameter is illegal.");
-
-            }
+            return switch (e.getMessage()) {
+                case "The username of the edited data does not exist in the database." ->
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
+                case "The username of the analytics entity does not match with the one passed as a parameter." ->
+                    ResponseEntity.status(HttpStatus.CONFLICT).body("The username of the analytics entity does not match with the one passed as a parameter.");
+                default ->
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A field of the analytics entity passed as a parameter is illegal.");
+            };
         }
 
         analyticsService.editAnalytics(username, editedAnalytics);
         return ResponseEntity.status(HttpStatus.OK).body(editedAnalytics);
     }
 
+    /**
+     * Get an existing analytics entity.
+     * @param username The user for which the entity exists.
+     * @return Either an error or the entity for the user.
+     */
     @GetMapping("/{username}")
     public ResponseEntity getAnalyticsEntity(@PathVariable String username) {
         AnalyticsIDExistsValidator h1 = new AnalyticsIDExistsValidator(analyticsRepository);
@@ -135,6 +162,11 @@ public class AnalyticsController {
         return ResponseEntity.status(HttpStatus.OK).body(analytics);
     }
 
+    /**
+     * Delete an analytics entity.
+     * @param username The user of the analytics entity.
+     * @return Either an error or deleted analytics entity.
+     */
     @DeleteMapping
     public ResponseEntity deleteAnalyticsEntity(@PathVariable String username) {
         AnalyticsIDExistsValidator h1 = new AnalyticsIDExistsValidator(analyticsRepository);

@@ -43,20 +43,37 @@ public class User {
 
         private String value;
 
+        /**
+         * Creates a UserRoleEnum.
+         * @param value Either "Regular", "Admin", or "Author"
+         */
         UserRoleEnum(String value) {
             this.value = value;
         }
 
+        /**
+         * Get the value of the enum.
+         * @return The value of the enum.
+         */
         @JsonValue
         public String getValue() {
             return value;
         }
 
+        /**
+         * Returns the enum as a string.
+         * @return The enum as a string.
+         */
         @Override
         public String toString() {
             return String.valueOf(value);
         }
 
+        /**
+         * Creates a UserRoleEnum from a value string.
+         * @param value The value string.
+         * @return The UserRoleEnum.
+         */
         @JsonCreator
         public static UserRoleEnum fromValue(String value) {
             for (UserRoleEnum b : UserRoleEnum.values()) {
@@ -97,10 +114,9 @@ public class User {
     private List<String> following;
 
     /**
-     * Get username
-     * @return username
+     * Get the user's username
+     * @return The username
      */
-
     @Schema(name = "username", example = "theUser", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @JsonProperty("username")
     public String getUsername() {
@@ -112,8 +128,8 @@ public class User {
     }
 
     /**
-     * Get firstName
-     * @return firstName
+     * Get the user's firstName
+     * @return The user's firstName
      */
 
     @Schema(name = "firstName", example = "John", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
@@ -387,11 +403,19 @@ public class User {
             Objects.equals(this.following, user.following);
     }
 
+    /**
+     * Return the hashCode of the user.
+     * @return The hash code.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(username, firstName, lastName, email, password, userRole, isLoggedIn, isActive, isBanned, bio, location, profilePicture, favoriteBook, favoriteGenres, followers, following);
     }
 
+    /**
+     * Returns the user as a string.
+     * @return The user string.
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
