@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 
 @Data
@@ -33,6 +34,9 @@ public class User {
 
     @OneToOne
     private UserStatus userStatus;
+
+    @OneToOne
+    private UserProfile userProfile;
 
     /**
      * User role (Regular or Author or Admin)
@@ -99,6 +103,7 @@ public class User {
 
     public User() {
         this.userStatus = new UserStatus();
+        this.userProfile = new UserProfile();
     }
 
     @Schema(name = "username", example = "theUser", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
