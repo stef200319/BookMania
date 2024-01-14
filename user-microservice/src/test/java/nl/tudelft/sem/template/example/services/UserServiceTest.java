@@ -24,12 +24,15 @@ public class UserServiceTest {
     private AnalyticsService analyticsService;
     private UserStatusService userStatusService;
 
+    private UserProfileService userProfileService;
+
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         analyticsService = Mockito.mock(AnalyticsService.class);
         userStatusService = Mockito.mock(UserStatusService.class);
-        userService = new UserService(userRepository, analyticsService, userStatusService);
+        userProfileService = Mockito.mock(UserProfileService.class);
+        userService = new UserService(userRepository, analyticsService, userStatusService, userProfileService);
     }
 
     @Test
@@ -135,23 +138,23 @@ public class UserServiceTest {
         modifiedUser.setEmail("email2@tud.com");
         modifiedUser.setFirstName("bob");
         modifiedUser.setLastName("bobby");
-        modifiedUser.setBio("nice guy");
-        modifiedUser.setProfilePicture("pic");
-        modifiedUser.setLocation("location");
+        modifiedUser.getUserProfile().setBio("nice guy");
+        modifiedUser.getUserProfile().setProfilePicture("pic");
+        modifiedUser.getUserProfile().setLocation("location");
         modifiedUser.setPassword("pass");
-        modifiedUser.setFavoriteBook("Crime and Punishment");
-        modifiedUser.setFavoriteGenres(new ArrayList<>());
+        modifiedUser.getUserProfile().setFavoriteBook("Crime and Punishment");
+        modifiedUser.getUserProfile().setFavoriteGenres(new ArrayList<>());
         Mockito.when(userRepository.findById(modifiedUser.getUsername())).thenReturn(Optional.of(currentUser));
         userService.updateUserInfo(modifiedUser);
         assertEquals(currentUser.getEmail(),modifiedUser.getEmail());
         assertEquals(currentUser.getFirstName(),modifiedUser.getFirstName());
         assertEquals(currentUser.getLastName(),modifiedUser.getLastName());
-        assertEquals(currentUser.getBio(),modifiedUser.getBio());
-        assertEquals(currentUser.getProfilePicture(),modifiedUser.getProfilePicture());
-        assertEquals(currentUser.getLocation(),modifiedUser.getLocation());
+        assertEquals(currentUser.getUserProfile().getBio(),modifiedUser.getUserProfile().getBio());
+        assertEquals(currentUser.getUserProfile().getProfilePicture(),modifiedUser.getUserProfile().getProfilePicture());
+        assertEquals(currentUser.getUserProfile().getLocation(),modifiedUser.getUserProfile().getLocation());
         assertEquals(currentUser.getPassword(),modifiedUser.getPassword());
-        assertEquals(currentUser.getFavoriteBook(),modifiedUser.getFavoriteBook());
-        assertEquals(currentUser.getFavoriteGenres(),modifiedUser.getFavoriteGenres());
+        assertEquals(currentUser.getUserProfile().getFavoriteBook(),modifiedUser.getUserProfile().getFavoriteBook());
+        assertEquals(currentUser.getUserProfile().getFavoriteGenres(),modifiedUser.getUserProfile().getFavoriteGenres());
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(currentUser);
     }
 

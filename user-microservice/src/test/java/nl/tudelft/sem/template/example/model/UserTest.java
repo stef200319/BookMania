@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.model;
 
+import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +22,8 @@ public class UserTest {
         List<String> favGenres = new LinkedList<>();
         favGenres.add("SF");
         UserStatus status = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
-        user = new User("username", "Surname", "Name", "email", "password", status, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        UserProfile profile = new UserProfile("username","bio", "location", "picture", "favoriteBook", favGenres);
+        user = new User("username", "Surname", "Name", "email", "password", status, profile, null, null);
     }
 
     @Test
@@ -131,46 +133,46 @@ public class UserTest {
 
     @Test
     public void testGetBio() {
-        assertEquals("bio", user.getBio());
+        assertEquals("bio", user.getUserProfile().getBio());
     }
 
     @Test
     public void testSetBio() {
-        user.setBio("test");
-        assertEquals("test", user.getBio());
+        user.getUserProfile().setBio("test");
+        assertEquals("test", user.getUserProfile().getBio());
     }
 
     @Test
     public void testGetLocation() {
-        assertEquals("location", user.getLocation());
+        assertEquals("location", user.getUserProfile().getLocation());
     }
 
     @Test
     public void testSetLocation() {
-        user.setLocation("test");
-        assertEquals("test", user.getLocation());
+        user.getUserProfile().setLocation("test");
+        assertEquals("test", user.getUserProfile().getLocation());
     }
 
     @Test
     public void testGetProfilePicture() {
-        assertEquals("picture", user.getProfilePicture());
+        assertEquals("picture", user.getUserProfile().getProfilePicture());
     }
 
     @Test
     public void testSetProfilePicture() {
-        user.setProfilePicture("test");
-        assertEquals("test", user.getProfilePicture());
+        user.getUserProfile().setProfilePicture("test");
+        assertEquals("test", user.getUserProfile().getProfilePicture());
     }
 
     @Test
     public void testGetFavoriteBook() {
-        assertEquals("favoriteBook", user.getFavoriteBook());
+        assertEquals("favoriteBook", user.getUserProfile().getFavoriteBook());
     }
 
     @Test
     public void testSetFavoriteBook() {
-        user.setFavoriteBook("test");
-        assertEquals("test", user.getFavoriteBook());
+        user.getUserProfile().setFavoriteBook("test");
+        assertEquals("test", user.getUserProfile().getFavoriteBook());
     }
 
     @Test
@@ -178,7 +180,7 @@ public class UserTest {
         List<String> favGenres = new LinkedList<>();
         favGenres.add("SF");
 
-        assertEquals(favGenres, user.getFavoriteGenres());
+        assertEquals(favGenres, user.getUserProfile().getFavoriteGenres());
     }
 
     @Test
@@ -187,32 +189,9 @@ public class UserTest {
         favGenres.add("SF");
         favGenres.add("Horror");
 
-        user.setFavoriteGenres(favGenres);
+        user.getUserProfile().setFavoriteGenres(favGenres);
 
-        assertEquals(favGenres, user.getFavoriteGenres());
-    }
-
-    @Test
-    public void testAddFavoriteGenresFirst() {
-        User u = new User();
-
-        u.addFavoriteGenresItem("SF");
-
-        List<String> favGenres = new LinkedList<>();
-        favGenres.add("SF");
-
-        assertEquals(favGenres, user.getFavoriteGenres());
-    }
-
-    @Test
-    public void testAddFavoriteGenresMore() {
-        user.addFavoriteGenresItem("Horror");
-
-        List<String> favGenres = new LinkedList<>();
-        favGenres.add("SF");
-        favGenres.add("Horror");
-
-        assertEquals(favGenres, user.getFavoriteGenres());
+        assertEquals(favGenres, user.getUserProfile().getFavoriteGenres());
     }
 
     @Test
@@ -342,7 +321,8 @@ public class UserTest {
         favGenres.add("SF");
 
         UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
-        User user1 = new User("username", "Surname", "Name", "email", "password", status1, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        UserProfile profile1 = new UserProfile("username","bio", "location", "picture", "favoriteBook", favGenres);
+        User user1 = new User("username", "Surname", "Name", "email", "password", status1, profile1, null, null);
 
         //User u1 = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
 
@@ -355,7 +335,8 @@ public class UserTest {
         favGenres.add("SF");
 
         UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
-        User user1 = new User("usernameeee", "Surname", "Name", "email", "password", status1, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        UserProfile profile1 = new UserProfile("username","bio", "location", "picture", "favoriteBook", favGenres);
+        User user1 = new User("username1", "Surname", "Name", "email", "password", status1, profile1, null, null);
         assertEquals(false, user1.equals(user));
     }
 
@@ -367,7 +348,8 @@ public class UserTest {
         //User u1 = new User("username", "Surname", "Name", "email", "password", User.UserRoleEnum.REGULAR, true, true, false, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
 
         UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
-        User user1 = new User("username", "Surname", "Name", "email", "password", status1, "bio", "location", "picture", "favoriteBook", favGenres, null, null);
+        UserProfile profile1 = new UserProfile("username","bio", "location", "picture", "favoriteBook", favGenres);
+        User user1 = new User("username", "Surname", "Name", "email", "password", status1, profile1, null, null);
 
 
         assertEquals(user1.hashCode(), user.hashCode());
@@ -375,7 +357,8 @@ public class UserTest {
 
     @Test
     public void testToString() {
-        assertEquals("User{username='username', firstName='Surname', lastName='Name', email='email', password='password', userStatus=UserStatus{username='username', isActive=true, isLoggedIn=true, isBanned=false, userRole=Regular}, bio='bio', location='location', profilePicture='picture', favoriteBook='favoriteBook', favoriteGenres=[SF], followers=null, following=null}", user.toString());
+        //assertEquals("User{username='username', firstName='Surname', lastName='Name', email='email', password='password', userStatus=UserStatus{username='username', isActive=true, isLoggedIn=true, isBanned=false, userRole=Regular}, userProfile=UserProfile{username='username', bio='bio', location='location', profilePicture='picture', favoriteBook='favoriteBook', favoriteGenres=[SF]}, followers=null, following=null}> but was: <User{username='username', firstName='Surname', lastName='Name', email='email', password='password', userStatus=UserStatus{username='username', isActive=true, isLoggedIn=true, isBanned=false, userRole=Regular}, userProfile=UserProfile{username='username', bio='bio', location='location', profilePicture='picture', favoriteBook='favoriteBook', favoriteGenres=[SF]}, followers=null, following=null}", user.toString());
+        assertEquals("User{username='username', firstName='Surname', lastName='Name', email='email', password='password', userStatus=UserStatus{username='username', isActive=true, isLoggedIn=true, isBanned=false, userRole=Regular}, userProfile=UserProfile{username='username', bio='bio', location='location', profilePicture='picture', favoriteBook='favoriteBook', favoriteGenres=[SF]}, followers=null, following=null}", user.toString());
     }
 
     @Test

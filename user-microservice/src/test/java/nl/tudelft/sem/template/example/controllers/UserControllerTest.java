@@ -601,7 +601,7 @@ public class UserControllerTest {
         modifiedUser.setEmail("email2@tud.com");
         modifiedUser.setFirstName("bob");
         modifiedUser.setLastName("bobby");
-        modifiedUser.setBio("nice guy");
+        //modifiedUser.setBio("nice guy");
 
         Mockito.when(userRepository.existsById(modifiedUser.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(modifiedUser.getUsername())).thenReturn(Optional.of(currentUser));

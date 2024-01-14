@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
+import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -24,10 +25,13 @@ public class UserService {
 
     private UserStatusService userStatusService;
 
-    public UserService(UserRepository userRepository, AnalyticsService analyticsService, UserStatusService userStatusService) {
+    private UserProfileService userProfileService;
+
+    public UserService(UserRepository userRepository, AnalyticsService analyticsService, UserStatusService userStatusService, UserProfileService userProfileService) {
         this.userRepository = userRepository;
         this.analyticsService = analyticsService;
         this.userStatusService = userStatusService;
+        this.userProfileService = userProfileService;
     }
 
     public User logInUser(User user1) {
@@ -134,13 +138,13 @@ public class UserService {
         Example<User> example = Example.of(exampleUser, matcher);
 
         return userRepository.findAll(example).stream()
-            .filter(user -> user.getFavoriteGenres().contains(genre))
+            .filter(user -> user.getUserProfile().getFavoriteGenres().contains(genre))
             .collect(Collectors.toList());
     }
 
     public List<User> findUsersByFavoriteBook(String bookName, boolean isAuthor) {
         User exampleUser = new User();
-        exampleUser.setFavoriteBook(bookName);
+        exampleUser.getUserProfile().setFavoriteBook(bookName);
         exampleUser.getUserStatus().setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
 
         ExampleMatcher matcher = ExampleMatcher.matching()
@@ -194,14 +198,17 @@ public class UserService {
     public User updateUserInfo(User modifiedUser){
         User currentUser = userRepository.findById(modifiedUser.getUsername()).get();
         // Perform modifications of the personal info of the user
-        currentUser.setBio(modifiedUser.getBio());
+        currentUser.getUserProfile().setBio(modifiedUser.getUserProfile().getBio());
+        currentUser.getUserProfile().setProfilePicture(modifiedUser.getUserProfile().getProfilePicture());
+        currentUser.getUserProfile().setLocation(modifiedUser.getUserProfile().getLocation());
+        currentUser.getUserProfile().setFavoriteBook(modifiedUser.getUserProfile().getFavoriteBook());
+        currentUser.getUserProfile().setFavoriteGenres(modifiedUser.getUserProfile().getFavoriteGenres());
+        UserProfile profile = currentUser.getUserProfile();
+        userProfileService.editUserProfile(profile);
+
         currentUser.setFirstName(modifiedUser.getFirstName());
         currentUser.setLastName(modifiedUser.getLastName());
-        currentUser.setProfilePicture(modifiedUser.getProfilePicture());
-        currentUser.setLocation(modifiedUser.getLocation());
         currentUser.setPassword(modifiedUser.getPassword());
-        currentUser.setFavoriteBook(modifiedUser.getFavoriteBook());
-        currentUser.setFavoriteGenres(modifiedUser.getFavoriteGenres());
         currentUser.setEmail(modifiedUser.getEmail());
         userRepository.saveAndFlush(currentUser);
         return currentUser;
@@ -272,9 +279,11 @@ public class UserService {
 
         userRepository.deleteById(username);
         userStatusService.deleteUserStatus(username);
+        userProfileService.deleteUserProfile(username);
     }
 
     public User createUser(User user) {
+        userProfileService.createUserProfile(user.getUserProfile());
         userStatusService.createUserStatus(user.getUserStatus());
         User saved = userRepository.saveAndFlush(user);
         Analytics analytics = new Analytics(saved.getUsername());

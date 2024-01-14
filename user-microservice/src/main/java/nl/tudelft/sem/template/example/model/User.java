@@ -76,18 +76,6 @@ public class User {
     }
 
 
-    private String bio;
-
-    private String location;
-
-    private String profilePicture;
-
-    private String favoriteBook;
-
-    @Valid
-    @ElementCollection
-    private List<String> favoriteGenres;
-
     @Valid
     @ElementCollection
     private List<String> followers;
@@ -176,88 +164,7 @@ public class User {
         this.password = password;
     }
 
-    /**
-     * User Bio
-     * @return bio
-     */
 
-    @Schema(name = "bio", example = "Hey I am a person", description = "User Bio", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("bio")
-    public String getBio() {
-        return bio;
-    }
-
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    /**
-     * Simple string that vaguely describes where the user is
-     * @return location
-     */
-
-    @Schema(name = "location", example = "The Netherlands", description = "Simple string that vaguely describes where the user is", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("location")
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    /**
-     * URL of an image
-     * @return profilePicture
-     */
-
-    @Schema(name = "profilePicture", example = "https://server.net/image.jpg", description = "URL of an image", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("profilePicture")
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    /**
-     * Name of favorite book
-     * @return favoriteBook
-     */
-
-    @Schema(name = "favoriteBook", example = "Harry Potter", description = "Name of favorite book", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("favoriteBook")
-    public String getFavoriteBook() {
-        return favoriteBook;
-    }
-
-    public void setFavoriteBook(String favoriteBook) {
-        this.favoriteBook = favoriteBook;
-    }
-
-    public User addFavoriteGenresItem(String favoriteGenresItem) {
-        if (this.favoriteGenres == null) {
-            this.favoriteGenres = new ArrayList<>();
-        }
-        this.favoriteGenres.add(favoriteGenresItem);
-        return this;
-    }
-
-    /**
-     * Get favoriteGenres
-     * @return favoriteGenres
-     */
-
-    @Schema(name = "favoriteGenres", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("favoriteGenres")
-    public List<String> getFavoriteGenres() {
-        return favoriteGenres;
-    }
-
-    public void setFavoriteGenres(List<String> favoriteGenres) {
-        this.favoriteGenres = favoriteGenres;
-    }
 
     public User addFollowersItem(User followersItem) {
         if (this.followers == null) {
@@ -306,6 +213,19 @@ public class User {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(userStatus, user.userStatus) && Objects.equals(userProfile, user.userProfile) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, firstName, lastName, email, password, userStatus, userProfile, followers, following);
+    }
+
+    @Override
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
@@ -314,27 +234,10 @@ public class User {
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", userStatus=" + userStatus +
-                ", bio='" + bio + '\'' +
-                ", location='" + location + '\'' +
-                ", profilePicture='" + profilePicture + '\'' +
-                ", favoriteBook='" + favoriteBook + '\'' +
-                ", favoriteGenres=" + favoriteGenres +
+                ", userProfile=" + userProfile +
                 ", followers=" + followers +
                 ", following=" + following +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(userStatus, user.userStatus) && Objects.equals(bio, user.bio) && Objects.equals(location, user.location) && Objects.equals(profilePicture, user.profilePicture) && Objects.equals(favoriteBook, user.favoriteBook) && Objects.equals(favoriteGenres, user.favoriteGenres) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(username, firstName, lastName, email, password, userStatus, bio, location, profilePicture, favoriteBook, favoriteGenres, followers, following);
     }
 }
 
