@@ -8,6 +8,9 @@ package nl.tudelft.sem.template.example.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +20,7 @@ import javax.persistence.Id;
 import javax.validation.Valid;
 
 @Entity
+@AllArgsConstructor
 public class
 Book {
     @Id
@@ -38,11 +42,6 @@ Book {
     public Book() {
     }
 
-    public Book id(Long id) {
-        this.id = id;
-        return this;
-    }
-
     @Schema(
             name = "id",
             example = "10",
@@ -55,11 +54,6 @@ Book {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Book title(String title) {
-        this.title = title;
-        return this;
     }
 
     @Schema(
@@ -76,11 +70,6 @@ Book {
         this.title = title;
     }
 
-    public Book description(String description) {
-        this.description = description;
-        return this;
-    }
-
     @Schema(
             name = "description",
             example = "The greatest book ever",
@@ -93,11 +82,6 @@ Book {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public Book author(String author) {
-        this.author = author;
-        return this;
     }
 
     @Schema(
@@ -114,11 +98,6 @@ Book {
         this.author = author;
     }
 
-    public Book reads(Long reads) {
-        this.reads = reads;
-        return this;
-    }
-
     @Schema(
             name = "reads",
             example = "0",
@@ -131,11 +110,6 @@ Book {
 
     public void setReads(Long reads) {
         this.reads = reads;
-    }
-
-    public Book series(String series) {
-        this.series = series;
-        return this;
     }
 
     @Schema(
@@ -152,18 +126,12 @@ Book {
         this.series = series;
     }
 
-    public Book genres(List<String> genres) {
-        this.genres = genres;
-        return this;
-    }
-
-    public Book addGenresItem(String genresItem) {
+    public void addGenresItem(String genresItem) {
         if (this.genres == null) {
             this.genres = new ArrayList();
         }
 
         this.genres.add(genresItem);
-        return this;
     }
 
     @Schema(
