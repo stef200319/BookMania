@@ -10,9 +10,9 @@ import org.mockito.Mockito;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class AnalyticsReviewValidatorTest {
     @Test
     void handle_validReviewsNumber_shouldReturnTrue() {
@@ -37,7 +37,7 @@ public class AnalyticsReviewValidatorTest {
             result = reviewValidator.handle(analytics);
             assertTrue(result);
         } catch (InvalidAnalyticsException e) {
-            return;
+            fail();
         }
     }
 

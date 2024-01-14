@@ -5,8 +5,7 @@ import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
 import nl.tudelft.sem.template.example.model.Analytics;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AnalyticsCommentValidatorTest {
     @Test
@@ -36,7 +35,7 @@ public class AnalyticsCommentValidatorTest {
             result = commentValidator.handle(analytics);
             assertTrue(result);
         } catch (InvalidAnalyticsException e) {
-            return;
+            fail();
         }
 
     }

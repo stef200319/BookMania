@@ -10,9 +10,8 @@ import org.mockito.Mockito;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AnalyticsFollowersValidatorTest {
     @Test
@@ -38,7 +37,7 @@ public class AnalyticsFollowersValidatorTest {
             result = followersValidator.handle(analytics);
             assertTrue(result);
         } catch (InvalidAnalyticsException e) {
-            return;
+            fail();
         }
     }
 
