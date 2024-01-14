@@ -32,6 +32,7 @@ public class User {
 
     private String password;
 
+    @OneToOne
     private UserStatus userStatus;
 
     /**
@@ -71,7 +72,6 @@ public class User {
         }
     }
 
-    private UserRoleEnum userRole;
 
     private String bio;
 
@@ -166,21 +166,6 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    /**
-     * User role (Regular or Author or Admin)
-     * @return userRole
-     */
-
-    @Schema(name = "userRole", example = "Regular", description = "User role (Regular or Author or Admin)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("userRole")
-    public UserRoleEnum getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(UserRoleEnum userRole) {
-        this.userRole = userRole;
     }
 
     /**
@@ -313,70 +298,35 @@ public class User {
     }
 
     @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", userStatus=" + userStatus +
+                ", bio='" + bio + '\'' +
+                ", location='" + location + '\'' +
+                ", profilePicture='" + profilePicture + '\'' +
+                ", favoriteBook='" + favoriteBook + '\'' +
+                ", favoriteGenres=" + favoriteGenres +
+                ", followers=" + followers +
+                ", following=" + following +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(this.username, user.username) &&
-            Objects.equals(this.firstName, user.firstName) &&
-            Objects.equals(this.lastName, user.lastName) &&
-            Objects.equals(this.email, user.email) &&
-            Objects.equals(this.password, user.password) &&
-            Objects.equals(this.userRole, user.userRole) &&
-            Objects.equals(this.isLoggedIn, user.isLoggedIn) &&
-            Objects.equals(this.isActive, user.isActive) &&
-            Objects.equals(this.isBanned, user.isBanned) &&
-            Objects.equals(this.bio, user.bio) &&
-            Objects.equals(this.location, user.location) &&
-            Objects.equals(this.profilePicture, user.profilePicture) &&
-            Objects.equals(this.favoriteBook, user.favoriteBook) &&
-            Objects.equals(this.favoriteGenres, user.favoriteGenres) &&
-            Objects.equals(this.followers, user.followers) &&
-            Objects.equals(this.following, user.following);
+        return Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(userStatus, user.userStatus) && Objects.equals(bio, user.bio) && Objects.equals(location, user.location) && Objects.equals(profilePicture, user.profilePicture) && Objects.equals(favoriteBook, user.favoriteBook) && Objects.equals(favoriteGenres, user.favoriteGenres) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, firstName, lastName, email, password, userRole, isLoggedIn, isActive, isBanned, bio, location, profilePicture, favoriteBook, favoriteGenres, followers, following);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class User {\n");
-        sb.append("    username: ").append(toIndentedString(username)).append("\n");
-        sb.append("    firstName: ").append(toIndentedString(firstName)).append("\n");
-        sb.append("    lastName: ").append(toIndentedString(lastName)).append("\n");
-        sb.append("    email: ").append(toIndentedString(email)).append("\n");
-        sb.append("    password: ").append(toIndentedString(password)).append("\n");
-        sb.append("    userRole: ").append(toIndentedString(userRole)).append("\n");
-        sb.append("    isLoggedIn: ").append(toIndentedString(isLoggedIn)).append("\n");
-        sb.append("    isActive: ").append(toIndentedString(isActive)).append("\n");
-        sb.append("    isBanned: ").append(toIndentedString(isBanned)).append("\n");
-        sb.append("    bio: ").append(toIndentedString(bio)).append("\n");
-        sb.append("    location: ").append(toIndentedString(location)).append("\n");
-        sb.append("    profilePicture: ").append(toIndentedString(profilePicture)).append("\n");
-        sb.append("    favoriteBook: ").append(toIndentedString(favoriteBook)).append("\n");
-        sb.append("    favoriteGenres: ").append(toIndentedString(favoriteGenres)).append("\n");
-        sb.append("    followers: ").append(toIndentedString(followers)).append("\n");
-        sb.append("    following: ").append(toIndentedString(following)).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
+        return Objects.hash(username, firstName, lastName, email, password, userStatus, bio, location, profilePicture, favoriteBook, favoriteGenres, followers, following);
     }
 }
 

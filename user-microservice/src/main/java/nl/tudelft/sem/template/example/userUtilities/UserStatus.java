@@ -3,13 +3,27 @@ package nl.tudelft.sem.template.example.userUtilities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import nl.tudelft.sem.template.example.model.User;
+import org.hibernate.annotations.GeneratorType;
+import org.hibernate.annotations.ValueGenerationType;
 import org.springframework.context.annotation.Bean;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import java.util.Objects;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class UserStatus {
+
+    @Id
+    private String username;
 
     private Boolean isActive;
 
@@ -17,49 +31,29 @@ public class UserStatus {
 
     private Boolean isBanned;
 
-    /**
-     * Whether the user account is activated (not deactivated)
-     * @return isActive
-     */
+    private User.UserRoleEnum userRole;
 
-    @Schema(name = "isActive", example = "true", description = "Whether the user account is activated (not deactivated)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("isActive")
-    public Boolean getIsActive() {
-        return isActive;
+    @Override
+    public String toString() {
+        return "UserStatus{" +
+                "username='" + username + '\'' +
+                ", isActive=" + isActive +
+                ", isLoggedIn=" + isLoggedIn +
+                ", isBanned=" + isBanned +
+                ", userRole=" + userRole +
+                '}';
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserStatus that = (UserStatus) o;
+        return Objects.equals(username, that.username) && Objects.equals(isActive, that.isActive) && Objects.equals(isLoggedIn, that.isLoggedIn) && Objects.equals(isBanned, that.isBanned) && userRole == that.userRole;
     }
 
-    /**
-     * Whether the user is logged in the system
-     * @return isLoggedIn
-     */
-
-    @Schema(name = "isLoggedIn", example = "true", description = "Whether the user account is activated (not deactivated)", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("isLoggedIn")
-    public Boolean getIsLoggedIn() {
-        return isLoggedIn;
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, isActive, isLoggedIn, isBanned, userRole);
     }
-
-    public void setIsLoggedIn(Boolean isLoggedIn) {
-        this.isLoggedIn = isLoggedIn;
-    }
-
-    /**
-     * Whether the user account is banned
-     * @return isBanned
-     */
-
-    @Schema(name = "isBanned", example = "true", description = "Whether the user account is banned", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("isBanned")
-    public Boolean getIsBanned() {
-        return isBanned;
-    }
-
-    public void setIsBanned(Boolean isBanned) {
-        this.isBanned = isBanned;
-    }
-
 }
