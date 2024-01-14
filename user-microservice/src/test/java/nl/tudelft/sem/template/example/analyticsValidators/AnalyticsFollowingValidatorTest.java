@@ -27,6 +27,19 @@ public class AnalyticsFollowingValidatorTest {
         }
         assertTrue(result);
     }
+    @Test
+    void handle_validFollowingNumber_shouldReturnTrueZero() {
+        AnalyticsFollowingValidator followingValidator = new AnalyticsFollowingValidator();
+        Analytics analytics = new Analytics("testUser");
+        analytics.setFollowingNumber(0L);
+        boolean result;
+        try {
+            result = followingValidator.handle(analytics);
+            assertTrue(result);
+        } catch (InvalidAnalyticsException e) {
+            return;
+        }
+    }
 
     @Test
     void handle_negativeFollowingNumber_shouldThrowInvalidDataException() {

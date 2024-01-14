@@ -58,4 +58,12 @@ public class AnalyticsUsernameValidatorTest {
         when(userRepository.existsById("invalid@User")).thenReturn(false);
         assertThrows(InvalidDataException.class, () -> usernameValidator.handle(analytics));
     }
+
+    @Test
+    void handle_invalidCharactersInUsername_shouldThrowInvalidDataExceptionTwo() {
+        Analytics analytics = new Analytics("invalid@User");
+        AnalyticsUsernameValidator usernameValidator2 = new AnalyticsUsernameValidator("invalid@User", userRepository);
+        when(userRepository.existsById("invalid@User")).thenReturn(true);
+        assertThrows(InvalidDataException.class, () -> usernameValidator2.handle(analytics));
+    }
 }

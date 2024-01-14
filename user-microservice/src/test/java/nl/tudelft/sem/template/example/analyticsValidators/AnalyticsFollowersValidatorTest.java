@@ -28,6 +28,19 @@ public class AnalyticsFollowersValidatorTest {
         }
         assertTrue(result);
     }
+    @Test
+    void handle_validFollowersNumber_shouldReturnTrueZero() {
+        AnalyticsFollowersValidator followersValidator = new AnalyticsFollowersValidator();
+        Analytics analytics = new Analytics("testUser");
+        analytics.setFollowersNumber(0L);
+        boolean result;
+        try {
+            result = followersValidator.handle(analytics);
+            assertTrue(result);
+        } catch (InvalidAnalyticsException e) {
+            return;
+        }
+    }
 
     @Test
     void handle_negativeFollowersNumber_shouldThrowInvalidDataException() {

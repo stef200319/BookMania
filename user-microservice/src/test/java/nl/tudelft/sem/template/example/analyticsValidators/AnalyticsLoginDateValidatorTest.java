@@ -32,6 +32,7 @@ public class AnalyticsLoginDateValidatorTest {
         assertTrue(result);
     }
 
+
     @Test
     void handle_futureLoginDate_shouldThrowInvalidDataException() {
         AnalyticsLoginDateValidator loginDateValidator = new AnalyticsLoginDateValidator();

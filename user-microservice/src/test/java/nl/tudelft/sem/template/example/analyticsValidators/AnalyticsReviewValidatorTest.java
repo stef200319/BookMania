@@ -27,6 +27,19 @@ public class AnalyticsReviewValidatorTest {
         }
         assertTrue(result);
     }
+    @Test
+    void handle_validReviewsNumber_shouldReturnTrueZero() {
+        AnalyticsReviewValidator reviewValidator = new AnalyticsReviewValidator();
+        Analytics analytics = new Analytics("testUser");
+        analytics.setReviewsNumber(0L);
+        boolean result;
+        try {
+            result = reviewValidator.handle(analytics);
+            assertTrue(result);
+        } catch (InvalidAnalyticsException e) {
+            return;
+        }
+    }
 
     @Test
     void handle_negativeReviewsNumber_shouldThrowInvalidDataException() {

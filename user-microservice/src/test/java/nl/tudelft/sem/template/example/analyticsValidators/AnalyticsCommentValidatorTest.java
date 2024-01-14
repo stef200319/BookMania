@@ -26,6 +26,22 @@ public class AnalyticsCommentValidatorTest {
     }
 
     @Test
+    void handle_validCommentsNumber_shouldReturnTrueZero() {
+        AnalyticsCommentValidator commentValidator = new AnalyticsCommentValidator();
+        Analytics analytics = new Analytics("testUser");
+        analytics.setCommentsNumber(0L);
+
+        boolean result;
+        try {
+            result = commentValidator.handle(analytics);
+            assertTrue(result);
+        } catch (InvalidAnalyticsException e) {
+            return;
+        }
+
+    }
+
+    @Test
     void handle_negativeCommentsNumber_shouldThrowInvalidDataException() {
         AnalyticsCommentValidator commentValidator = new AnalyticsCommentValidator();
         Analytics analytics = new Analytics("testUser");
