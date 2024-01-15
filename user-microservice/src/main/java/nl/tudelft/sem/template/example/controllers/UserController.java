@@ -98,9 +98,6 @@ public class UserController {
 
     @PostMapping("/")
     public ResponseEntity createUser(@RequestBody User newUser){
-
-        System.out.println(newUser.toString());
-
         UsernameValidator handler = new UsernameValidator(userRepo);
         EmailValidator ev = new EmailValidator(userRepo);
         UserActiveValidator av = new UserActiveValidator(userRepo);
