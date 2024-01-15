@@ -10,6 +10,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -214,6 +218,7 @@ public class UserServiceTest {
 
         Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1)).findById("123");
+        assertEquals(new LinkedList<>(), user2.getFollowers());
     }
 
     @Test
@@ -230,7 +235,7 @@ public class UserServiceTest {
 
         List<String> following = new LinkedList<>();
         following.add("test");
-        user2.setFollowing(followers);
+        user2.setFollowing(following);
 
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         Mockito.when(userRepository.existsById(user2.getUsername())).thenReturn(true);
@@ -240,6 +245,7 @@ public class UserServiceTest {
 
         Mockito.verify(userRepository,Mockito.times(1)).deleteById(user.getUsername());
         Mockito.verify(userRepository, Mockito.times(1)).findById("123");
+        assertEquals(new LinkedList<>(), user2.getFollowing());
     }
 
     @Test
@@ -341,7 +347,8 @@ public class UserServiceTest {
         user.setUsername("test");
         Analytics analytics = new Analytics(user.getUsername());
         Mockito.when(userRepository.saveAndFlush(user)).thenReturn(user);
-        userService.createUser(user);
+        User u = userService.createUser(user);
+        assertEquals(user, u);
         Mockito.verify(analyticsService,Mockito.times(1)).createAnalytics(analytics);
     }
 

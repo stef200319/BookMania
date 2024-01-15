@@ -54,20 +54,37 @@ public class User {
 
         private String value;
 
+        /**
+         * Creates a UserRoleEnum.
+         * @param value Either "Regular", "Admin", or "Author"
+         */
         UserRoleEnum(String value) {
             this.value = value;
         }
 
+        /**
+         * Get the value of the enum.
+         * @return The value of the enum.
+         */
         @JsonValue
         public String getValue() {
             return value;
         }
 
+        /**
+         * Returns the enum as a string.
+         * @return The enum as a string.
+         */
         @Override
         public String toString() {
             return String.valueOf(value);
         }
 
+        /**
+         * Creates a UserRoleEnum from a value string.
+         * @param value The value string.
+         * @return The UserRoleEnum.
+         */
         @JsonCreator
         public static UserRoleEnum fromValue(String value) {
             for (UserRoleEnum b : UserRoleEnum.values()) {
@@ -89,8 +106,8 @@ public class User {
     private List<String> following;
 
     /**
-     * Get username
-     * @return username
+     * Get the user's username
+     * @return The username
      */
 
     public User() {
@@ -225,11 +242,19 @@ public class User {
         return Objects.equals(username, user.username) && Objects.equals(userInfo, user.userInfo) && Objects.equals(userStatus, user.userStatus) && Objects.equals(userProfile, user.userProfile) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
     }
 
+    /**
+     * Return the hashCode of the user.
+     * @return The hash code.
+     */
     @Override
     public int hashCode() {
         return Objects.hash(username, userInfo, userStatus, userProfile, followers, following);
     }
 
+    /**
+     * Returns the user as a string.
+     * @return The user string.
+     */
     @Override
     public String toString() {
         return "User{" +

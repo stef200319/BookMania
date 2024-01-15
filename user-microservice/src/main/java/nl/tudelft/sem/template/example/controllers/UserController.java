@@ -1,27 +1,16 @@
 package nl.tudelft.sem.template.example.controllers;
-
-//import nl.tudelft.sem.template.api.UserApi;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.services.UserService;
 import nl.tudelft.sem.template.example.userHandlers.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.logging.Handler;
 
 @RestController
 @RequestMapping("/user")
@@ -30,14 +19,21 @@ public class UserController {
     private final UserRepository userRepo;
     private final UserService userService;
 
+    /**
+     * Create a user controller.
+     * @param userRepo The repository to save the user to.
+     * @param userService The service that handles all the logic.
+     */
     @Autowired
     public UserController(UserRepository userRepo, UserService userService) {
         this.userRepo = userRepo;
         this.userService = userService;
     }
 
-    /*
-    "/user/" route
+    /**
+     * Log in the user.
+     * @param loginRequest Username and password of the user.
+     * @return Whether the user was successfuly logged in.
      */
     @PostMapping("/login")
     public ResponseEntity logInUser(@RequestBody User loginRequest) {
@@ -70,6 +66,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User logged in successfully");
     }
 
+    /**
+     * Log a user out.
+     * @param username The username to log out.
+     * @return Whether the user was logged out successfully.
+     */
     @PostMapping("/logout/{username}")
     public ResponseEntity logOutUser(@PathVariable String username) {
         User u = new User();
@@ -96,6 +97,11 @@ public class UserController {
     }
 
 
+    /**
+     * Creates a user.
+     * @param newUser The user values to save.
+     * @return The created user.
+     */
     @PostMapping("/")
     public ResponseEntity createUser(@RequestBody User newUser){
         UsernameValidator handler = new UsernameValidator(userRepo);
@@ -136,6 +142,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(saved);
     }
 
+    /**
+     * Update a user entity.
+     * @param modifiedUser Changes to the user entity.
+     * @return The new user values.
+     */
     @PutMapping
     public ResponseEntity updateUserInfo(@RequestBody User modifiedUser){
         EmailValidator handler = new EmailValidator(userRepo);
@@ -170,8 +181,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Account updated successfully");
     }
 
-    /*
-    "/user/delete/{username}" route
+    /**
+     * Used when a user wants to delete themselves.
+     * @param username The username to delete.
+     * @return Whether the user was deleted successfully.
      */
     @DeleteMapping("/delete/{username}")
     public ResponseEntity deleteSelf(@PathVariable String username){
@@ -198,8 +211,10 @@ public class UserController {
 
     }
 
-    /*
-    "/user/{username}" route
+    /**
+     * Get a user with a given username
+     * @param username The username.
+     * @return The user if they exist.
      */
     @GetMapping("/{username}")
     public ResponseEntity getUserByUsername(@PathVariable String username){
@@ -220,6 +235,13 @@ public class UserController {
     }
 
 
+    /**
+     * Search the user repository.
+     * @param query The search query.
+     * @param searchBy What to search by. Name or Genre or Favorite Book or Follows
+     * @param isAuthor Whether the user is an author
+     * @return The search results.
+     */
     @GetMapping("/search")
     ResponseEntity<List<User>> searchUser(
         String query,
@@ -251,8 +273,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(foundUsers);
     }
 
-    /*
-    "/user/deactivate/{username}" route
+    /**
+     * Used when a user wants to deactivate themselves.
+     * @param username The username of the user.
+     * @return Whether the operation was successful.
      */
     @PutMapping("/deactivate/{username}")
     public ResponseEntity deactivateSelf(@PathVariable String username){
@@ -281,8 +305,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User account deactivated successfully");
     }
 
-    /*
-    "/user/reactivate/{username}" route
+    /**
+     * Used when the user wants to reactivate themselves.
+     * @param username The username of the user.
+     * @return Whether the operation was successful.
      */
     @PutMapping("/reactivate/{username}")
     public ResponseEntity reactivateSelf(@PathVariable String username){
@@ -312,8 +338,12 @@ public class UserController {
     }
 
 
-    /*
-    "/user/setActive/{adminUsername}/{username}" route
+    /**
+     * Changes a user activation (can only be done by an admin).
+     * @param adminUsername The username of the admin.
+     * @param username The username of the user to change.
+     * @param flag What to set the activation to.
+     * @return Whether the activation was changed successfully.
      */
     @PutMapping("/setActive/{adminUsername}/{username}")
     public ResponseEntity changeActivation(@PathVariable String adminUsername, @PathVariable String username, @RequestBody boolean flag){
@@ -353,8 +383,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("Activation status changed successfully");
     }
 
-    /*
-    "/user/delete/{adminUsername}/{username}"
+    /**
+     * Delete a user. (Can only be done by an admin).
+     * @param adminUsername The username of the admin.
+     * @param username The username of the user to delete.
+     * @return Whether the operation was successful.
      */
     @DeleteMapping("/delete/{adminUsername}/{username}")
     public ResponseEntity deleteUser(@PathVariable String adminUsername,@PathVariable String username){
@@ -394,6 +427,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User account deleted successfully");
     }
 
+    /**
+     * Have user1 follow user2.
+     * @param username1 The username of user1.
+     * @param username2 The username of user2.
+     * @return Whether the operation was successful.
+     */
     @PostMapping("/follow/{username1}/{username2}")
     public ResponseEntity followUser(@PathVariable String username1, @PathVariable String username2) {
         User u1 = new User();
@@ -431,6 +470,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User account followed successfully");
     }
 
+    /**
+     * Remove user2 from user1's followers.
+     * @param username1 Username of user1.
+     * @param username2 Username of user2.
+     * @return Whether the operation was successful.
+     */
     @DeleteMapping("/follow/{username1}/{username2}")
     public ResponseEntity unfollowUser(@PathVariable String username1, @PathVariable String username2) {
 
@@ -471,6 +516,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body("User account unfollowed successfully");
     }
 
+    /**
+     * Gets the followers of a user.
+     * @param username The username of the user.
+     * @return The followers of the user.
+     */
     @GetMapping("/followers/{username}")
     public ResponseEntity getFollowers(@PathVariable String username) {
         User u = new User();
@@ -491,6 +541,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(followers);
     }
 
+    /**
+     * Get the users that a given user is following.
+     * @param username The username of the user.
+     * @return The list of users they follow.
+     */
     @GetMapping("/following/{username}")
     public ResponseEntity getFollowing(@PathVariable String username) {
         User u = new User();
