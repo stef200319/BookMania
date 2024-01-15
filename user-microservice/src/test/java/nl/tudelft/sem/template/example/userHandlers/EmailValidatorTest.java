@@ -17,7 +17,7 @@ class EmailValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setEmail("abc@fdg.com");
+        user.getUserInfo().setEmail("abc@fdg.com");
 
         EmailValidator emailValidator = new EmailValidator(userRepository);
 
@@ -31,7 +31,7 @@ class EmailValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setEmail("sad");
+        user.getUserInfo().setEmail("sad");
 
         EmailValidator emailValidator = new EmailValidator(userRepository);
 

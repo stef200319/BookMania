@@ -104,11 +104,16 @@ public class UserController {
      */
     @PostMapping("/")
     public ResponseEntity createUser(@RequestBody User newUser){
-
         UsernameValidator handler = new UsernameValidator(userRepo);
         EmailValidator ev = new EmailValidator(userRepo);
         UserActiveValidator av = new UserActiveValidator(userRepo);
-        av.setNext(new UserBannedValidator(userRepo));
+        UserBannedValidator bv = new UserBannedValidator(userRepo);
+        UserDifferentInfoUsernameValidator difu = new UserDifferentInfoUsernameValidator(userRepo);
+        UserDifferentProfileUsernameValidator difp = new UserDifferentProfileUsernameValidator(userRepo);
+        difp.setNext(new UserDifferentStatusUsernameValidator(userRepo));
+        difu.setNext(difp);
+        bv.setNext(difu);
+        av.setNext(bv);
         ev.setNext(av);
         handler.setNext(ev);
 
@@ -124,6 +129,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid email format");
         }
         catch (InvalidUserException e) {
+            if(e.getMessage().equals("The usernames of the user do not match with the ones of the info."))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The usernames of the user do not match with the ones of the info.");
+            if(e.getMessage().equals("The usernames of the user do not match with the ones of the profile."))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The usernames of the user do not match with the ones of the profile.");
+            if(e.getMessage().equals("The usernames of the user do not match with the ones of the status."))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The usernames of the user do not match with the ones of the status.");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user object");
         }
 
@@ -140,7 +151,13 @@ public class UserController {
     public ResponseEntity updateUserInfo(@RequestBody User modifiedUser){
         EmailValidator handler = new EmailValidator(userRepo);
         UserExistingValidator ev =  new UserExistingValidator(userRepo);
-        ev.setNext(new UserLoggedInValidator(userRepo));
+        UserLoggedInValidator lv = new UserLoggedInValidator(userRepo);
+        UserDifferentInfoUsernameValidator difu = new UserDifferentInfoUsernameValidator(userRepo);
+        UserDifferentProfileUsernameValidator difp = new UserDifferentProfileUsernameValidator(userRepo);
+        difp.setNext(new UserDifferentStatusUsernameValidator(userRepo));
+        difu.setNext(difp);
+        lv.setNext(difu);
+        ev.setNext(lv);
         handler.setNext(ev);
 
         try {
@@ -149,6 +166,12 @@ public class UserController {
         catch (InvalidUsernameException | InvalidUserException e) {
             if(e.getMessage().equals("User does not exist"))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("The user does not exist");
+            if(e.getMessage().equals("The usernames of the user do not match with the ones of the info."))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The usernames of the user do not match with the ones of the info.");
+            if(e.getMessage().equals("The usernames of the user do not match with the ones of the profile."))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The usernames of the user do not match with the ones of the profile.");
+            if(e.getMessage().equals("The usernames of the user do not match with the ones of the status."))
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The usernames of the user do not match with the ones of the status.");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
         }
         catch (InvalidEmailException e) {

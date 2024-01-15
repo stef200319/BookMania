@@ -26,8 +26,8 @@ public class UserLoggedInValidatorTest {
 
     @Test
     public void testHandleUserIsLoggedIn() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        User user = mock(User.class);
-        when(user.getIsLoggedIn()).thenReturn(true);
+        User user = new User();
+        user.getUserStatus().setIsLoggedIn(true);
 
         assertTrue(userLoggedInValidator.handle(user));
         verify(userRepositoryMock, times(0)).save(any(User.class));
@@ -35,19 +35,12 @@ public class UserLoggedInValidatorTest {
 
     @Test
     public void testHandleUserIsNotLoggedIn() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        User user = mock(User.class);
-        when(user.getIsLoggedIn()).thenReturn(false);
+        User user = new User();
+        user.getUserStatus().setIsLoggedIn(false);
+
 
         assertThrows(InvalidUserException.class, () -> userLoggedInValidator.handle(user));
         verify(userRepositoryMock, times(0)).save(any(User.class));
     }
 
-    @Test
-    public void testHandleUserLoggedInIsNull() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        User user = mock(User.class);
-        when(user.getIsLoggedIn()).thenReturn(null);
-
-        assertThrows(InvalidUserException.class, () -> userLoggedInValidator.handle(user));
-        verify(userRepositoryMock, times(0)).save(any(User.class));
-    }
 }

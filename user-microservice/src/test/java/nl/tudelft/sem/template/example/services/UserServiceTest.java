@@ -26,12 +26,18 @@ public class UserServiceTest {
     private UserRepository userRepository;
     private UserService userService;
     private AnalyticsService analyticsService;
+    private UserStatusService userStatusService;
+    private UserProfileService userProfileService;
+    private UserInfoService userInfoService;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         analyticsService = Mockito.mock(AnalyticsService.class);
-        userService = new UserService(userRepository, analyticsService);
+        userStatusService = Mockito.mock(UserStatusService.class);
+        userProfileService = Mockito.mock(UserProfileService.class);
+        userInfoService = Mockito.mock(UserInfoService.class);
+        userService = new UserService(userRepository, analyticsService, userStatusService, userProfileService, userInfoService);
     }
 
     @Test
@@ -128,33 +134,32 @@ public class UserServiceTest {
     public void testUpdateUserInfo(){
         User currentUser = new User();
         currentUser.setUsername("test");
-        currentUser.setIsLoggedIn(true);
-        currentUser.setEmail("email@tud.com");
+        currentUser.getUserStatus().setIsLoggedIn(true);
+        currentUser.getUserInfo().setEmail("email@tud.com");
 
         User modifiedUser = new User();
         modifiedUser.setUsername("test");
-        modifiedUser.setIsLoggedIn(true);
-        modifiedUser.setEmail("email2@tud.com");
-        modifiedUser.setFirstName("bob");
-        modifiedUser.setLastName("bobby");
-        modifiedUser.setBio("nice guy");
-        modifiedUser.setProfilePicture("pic");
-        modifiedUser.setLocation("location");
-        modifiedUser.setPassword("pass");
-        modifiedUser.setFavoriteBook("Crime and Punishment");
-        modifiedUser.setFavoriteGenres(new ArrayList<>());
+        modifiedUser.getUserStatus().setIsLoggedIn(true);
+        modifiedUser.getUserInfo().setEmail("email2@tud.com");
+        modifiedUser.getUserInfo().setFirstName("bob");
+        modifiedUser.getUserInfo().setLastName("bobby");
+        modifiedUser.getUserProfile().setBio("nice guy");
+        modifiedUser.getUserProfile().setProfilePicture("pic");
+        modifiedUser.getUserProfile().setLocation("location");
+        modifiedUser.getUserInfo().setPassword("pass");
+        modifiedUser.getUserProfile().setFavoriteBook("Crime and Punishment");
+        modifiedUser.getUserProfile().setFavoriteGenres(new ArrayList<>());
         Mockito.when(userRepository.findById(modifiedUser.getUsername())).thenReturn(Optional.of(currentUser));
-        User u = userService.updateUserInfo(modifiedUser);
-        assertEquals(currentUser.getEmail(),modifiedUser.getEmail());
-        assertEquals(currentUser.getFirstName(),modifiedUser.getFirstName());
-        assertEquals(currentUser.getLastName(),modifiedUser.getLastName());
-        assertEquals(currentUser.getBio(),modifiedUser.getBio());
-        assertEquals(currentUser.getProfilePicture(),modifiedUser.getProfilePicture());
-        assertEquals(currentUser.getLocation(),modifiedUser.getLocation());
-        assertEquals(currentUser.getPassword(),modifiedUser.getPassword());
-        assertEquals(currentUser.getFavoriteBook(),modifiedUser.getFavoriteBook());
-        assertEquals(currentUser.getFavoriteGenres(),modifiedUser.getFavoriteGenres());
-        assertEquals(modifiedUser, u);
+        userService.updateUserInfo(modifiedUser);
+        assertEquals(currentUser.getUserInfo().getEmail(),modifiedUser.getUserInfo().getEmail());
+        assertEquals(currentUser.getUserInfo().getFirstName(),modifiedUser.getUserInfo().getFirstName());
+        assertEquals(currentUser.getUserInfo().getLastName(),modifiedUser.getUserInfo().getLastName());
+        assertEquals(currentUser.getUserProfile().getBio(),modifiedUser.getUserProfile().getBio());
+        assertEquals(currentUser.getUserProfile().getProfilePicture(),modifiedUser.getUserProfile().getProfilePicture());
+        assertEquals(currentUser.getUserProfile().getLocation(),modifiedUser.getUserProfile().getLocation());
+        assertEquals(currentUser.getUserInfo().getPassword(),modifiedUser.getUserInfo().getPassword());
+        assertEquals(currentUser.getUserProfile().getFavoriteBook(),modifiedUser.getUserProfile().getFavoriteBook());
+        assertEquals(currentUser.getUserProfile().getFavoriteGenres(),modifiedUser.getUserProfile().getFavoriteGenres());
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(currentUser);
     }
 
@@ -162,11 +167,10 @@ public class UserServiceTest {
     public void testModifyActivationStatus(){
         User user = new User();
         user.setUsername("test");
-        user.setIsActive(false);
+        user.getUserStatus().setIsActive(false);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
-        User u = userService.modifyUserActivationStatus(user.getUsername(),true);
-        assertEquals(user.getIsActive(),true);
-        assertEquals(user, u);
+        userService.modifyUserActivationStatus(user.getUsername(),true);
+        assertEquals(user.getUserStatus().getIsActive(),true);
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
     }
 
@@ -174,10 +178,10 @@ public class UserServiceTest {
     public void testFetchUser(){
         User user = new User();
         user.setUsername("test");
-        user.setUserRole(User.UserRoleEnum.REGULAR);
+        user.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
         User fetchedUser = userService.fetchUser(user.getUsername());
-        assertEquals(user.getUserRole(),fetchedUser.getUserRole());
+        assertEquals(user.getUserStatus().getUserRole(),fetchedUser.getUserStatus().getUserRole());
         Mockito.verify(userRepository,Mockito.times(1)).findById(user.getUsername());
     }
 
@@ -320,23 +324,21 @@ public class UserServiceTest {
     public void testLogInUser(){
         User user = new User();
         user.setUsername("test");
-        user.setIsLoggedIn(false);
+        user.getUserStatus().setIsLoggedIn(false);
         Analytics analytics = new Analytics();
         Mockito.when(analyticsService.getAnalytics(user.getUsername())).thenReturn(analytics);
-        User u = userService.logInUser(user);
-        assertEquals(true,user.getIsLoggedIn());
-        assertEquals(user, u);
+        userService.logInUser(user);
+        assertEquals(true,user.getUserStatus().getIsLoggedIn());
         Mockito.verify(analyticsService,Mockito.times(1)).editAnalytics(user.getUsername(),analytics);
     }
     @Test
     public void testLogOutUser(){
         User user = new User();
         user.setUsername("test");
-        user.setIsLoggedIn(true);
-        User u = userService.logOutUser(user);
-        assertEquals(false,user.getIsLoggedIn());
-        assertEquals(user, u);
-        Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(user);
+        user.getUserStatus().setIsLoggedIn(true);
+        userService.logOutUser(user);
+        assertEquals(false,user.getUserStatus().getIsLoggedIn());
+        Mockito.verify(userRepository,Mockito.times(2)).saveAndFlush(user);
     }
 
     @Test

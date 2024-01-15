@@ -17,10 +17,10 @@ class PasswordValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setPassword("123");
+        user.getUserInfo().setPassword("123");
 
         User loggingIn = new User();
-        loggingIn.setPassword("123");
+        loggingIn.getUserInfo().setPassword("123");
 
         PasswordValidator passwordValidator = new PasswordValidator(userRepository, loggingIn);
 
@@ -34,10 +34,10 @@ class PasswordValidatorTest {
         UserRepository userRepository = mock(UserRepository.class);
 
         User user = new User();
-        user.setPassword("123");
+        user.getUserInfo().setPassword("123");
 
         User loggingIn = new User();
-        loggingIn.setPassword("1234");
+        loggingIn.getUserInfo().setPassword("1234");
 
         PasswordValidator passwordValidator = new PasswordValidator(userRepository, loggingIn);
 

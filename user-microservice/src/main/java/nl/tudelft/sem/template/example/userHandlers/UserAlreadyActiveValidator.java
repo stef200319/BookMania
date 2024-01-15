@@ -14,7 +14,7 @@ public class UserAlreadyActiveValidator extends BaseUserValidator {
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        if(user.getIsActive())
+        if(user.getUserStatus().getIsActive())
             throw new InvalidUserException("User is active");
 
         return super.checkNext(user);
