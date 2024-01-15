@@ -37,9 +37,10 @@ public class BookController {
     BookService bookService;
 
     @Autowired
-    public BookController(BookRepository bookRepo, BookService bookService) {
+    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo) {
         this.bookRepo = bookRepo;
         this.bookService = bookService;
+        this.userRepo = userRepo;
     }
 
     @PostMapping("/{username}")

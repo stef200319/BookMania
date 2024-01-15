@@ -10,6 +10,11 @@ public class BookExistingValidator extends BaseBookValidator{
     }
     @Override
     public boolean handle(Book book) throws InvalidBookException {
+
+        if (book == null) {
+            throw new InvalidBookException("Book does not exist");
+        }
+
         long bookId = book.getId();
         if(!bookRepository.existsById(bookId)){
             throw new InvalidBookException("Book does not exist");
