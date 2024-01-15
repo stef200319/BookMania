@@ -12,6 +12,9 @@ public class BookGenresValidator extends BaseBookValidator{
     }
     @Override
     public boolean handle(Book book) throws InvalidBookException, InvalidAuthorException, InvalidBookIdException {
+        if (book.getGenres() == null) {
+            throw new InvalidBookException("Book must have at least one genre");
+        }
         if(book.getGenres().isEmpty()){
             throw new InvalidBookException("Book must have at least one genre");
         }

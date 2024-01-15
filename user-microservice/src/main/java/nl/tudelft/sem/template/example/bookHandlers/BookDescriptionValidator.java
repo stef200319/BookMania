@@ -12,6 +12,9 @@ public class BookDescriptionValidator extends BaseBookValidator{
     }
     @Override
     public boolean handle(Book book) throws InvalidBookException, InvalidAuthorException, InvalidBookIdException {
+        if (book.getDescription() == null) {
+            throw new InvalidBookException("Book must have a description");
+        }
         if(book.getDescription().isBlank()){
             throw new InvalidBookException("Book must have a description");
         }
