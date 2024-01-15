@@ -4,7 +4,7 @@ import nl.tudelft.sem.template.example.bookHandlers.*;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import javax.validation.Valid;
-
+import nl.tudelft.sem.template.example.bookHandlers.BookNotNullValidator;
 import nl.tudelft.sem.template.example.database.BookRepository;
 import nl.tudelft.sem.template.example.exceptions.*;
 import nl.tudelft.sem.template.example.model.Book;
@@ -40,9 +40,10 @@ public class BookController {
      * @param bookService The service that handles book logic.
      */
     @Autowired
-    public BookController(BookRepository bookRepo, BookService bookService) {
+    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo) {
         this.bookRepo = bookRepo;
         this.bookService = bookService;
+        this.userRepo = userRepo;
     }
 
     /**
@@ -71,6 +72,15 @@ public class BookController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             }
         }
+
+        BookNotNullValidator bookNotNullHandler = new BookNotNullValidator(bookRepo);
+        try {
+            bookNotNullHandler.handle(newBook);
+        }
+        catch(InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book cannot be null");
+        }
+
         BookIdValidator bookHandler = new BookIdValidator(bookRepo);
         BookAuthorValidator v2 = new BookAuthorValidator(bookRepo);
         BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
