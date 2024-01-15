@@ -12,6 +12,9 @@ public class BookSeriesValidator extends BaseBookValidator{
     }
     @Override
     public boolean handle(Book book) throws InvalidBookException, InvalidAuthorException, InvalidBookIdException {
+        if (book.getSeries() == null) {
+            throw new InvalidBookException("Book must have a series associated to it");
+        }
         if(book.getSeries().isBlank()){
             throw new InvalidBookException("Book must have a series associated to it");
         }
