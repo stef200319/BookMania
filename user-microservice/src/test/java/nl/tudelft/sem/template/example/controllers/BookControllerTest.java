@@ -59,6 +59,15 @@ public class BookControllerTest {
     @Test
     public void testCreateValidBook() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
         Book book = new Book();
+        book.setId(1L);
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.setUserRole(User.UserRoleEnum.ADMIN);
