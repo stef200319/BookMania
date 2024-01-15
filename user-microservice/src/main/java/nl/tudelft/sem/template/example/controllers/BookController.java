@@ -77,7 +77,7 @@ public class BookController {
         try {
             bookNotNullHandler.handle(newBook);
         }
-        catch(InvalidBookException | InvalidAuthorException e){
+        catch(InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book cannot be null");
         }
 
