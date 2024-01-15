@@ -69,16 +69,16 @@ public class UserControllerTest {
     public void testInvalidLogInWithInvalidPassword() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
-        validUser.setIsActive(true);
+        validUser.getUserInfo().setPassword("testPassword");
+        validUser.getUserStatus().setIsActive(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser));
 
         User user2 = new User();
         user2.setUsername("testUsername");
-        user2.setPassword("wrongPassword");
-        user2.setIsActive(true);
+        user2.getUserInfo().setPassword("wrongPassword");
+        user2.getUserStatus().setIsActive(true);
 
         ResponseEntity response = userController.logInUser(user2);
 
