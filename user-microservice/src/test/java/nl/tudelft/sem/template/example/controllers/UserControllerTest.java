@@ -33,7 +33,7 @@ public class UserControllerTest {
     public void testInvalidLogInWithInvalidUsername() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(false);
@@ -50,7 +50,7 @@ public class UserControllerTest {
     public void testInvalidLogInWithInvalidIsActive() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(false);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
@@ -69,7 +69,7 @@ public class UserControllerTest {
     public void testAlreadyLoggedIn() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
         validUser.getUserStatus().setIsLoggedIn(true);
 
@@ -89,7 +89,7 @@ public class UserControllerTest {
     public void testValidLogIn() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
@@ -108,7 +108,7 @@ public class UserControllerTest {
     public void testInvalidLogOutWithInvalidUsername() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
         validUser.getUserStatus().setIsLoggedIn(true);
 
@@ -128,7 +128,7 @@ public class UserControllerTest {
     public void testInvalidLogOutWithNullLoggedIn() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
         validUser.getUserStatus().setIsLoggedIn(null);
 
@@ -148,7 +148,7 @@ public class UserControllerTest {
     public void testInvalidLogOutWithFalseLoggedIn() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
         validUser.getUserStatus().setIsLoggedIn(false);
 
@@ -168,7 +168,7 @@ public class UserControllerTest {
     public void testValidLogOut() {
         User validUser = new User();
         validUser.setUsername("testUsername");
-        validUser.setPassword("testPassword");
+        validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
         validUser.getUserStatus().setIsLoggedIn(true);
 
@@ -493,7 +493,7 @@ public class UserControllerTest {
     public void testCreateUserWInvalidEmail1(){
         User user = new User();
         user.setUsername("test");
-        user.setEmail("email.com");
+        user.getUserInfo().setEmail("email.com");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
         ResponseEntity response = userController.createUser(user);
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
@@ -503,7 +503,7 @@ public class UserControllerTest {
     public void testCreateUserWInvalidEmail2(){
         User user = new User();
         user.setUsername("test");
-        user.setEmail("email@tud.toolongsuffix");
+        user.getUserInfo().setEmail("email@tud.toolongsuffix");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
         ResponseEntity response = userController.createUser(user);
         assertEquals(response.getStatusCode(),HttpStatus.BAD_REQUEST);
@@ -513,7 +513,7 @@ public class UserControllerTest {
     public void testCreateInvalidUser1(){
         User user = new User();
         user.setUsername("test");
-        user.setEmail("email@tud.com");
+        user.getUserInfo().setEmail("email@tud.com");
         user.getUserStatus().setIsActive(false);
         user.getUserStatus().setIsBanned(false);
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
@@ -525,7 +525,7 @@ public class UserControllerTest {
     public void testCreateInvalidUser2(){
         User user = new User();
         user.setUsername("test");
-        user.setEmail("email@tud.com");
+        user.getUserInfo().setEmail("email@tud.com");
         user.getUserStatus().setIsActive(true);
         user.getUserStatus().setIsBanned(true);
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
@@ -537,7 +537,7 @@ public class UserControllerTest {
     public void testCreateValidUser(){
         User user = new User();
         user.setUsername("test");
-        user.setEmail("email@tud.com");
+        user.getUserInfo().setEmail("email@tud.com");
         user.getUserStatus().setIsActive(true);
         user.getUserStatus().setIsBanned(false);
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
@@ -551,7 +551,7 @@ public class UserControllerTest {
     @Test
     public void testUpdateNotExistingUserRoute(){
         User user = new User();
-        user.setEmail("asd@fds.com");
+        user.getUserInfo().setEmail("asd@fds.com");
         user.setUsername("test");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);
         ResponseEntity response = userController.updateUserInfo(user);
@@ -562,7 +562,7 @@ public class UserControllerTest {
     public void testUpdateNotLoggedInUserRoute(){
         User user = new User();
         user.setUsername("test");
-        user.setEmail("asd@fds.com");
+        user.getUserInfo().setEmail("asd@fds.com");
         user.getUserStatus().setIsLoggedIn(false);
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(user.getUsername())).thenReturn(Optional.of(user));
@@ -575,12 +575,12 @@ public class UserControllerTest {
         User currentUser = new User();
         currentUser.setUsername("test");
         currentUser.getUserStatus().setIsLoggedIn(true);
-        currentUser.setEmail("email@tud.com");
+        currentUser.getUserInfo().setEmail("email@tud.com");
 
         User modifiedUser = new User();
         modifiedUser.setUsername("test");
         modifiedUser.getUserStatus().setIsLoggedIn(true);
-        modifiedUser.setEmail("email.com");
+        modifiedUser.getUserInfo().setEmail("email.com");
 
         Mockito.when(userRepository.existsById(modifiedUser.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(modifiedUser.getUsername())).thenReturn(Optional.of(currentUser));
@@ -593,14 +593,14 @@ public class UserControllerTest {
         User currentUser = new User();
         currentUser.setUsername("test");
         currentUser.getUserStatus().setIsLoggedIn(true);
-        currentUser.setEmail("email@tud.com");
+        currentUser.getUserInfo().setEmail("email@tud.com");
 
         User modifiedUser = new User();
         modifiedUser.setUsername("test");
         modifiedUser.getUserStatus().setIsLoggedIn(true);
-        modifiedUser.setEmail("email2@tud.com");
-        modifiedUser.setFirstName("bob");
-        modifiedUser.setLastName("bobby");
+        modifiedUser.getUserInfo().setEmail("email2@tud.com");
+        modifiedUser.getUserInfo().setFirstName("bob");
+        modifiedUser.getUserInfo().setLastName("bobby");
         //modifiedUser.setBio("nice guy");
 
         Mockito.when(userRepository.existsById(modifiedUser.getUsername())).thenReturn(true);

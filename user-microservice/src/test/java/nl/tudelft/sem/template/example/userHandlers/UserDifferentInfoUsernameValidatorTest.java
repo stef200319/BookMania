@@ -15,10 +15,8 @@ import org.mockito.Mockito;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UserDifferentStatusUsernameValidatorTest {
-
+public class UserDifferentInfoUsernameValidatorTest {
     private UserRepository userRepository;
-
     @BeforeEach()
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
@@ -30,7 +28,7 @@ public class UserDifferentStatusUsernameValidatorTest {
         UserProfile profile1 = new UserProfile("username","bio", "location", "picture", "favoriteBook", null);
         UserInfo info1 = new UserInfo("username", "Surname", "Name", "email", "password");
         User user1 = new User("username", info1, status1, profile1, null, null);
-        UserDifferentStatusUsernameValidator h = new UserDifferentStatusUsernameValidator(userRepository);
+        UserDifferentInfoUsernameValidator h = new UserDifferentInfoUsernameValidator(userRepository);
 
         try {
             assertTrue(h.handle(user1));
@@ -46,11 +44,12 @@ public class UserDifferentStatusUsernameValidatorTest {
     @Test
     void diffUsername() {
         UserStatus status1 = new UserStatus("username1", true, true, false, User.UserRoleEnum.REGULAR);
-        UserProfile profile1 = new UserProfile("username1", "bio", "location", "picture", "favoriteBook", null);
-        UserInfo info1 = new UserInfo("username", "Surname", "Name", "email", "password");
+        UserProfile profile1 = new UserProfile("username1","bio", "location", "picture", "favoriteBook", null);
+        UserInfo info1 = new UserInfo("username1", "Surname", "Name", "email", "password");
         User user1 = new User("username", info1, status1, profile1, null, null);
-        UserDifferentProfileUsernameValidator h = new UserDifferentProfileUsernameValidator(userRepository);
+        UserDifferentInfoUsernameValidator h = new UserDifferentInfoUsernameValidator(userRepository);
 
         assertThrows(InvalidUserException.class, () -> h.handle(user1));
     }
+
 }

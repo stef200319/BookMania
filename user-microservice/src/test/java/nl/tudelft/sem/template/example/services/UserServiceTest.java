@@ -23,8 +23,8 @@ public class UserServiceTest {
     private UserService userService;
     private AnalyticsService analyticsService;
     private UserStatusService userStatusService;
-
     private UserProfileService userProfileService;
+    private UserInfoService userInfoService;
 
     @BeforeEach
     void setUp() {
@@ -32,7 +32,8 @@ public class UserServiceTest {
         analyticsService = Mockito.mock(AnalyticsService.class);
         userStatusService = Mockito.mock(UserStatusService.class);
         userProfileService = Mockito.mock(UserProfileService.class);
-        userService = new UserService(userRepository, analyticsService, userStatusService, userProfileService);
+        userInfoService = Mockito.mock(UserInfoService.class);
+        userService = new UserService(userRepository, analyticsService, userStatusService, userProfileService, userInfoService);
     }
 
     @Test
@@ -130,29 +131,29 @@ public class UserServiceTest {
         User currentUser = new User();
         currentUser.setUsername("test");
         currentUser.getUserStatus().setIsLoggedIn(true);
-        currentUser.setEmail("email@tud.com");
+        currentUser.getUserInfo().setEmail("email@tud.com");
 
         User modifiedUser = new User();
         modifiedUser.setUsername("test");
         modifiedUser.getUserStatus().setIsLoggedIn(true);
-        modifiedUser.setEmail("email2@tud.com");
-        modifiedUser.setFirstName("bob");
-        modifiedUser.setLastName("bobby");
+        modifiedUser.getUserInfo().setEmail("email2@tud.com");
+        modifiedUser.getUserInfo().setFirstName("bob");
+        modifiedUser.getUserInfo().setLastName("bobby");
         modifiedUser.getUserProfile().setBio("nice guy");
         modifiedUser.getUserProfile().setProfilePicture("pic");
         modifiedUser.getUserProfile().setLocation("location");
-        modifiedUser.setPassword("pass");
+        modifiedUser.getUserInfo().setPassword("pass");
         modifiedUser.getUserProfile().setFavoriteBook("Crime and Punishment");
         modifiedUser.getUserProfile().setFavoriteGenres(new ArrayList<>());
         Mockito.when(userRepository.findById(modifiedUser.getUsername())).thenReturn(Optional.of(currentUser));
         userService.updateUserInfo(modifiedUser);
-        assertEquals(currentUser.getEmail(),modifiedUser.getEmail());
-        assertEquals(currentUser.getFirstName(),modifiedUser.getFirstName());
-        assertEquals(currentUser.getLastName(),modifiedUser.getLastName());
+        assertEquals(currentUser.getUserInfo().getEmail(),modifiedUser.getUserInfo().getEmail());
+        assertEquals(currentUser.getUserInfo().getFirstName(),modifiedUser.getUserInfo().getFirstName());
+        assertEquals(currentUser.getUserInfo().getLastName(),modifiedUser.getUserInfo().getLastName());
         assertEquals(currentUser.getUserProfile().getBio(),modifiedUser.getUserProfile().getBio());
         assertEquals(currentUser.getUserProfile().getProfilePicture(),modifiedUser.getUserProfile().getProfilePicture());
         assertEquals(currentUser.getUserProfile().getLocation(),modifiedUser.getUserProfile().getLocation());
-        assertEquals(currentUser.getPassword(),modifiedUser.getPassword());
+        assertEquals(currentUser.getUserInfo().getPassword(),modifiedUser.getUserInfo().getPassword());
         assertEquals(currentUser.getUserProfile().getFavoriteBook(),modifiedUser.getUserProfile().getFavoriteBook());
         assertEquals(currentUser.getUserProfile().getFavoriteGenres(),modifiedUser.getUserProfile().getFavoriteGenres());
         Mockito.verify(userRepository,Mockito.times(1)).saveAndFlush(currentUser);

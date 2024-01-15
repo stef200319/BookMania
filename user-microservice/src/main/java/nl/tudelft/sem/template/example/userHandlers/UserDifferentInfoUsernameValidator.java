@@ -6,20 +6,13 @@ import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.model.User;
 
-public class PasswordValidator extends BaseUserValidator {
-    private User loggingIn;
-
-    public PasswordValidator(UserRepository userRepository, User loggingIn) {
+public class UserDifferentInfoUsernameValidator extends BaseUserValidator{
+    public UserDifferentInfoUsernameValidator(UserRepository userRepository) {
         super(userRepository);
-        this.loggingIn = loggingIn;
     }
-
     @Override
-    public boolean handle(User user)
-        throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-
-        if(!user.getUserInfo().getPassword().equals(loggingIn.getUserInfo().getPassword()))
-            throw new InvalidUserException("Wrong password");
+    public boolean handle(User user) throws InvalidUserException, InvalidUsernameException, InvalidEmailException {
+        if(!user.getUsername().equals(user.getUserInfo().getUsername())) throw new InvalidUserException("The usernames of the user do not match with the ones of the info.");
 
         return super.checkNext(user);
     }

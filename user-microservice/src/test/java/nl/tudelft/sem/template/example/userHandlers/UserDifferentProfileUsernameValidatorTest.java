@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.userHandlers;
 
 import nl.tudelft.sem.template.example.model.User;
+import nl.tudelft.sem.template.example.userUtilities.UserInfo;
 import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 import org.aspectj.lang.annotation.Before;
@@ -31,7 +32,8 @@ public class UserDifferentProfileUsernameValidatorTest {
     void sameUsername() {
         UserStatus status1 = new UserStatus("username", true, true, false, User.UserRoleEnum.REGULAR);
         UserProfile profile1 = new UserProfile("username","bio", "location", "picture", "favoriteBook", null);
-        User user1 = new User("username", "Surname", "Name", "email", "password", status1, profile1, null, null);
+        UserInfo info1 = new UserInfo("username", "Surname", "Name", "email", "password");
+        User user1 = new User("username", info1, status1, profile1, null, null);
         UserDifferentProfileUsernameValidator h = new UserDifferentProfileUsernameValidator(userRepository);
 
         try {
@@ -49,7 +51,8 @@ public class UserDifferentProfileUsernameValidatorTest {
     void diffUsername() {
         UserStatus status1 = new UserStatus("username1", true, true, false, User.UserRoleEnum.REGULAR);
         UserProfile profile1 = new UserProfile("username1","bio", "location", "picture", "favoriteBook", null);
-        User user1 = new User("username", "Surname", "Name", "email", "password", status1, profile1, null, null);
+        UserInfo info1 = new UserInfo("username", "Surname", "Name", "email", "password");
+        User user1 = new User("username", info1, status1, profile1, null, null);
         UserDifferentProfileUsernameValidator h = new UserDifferentProfileUsernameValidator(userRepository);
 
         assertThrows(InvalidUserException.class, () -> h.handle(user1));

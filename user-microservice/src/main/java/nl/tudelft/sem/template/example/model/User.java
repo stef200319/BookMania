@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.example.userUtilities.UserInfo;
 import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 
@@ -24,13 +25,16 @@ public class User {
     @Id
     private String username;
 
-    private String firstName;
+//    private String firstName;
+//
+//    private String lastName;
+//
+//    private String email;
+//
+//    private String password;
 
-    private String lastName;
-
-    private String email;
-
-    private String password;
+    @OneToOne
+    private UserInfo userInfo;
 
     @OneToOne
     private UserStatus userStatus;
@@ -92,6 +96,7 @@ public class User {
     public User() {
         this.userStatus = new UserStatus();
         this.userProfile = new UserProfile();
+        this.userInfo = new UserInfo();
     }
 
     @Schema(name = "username", example = "theUser", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
@@ -104,65 +109,65 @@ public class User {
         this.username = username;
     }
 
-    /**
-     * Get firstName
-     * @return firstName
-     */
-
-    @Schema(name = "firstName", example = "John", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("firstName")
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    /**
-     * Get lastName
-     * @return lastName
-     */
-
-    @Schema(name = "lastName", example = "James", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("lastName")
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    /**
-     * Get email
-     * @return email
-     */
-
-    @Schema(name = "email", example = "john@email.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("email")
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    /**
-     * Get password
-     * @return password
-     */
-
-    @Schema(name = "password", example = "12345", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @JsonProperty("password")
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    /**
+//     * Get firstName
+//     * @return firstName
+//     */
+//
+//    @Schema(name = "firstName", example = "John", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+//    @JsonProperty("firstName")
+//    public String getFirstName() {
+//        return firstName;
+//    }
+//
+//    public void setFirstName(String firstName) {
+//        this.firstName = firstName;
+//    }
+//
+//    /**
+//     * Get lastName
+//     * @return lastName
+//     */
+//
+//    @Schema(name = "lastName", example = "James", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+//    @JsonProperty("lastName")
+//    public String getLastName() {
+//        return lastName;
+//    }
+//
+//    public void setLastName(String lastName) {
+//        this.lastName = lastName;
+//    }
+//
+//    /**
+//     * Get email
+//     * @return email
+//     */
+//
+//    @Schema(name = "email", example = "john@email.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+//    @JsonProperty("email")
+//    public String getEmail() {
+//        return email;
+//    }
+//
+//    public void setEmail(String email) {
+//        this.email = email;
+//    }
+//
+//    /**
+//     * Get password
+//     * @return password
+//     */
+//
+//    @Schema(name = "password", example = "12345", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+//    @JsonProperty("password")
+//    public String getPassword() {
+//        return password;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
 
 
@@ -217,22 +222,19 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(username, user.username) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(userStatus, user.userStatus) && Objects.equals(userProfile, user.userProfile) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
+        return Objects.equals(username, user.username) && Objects.equals(userInfo, user.userInfo) && Objects.equals(userStatus, user.userStatus) && Objects.equals(userProfile, user.userProfile) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, firstName, lastName, email, password, userStatus, userProfile, followers, following);
+        return Objects.hash(username, userInfo, userStatus, userProfile, followers, following);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
+                ", userInfo=" + userInfo +
                 ", userStatus=" + userStatus +
                 ", userProfile=" + userProfile +
                 ", followers=" + followers +

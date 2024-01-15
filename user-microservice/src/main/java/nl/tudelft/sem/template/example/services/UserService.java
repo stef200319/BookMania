@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
+import nl.tudelft.sem.template.example.userUtilities.UserInfo;
 import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
 import org.springframework.data.domain.Example;
@@ -22,16 +23,16 @@ public class UserService {
 
     private UserRepository userRepository;
     private AnalyticsService analyticsService;
-
     private UserStatusService userStatusService;
-
     private UserProfileService userProfileService;
+    private UserInfoService userInfoService;
 
-    public UserService(UserRepository userRepository, AnalyticsService analyticsService, UserStatusService userStatusService, UserProfileService userProfileService) {
+    public UserService(UserRepository userRepository, AnalyticsService analyticsService, UserStatusService userStatusService, UserProfileService userProfileService, UserInfoService userInfoService) {
         this.userRepository = userRepository;
         this.analyticsService = analyticsService;
         this.userStatusService = userStatusService;
         this.userProfileService = userProfileService;
+        this.userInfoService = userInfoService;
     }
 
     public User logInUser(User user1) {
@@ -106,8 +107,8 @@ public class UserService {
      */
     public List<User> findUsersByName(String name, boolean isAuthor) {
         User exampleUser = new User();
-        exampleUser.setFirstName(name);
-        exampleUser.setLastName(name);
+        exampleUser.getUserInfo().setFirstName(name);
+        exampleUser.getUserInfo().setLastName(name);
         exampleUser.setUsername(name);
 
         ExampleMatcher matcher = ExampleMatcher.matchingAny()
@@ -163,8 +164,8 @@ public class UserService {
      */
     public List<User> findUsersByFollows(String name, boolean isAuthor) {
         User exampleUser = new User();
-        exampleUser.setFirstName(name);
-        exampleUser.setLastName(name);
+        exampleUser.getUserInfo().setFirstName(name);
+        exampleUser.getUserInfo().setLastName(name);
         exampleUser.setUsername(name);
 
         ExampleMatcher matcher = ExampleMatcher.matchingAny()
@@ -206,10 +207,13 @@ public class UserService {
         UserProfile profile = currentUser.getUserProfile();
         userProfileService.editUserProfile(profile);
 
-        currentUser.setFirstName(modifiedUser.getFirstName());
-        currentUser.setLastName(modifiedUser.getLastName());
-        currentUser.setPassword(modifiedUser.getPassword());
-        currentUser.setEmail(modifiedUser.getEmail());
+        currentUser.getUserInfo().setFirstName(modifiedUser.getUserInfo().getFirstName());
+        currentUser.getUserInfo().setLastName(modifiedUser.getUserInfo().getLastName());
+        currentUser.getUserInfo().setPassword(modifiedUser.getUserInfo().getPassword());
+        currentUser.getUserInfo().setEmail(modifiedUser.getUserInfo().getEmail());
+        UserInfo info = currentUser.getUserInfo();
+        userInfoService.editUserInfo(info);
+
         userRepository.saveAndFlush(currentUser);
         return currentUser;
     }
@@ -280,11 +284,13 @@ public class UserService {
         userRepository.deleteById(username);
         userStatusService.deleteUserStatus(username);
         userProfileService.deleteUserProfile(username);
+        userInfoService.deleteUserInfo(username);
     }
 
     public User createUser(User user) {
         userProfileService.createUserProfile(user.getUserProfile());
         userStatusService.createUserStatus(user.getUserStatus());
+        userInfoService.createUserInfo(user.getUserInfo());
         User saved = userRepository.saveAndFlush(user);
         Analytics analytics = new Analytics(saved.getUsername());
         analyticsService.createAnalytics(analytics);
