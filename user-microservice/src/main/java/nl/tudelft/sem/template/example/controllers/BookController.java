@@ -4,6 +4,8 @@ import nl.tudelft.sem.template.example.bookHandlers.BookExistingValidator;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import javax.validation.Valid;
+
+import nl.tudelft.sem.template.example.bookHandlers.BookNotNullValidator;
 import nl.tudelft.sem.template.example.database.BookRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidBookException;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
@@ -64,12 +66,12 @@ public class BookController {
             }
         }
 
-        BookExistingValidator bookHandler = new BookExistingValidator(bookRepo);
+        BookNotNullValidator bookHandler = new BookNotNullValidator(bookRepo);
         try {
             bookHandler.handle(newBook);
         }
         catch(InvalidBookException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book cannot be null");
         }
 
 //        if(userRepo.findByUsername(username).isPresent()){

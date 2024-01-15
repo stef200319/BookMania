@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.example.services.UserService;
 import nl.tudelft.sem.template.example.userHandlers.UserExistingValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,24 @@ public class BookControllerTest {
         ResponseEntity response = bookController.createBook("testUsername", nullBook);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("This book does not exist", response.getBody());
+        assertEquals("Book cannot be null", response.getBody());
+    }
+
+    @Test
+    public void testCreateValidBook() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        User adminUser = new User();
+        adminUser.setUsername("testUsername");
+        adminUser.setUserRole(User.UserRoleEnum.ADMIN);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
+        Mockito.when(bookService.createBook(book)).thenReturn(book);
+
+        ResponseEntity response = bookController.createBook("testUsername", book);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(book, response.getBody());
     }
 
 }
