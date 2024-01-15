@@ -1,7 +1,9 @@
 package nl.tudelft.sem.template.example.bookHandlers;
 
 import nl.tudelft.sem.template.example.database.BookRepository;
+import nl.tudelft.sem.template.example.exceptions.InvalidAuthorException;
 import nl.tudelft.sem.template.example.exceptions.InvalidBookException;
+import nl.tudelft.sem.template.example.exceptions.InvalidBookIdException;
 import nl.tudelft.sem.template.example.model.Book;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BookExistingValidatorTest {
     @Test
-    public void testHandleExistingBook() throws InvalidBookException {
+    public void testHandleExistingBook() throws InvalidBookException, InvalidAuthorException, InvalidBookIdException {
         BookRepository bookRepository = Mockito.mock(BookRepository.class);
 
         Book existingBook = new Book();
