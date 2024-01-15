@@ -204,6 +204,13 @@ public class BookController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
             }
         }
+        BookNotNullValidator bookNotNullValidator = new BookNotNullValidator(bookRepo);
+        try {
+            bookNotNullValidator.handle(updatedBook);
+        }
+        catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book cannot be null");
+        }
 
         bookService.updateBook(updatedBook, id);
 
