@@ -73,11 +73,11 @@ public class BookController {
             }
         }
 
-        BookNotNullValidator bookHandler = new BookNotNullValidator(bookRepo);
+        BookNotNullValidator bookNotNullHandler = new BookNotNullValidator(bookRepo);
         try {
-            bookHandler.handle(newBook);
+            bookNotNullHandler.handle(newBook);
         }
-        catch(InvalidBookException e){
+        catch(InvalidBookException | InvalidAuthorException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book cannot be null");
         }
 
