@@ -218,6 +218,10 @@ public class BookController {
     @GetMapping("/{id}")
     public ResponseEntity getBook(@PathVariable Long id){
 
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
+        }
+
         BookExistingValidator bookHandler = new BookExistingValidator(bookRepo);
         BookIdValidator bookIdValidator = new BookIdValidator(bookRepo);
         bookHandler.setNext(bookIdValidator);

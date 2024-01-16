@@ -645,4 +645,96 @@ public class BookControllerTest {
         assertEquals("Book must have a title", response.getBody());
     }
 
+    @Test
+    public void testUpdateNonAdmin() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        book.setId(1L);
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+        User adminUser = new User();
+        adminUser.setUsername("testUsername");
+        adminUser.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
+        Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
+        Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
+
+        ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("User is not an admin", response.getBody());
+    }
+
+    @Test
+    public void testGetValid() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        book.setId(1L);
+        Long id = 1L;
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+
+        Mockito.when(bookRepository.existsById(id)).thenReturn(true);
+        Mockito.when(bookRepository.findById(id)).thenReturn(Optional.of(book));
+        Mockito.when(bookService.getBook(id)).thenReturn(book);
+
+        ResponseEntity response = bookController.getBook(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(book, response.getBody());
+    }
+
+    @Test
+    public void testGetNullId() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        Long id = null;
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+
+        ResponseEntity response = bookController.getBook(id);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Book must have an id", response.getBody());
+    }
+
+    @Test
+    public void testGetInvalidId() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        book.setId(1L);
+        Long id = 1L;
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+
+        Mockito.when(bookRepository.existsById(id)).thenReturn(false);
+
+        ResponseEntity response = bookController.getBook(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("This book does not exist", response.getBody());
+    }
+
 }
