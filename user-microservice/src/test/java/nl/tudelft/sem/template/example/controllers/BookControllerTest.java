@@ -737,4 +737,156 @@ public class BookControllerTest {
         assertEquals("This book does not exist", response.getBody());
     }
 
+    @Test
+    public void testDeleteValid() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Long id = 1L;
+        Book book = new Book();
+        book.setId(id);
+        User adminUser = new User();
+        adminUser.setUsername("testUsername");
+        adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
+        Mockito.when(bookRepository.existsById(id)).thenReturn(true);
+        Mockito.when(bookRepository.findById(id)).thenReturn(Optional.of(book));
+
+        ResponseEntity response = bookController.deleteBook(id, "testUsername");
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Book deleted succesfully", response.getBody());
+    }
+
+    @Test
+    public void testDeleteIdNull() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        User adminUser = new User();
+        adminUser.setUsername("testUsername");
+        adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
+
+        ResponseEntity response = bookController.deleteBook(null, "testUsername");
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Book must have an id", response.getBody());
+    }
+    @Test
+    public void testDeleteIdNotInRepo() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        User adminUser = new User();
+        adminUser.setUsername("testUsername");
+        adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
+
+        ResponseEntity response = bookController.deleteBook(1L, "testUsername");
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Book does not exist", response.getBody());
+    }
+
+    @Test
+    public void testDeleteNonAdmin() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Long id = 1L;
+        Book book = new Book();
+        book.setId(id);
+        User adminUser = new User();
+        adminUser.setUsername("testUsername");
+        adminUser.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
+
+        Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
+        Mockito.when(bookRepository.existsById(id)).thenReturn(true);
+        Mockito.when(bookRepository.findById(id)).thenReturn(Optional.of(book));
+
+        ResponseEntity response = bookController.deleteBook(id, "testUsername");
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("User is not an admin", response.getBody());
+    }
+
+    @Test
+    public void testReadValid() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        book.setId(1L);
+        Long id = 1L;
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+
+        Mockito.when(bookRepository.existsById(id)).thenReturn(true);
+        Mockito.when(bookRepository.findById(id)).thenReturn(Optional.of(book));
+
+        ResponseEntity response = bookController.readBook(id);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Book successfully read", response.getBody());
+    }
+
+    @Test
+    public void testReadInvalidId() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        book.setId(1L);
+        Long id = 1L;
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+
+        Mockito.when(bookRepository.existsById(id)).thenReturn(false);
+
+        ResponseEntity response = bookController.readBook(id);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Book does not exist", response.getBody());
+    }
+
+    @Test
+    public void testReadIdNull() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        ResponseEntity response = bookController.readBook(null);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Book must have an id", response.getBody());
+    }
+
+    @Test
+    public void testGetBooksValid() throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
+        Book book = new Book();
+        book.setId(1L);
+        Long id = 1L;
+        List<String> ids = new LinkedList<String>();
+        ids.add("1");
+        book.setAuthor("Bob Authorson");
+        book.setDescription("This book contains story");
+        LinkedList genres = new LinkedList<String>();
+        genres.add("Novel");
+        book.setGenres(genres);
+        book.setReads(0L);
+        book.setSeries("The Story Series");
+        book.setTitle("A Story Story");
+
+        List<Book> books = new LinkedList<Book>();
+        books.add(book);
+
+        Mockito.when(bookRepository.existsById(id)).thenReturn(true);
+        Mockito.when(bookRepository.findById(id)).thenReturn(Optional.of(book));
+        Mockito.when(bookRepository.getOne(id)).thenReturn(book);
+        Mockito.when(bookService.getBooks(ids)).thenReturn(books);
+
+        ResponseEntity response = bookController.getBooks(ids);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(books, response.getBody());
+    }
+
 }
