@@ -136,7 +136,7 @@ public class BookController {
         } catch (InvalidAuthorException e) {
             if (e.getMessage().equals("Book must have an author")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            } else if(e.getMessage().equals("The author name contains illegal characters.")) {
+            } else if (e.getMessage().equals("The author name contains illegal characters.")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -189,22 +189,22 @@ public class BookController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
         }
 
-        BookIdValidator bookHandler2 = new BookIdValidator(bookRepo);
-        BookAuthorValidator v2 = new BookAuthorValidator(bookRepo);
-        BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
-        BookGenresValidator v4 = new BookGenresValidator(bookRepo);
-        BookSeriesValidator v5 = new BookSeriesValidator(bookRepo);
         BookTitleValidator v6 = new BookTitleValidator(bookRepo);
+        BookSeriesValidator v5 = new BookSeriesValidator(bookRepo);
         v5.setNext(v6);
+        BookGenresValidator v4 = new BookGenresValidator(bookRepo);
         v4.setNext(v5);
+        BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
         v3.setNext(v4);
+        BookAuthorValidator v2 = new BookAuthorValidator(bookRepo);
         v2.setNext(v3);
+        BookIdValidator bookHandler2 = new BookIdValidator(bookRepo);
         bookHandler2.setNext(v2);
 
         try {
             bookHandler2.handle(updatedBook);
         } catch (InvalidBookException e) {
-            switch(e.getMessage()) {
+            switch (e.getMessage()) {
                 case "Book must have a description" -> {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
                 }
@@ -259,7 +259,7 @@ public class BookController {
         book.setId(id);
         try {
             bookHandler.handle(book);
-        } catch(InvalidBookException | InvalidAuthorException e) {
+        } catch (InvalidBookException | InvalidAuthorException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("This book does not exist");
         } catch (InvalidBookIdException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
@@ -290,10 +290,10 @@ public class BookController {
         book.setId(id);
         try {
             userHandler.handle(user);
-        } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e){
-            if(e.getMessage().equals("User does not exist")){
+        } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
+            if (e.getMessage().equals("User does not exist")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
-            } else if(e.getMessage().equals("User is not an admin")){
+            } else if (e.getMessage().equals("User is not an admin")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -378,18 +378,21 @@ public class BookController {
         book.setTitle(title);
         book.setDescription(description);
         book.setSeries(series);
-        BookAuthorValidator bookHandler = new BookAuthorValidator(bookRepo);
-        BookTitleValidator v2 = new BookTitleValidator(bookRepo);
-        BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
-        BookSeriesValidator v4 = new BookSeriesValidator(bookRepo);
+
+
+
         BookGenresValidator v5 = new BookGenresValidator(bookRepo);
+        BookSeriesValidator v4 = new BookSeriesValidator(bookRepo);
         v4.setNext(v5);
+        BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
         v3.setNext(v4);
+        BookTitleValidator v2 = new BookTitleValidator(bookRepo);
         v2.setNext(v3);
+        BookAuthorValidator bookHandler = new BookAuthorValidator(bookRepo);
         bookHandler.setNext(v2);
         try {
             bookHandler.handle(book);
-        } catch (InvalidBookException | InvalidBookIdException e){
+        } catch (InvalidBookException | InvalidBookIdException e) {
             switch (e.getMessage()) {
                 case "Book must have a description" -> {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
@@ -407,16 +410,17 @@ public class BookController {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
                 }
             }
-        } catch (InvalidAuthorException e){
-            if(e.getMessage().equals("Book must have an author")){
+        } catch (InvalidAuthorException e) {
+            if (e.getMessage().equals("Book must have an author")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            } else if(e.getMessage().equals("The author name contains illegal characters.")){
+            } else if (e.getMessage().equals("The author name contains illegal characters.")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.findBook(author, genre, title, description, series, sortBy));
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(bookService.findBook(author, genre, title, description, series, sortBy));
     }
 }
