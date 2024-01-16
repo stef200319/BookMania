@@ -390,6 +390,7 @@ public class BookController {
         v2.setNext(v3);
         BookAuthorValidator bookHandler = new BookAuthorValidator(bookRepo);
         bookHandler.setNext(v2);
+
         try {
             bookHandler.handle(book);
         } catch (InvalidBookException | InvalidBookIdException e) {
