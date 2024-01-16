@@ -78,7 +78,7 @@ public class BookController {
             bookNotNullHandler.handle(newBook);
         }
         catch(InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book cannot be null");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Book cannot be null");
         }
 
         BookIdValidator bookHandler = new BookIdValidator(bookRepo);
@@ -209,7 +209,7 @@ public class BookController {
             bookNotNullValidator.handle(updatedBook);
         }
         catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book cannot be null");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Book cannot be null");
         }
 
         bookService.updateBook(updatedBook, id);
@@ -319,7 +319,7 @@ public class BookController {
      * @param ids The list of ids.
      * @return The list of books.
      */
-    @GetMapping("")
+    @PostMapping("")
     public ResponseEntity getBooks(@RequestBody List<String> ids) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBooks(ids));
     }

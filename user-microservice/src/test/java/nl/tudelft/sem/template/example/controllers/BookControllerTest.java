@@ -52,7 +52,7 @@ public class BookControllerTest {
 
         ResponseEntity response = bookController.createBook("testUsername", nullBook);
 
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
         assertEquals("Book cannot be null", response.getBody());
     }
 
