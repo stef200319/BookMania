@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.example.authenticationStrategy;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.services.UserService;
 
+import java.util.NoSuchElementException;
+
 public class UserAuthentication implements Authenticate{
 
     private UserService userService;
@@ -15,7 +17,12 @@ public class UserAuthentication implements Authenticate{
     }
     @Override
     public boolean auth() {
-        User user = userService.fetchUser(username);
+        User user;
+        try {
+            user = userService.fetchUser(username);
+        } catch (NoSuchElementException e) {
+            return false;
+        }
         return (user.getUserStatus().getUserRole().equals("Regular") || user.getUserStatus().getUserRole().equals("Author"));
     }
 }
