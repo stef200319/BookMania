@@ -643,12 +643,94 @@ paths:
         '404':
           description: User not found
 
-  /analytics/{username}:
+/analytics/{username}:
+  post:
+    tags:
+      - analytics
+    summary: Create analytics entity
+    description: Create new analytics entity
+    parameters:
+      - name: username
+        in: path
+        description: The username of the user that the analytics are for
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Successful response.
+      '404':
+        description: User not found.
+      '409':
+        description: Analytics entity already exists.
+
+  put:
+    tags:
+      - analytics
+    summary: Update analytics
+    description: Update analytics
+    parameters:
+      - name: username
+        in: path
+        description: The username of the user that the analytics are for
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Successful response.
+      '400':
+        description: A field of the analytics entity passed as a parameter is illegal.
+      '404':
+        description: User not found.
+      '409':
+        description: The username of the analytics entity does not match with the one passed as a parameter.
+
+  get:
+    tags:
+      - analytics
+    summary: Get analytics
+    description: Get analytics for a user
+    parameters:
+      - name: username
+        in: path
+        description: The username of the user that the analytics are for
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Successful response
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Analytics'
+      '404':
+        description: User not found
+
+  delete:
+    tags:
+      - analytics
+    summary: Update analytics
+    description: Update analytics
+    parameters:
+      - name: username
+        in: path
+        description: The username of the user that the analytics are for
+        required: true
+        schema:
+          type: string
+    responses:
+      '200':
+        description: Successful response
+      '404':
+        description: User not found
+  /analytics/{username}/new:
     post:
       tags:
         - analytics
       summary: Create analytics entity
-      description: Create new analytics entity
+      description: Create new analytics entity with only username present.
       parameters:
         - name: username
           in: path
@@ -658,68 +740,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful response
+          description: Successful response.
         '404':
-          description: User not found
-
-    put:
-      tags:
-        - analytics
-      summary: Update analytics
-      description: Update analytics
-      parameters:
-        - name: username
-          in: path
-          description: The username of the user that the analytics are for
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
-        '404':
-          description: User not found
-
-    get:
-      tags:
-        - analytics
-      summary: Get analytics
-      description: Get analytics for a user
-      parameters:
-        - name: username
-          in: path
-          description: The username of the user that the analytics are for
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Analytics'
-        '404':
-          description: User not found
-
-    delete:
-      tags:
-        - analytics
-      summary: Update analytics
-      description: Update analytics
-      parameters:
-        - name: username
-          in: path
-          description: The username of the user that the analytics are for
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful response
-        '404':
-          description: User not found
-
+          description: User not found.
+        '409':
+          description: Analytics entity already exists.
 
 
 components:
