@@ -643,88 +643,88 @@ paths:
         '404':
           description: User not found
 
-/analytics/{username}:
-  post:
-    tags:
-      - analytics
-    summary: Create analytics entity
-    description: Create new analytics entity
-    parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: Successful response.
-      '404':
-        description: User not found.
-      '409':
-        description: Analytics entity already exists.
+  /analytics/{username}:
+    post:
+      tags:
+        - analytics
+      summary: Create analytics entity
+      description: Create new analytics entity
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response.
+        '404':
+          description: User not found.
+        '409':
+          description: Analytics entity already exists.
 
-  put:
-    tags:
-      - analytics
-    summary: Update analytics
-    description: Update analytics
-    parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: Successful response.
-      '400':
-        description: A field of the analytics entity passed as a parameter is illegal.
-      '404':
-        description: User not found.
-      '409':
-        description: The username of the analytics entity does not match with the one passed as a parameter.
+    put:
+      tags:
+        - analytics
+      summary: Update analytics
+      description: Update analytics
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response.
+        '400':
+          description: A field of the analytics entity passed as a parameter is illegal.
+        '404':
+          description: User not found.
+        '409':
+          description: The username of the analytics entity does not match with the one passed as a parameter.
 
-  get:
-    tags:
-      - analytics
-    summary: Get analytics
-    description: Get analytics for a user
-    parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: Successful response
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Analytics'
-      '404':
-        description: User not found
+    get:
+      tags:
+        - analytics
+      summary: Get analytics
+      description: Get analytics for a user
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Analytics'
+        '404':
+          description: User not found
 
-  delete:
-    tags:
-      - analytics
-    summary: Update analytics
-    description: Update analytics
-    parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: Successful response
-      '404':
-        description: User not found
+    delete:
+      tags:
+        - analytics
+      summary: Update analytics
+      description: Update analytics
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+        '404':
+          description: User not found
   /analytics/{username}/new:
     post:
       tags:
@@ -807,106 +807,106 @@ components:
             type: string
             example: 'Stefan'
 
-      Analytics:
-        type: object
-        properties:
-          userUsername:
-            type: string
-            example: theUser
-          reviewsNumber:
-            type: integer
-            format: int64
-            example: '7'
-          commentsNumber:
-            type: integer
-            format: int64
-            example: '2'
-          lastLoginDate:
-            type: string
-            example: '12.02.2020'
-          followersNumber:
-            type: integer
-            format: int64
-            example: '21'
-          followingNumber:
-            type: integer
-            format: int64
-            example: '13'
+    Analytics:
+      type: object
+      properties:
+        userUsername:
+          type: string
+          example: theUser
+        reviewsNumber:
+          type: integer
+          format: int64
+          example: '7'
+        commentsNumber:
+          type: integer
+          format: int64
+          example: '2'
+        lastLoginDate:
+          type: string
+          example: '12.02.2020'
+        followersNumber:
+          type: integer
+          format: int64
+          example: '21'
+        followingNumber:
+          type: integer
+          format: int64
+          example: '13'
 
-      UserStatus:
-        type: object
-        properties:
-          username:
-            type: string
-            example: username
-          userRole:
-            type: string
-            enum:
-              - 'Regular'
-              - 'Admin'
-              - 'Author'
-            description: User role (Regular or Author or Admin)
-            example: 'Regular'
-          isLoggedIn:
-            type: boolean
-            description: Whether the user account is logged in
-            example: true
-          isActive:
-            type: boolean
-            description: Whether the user account is activated (not deactivated)
-            example: true
-          isBanned:
-            type: boolean
-            description: Whether the user account is banned
-            example: true
+    UserStatus:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        userRole:
+          type: string
+          enum:
+            - 'Regular'
+            - 'Admin'
+            - 'Author'
+          description: User role (Regular or Author or Admin)
+          example: 'Regular'
+        isLoggedIn:
+          type: boolean
+          description: Whether the user account is logged in
+          example: true
+        isActive:
+          type: boolean
+          description: Whether the user account is activated (not deactivated)
+          example: true
+        isBanned:
+          type: boolean
+          description: Whether the user account is banned
+          example: true
 
-      UserProfile:
-        type: object
-        properties:
-          username:
+    UserProfile:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        bio:
+          type: string
+          description: User Bio
+          example: 'Hey I am a person'
+        location:
+          type: string
+          description: Simple string that vaguely describes where the user is
+          example: 'The Netherlands'
+        profilePicture:
+          type: string
+          description: URL of an image
+          example: 'https://server.net/image.jpg'
+        favoriteBook:
+          type: string
+          description: Name of favorite book
+          example: 'Harry Potter'
+        favoriteGenres:
+          type: array
+          items:
             type: string
-            example: username
-          bio:
-            type: string
-            description: User Bio
-            example: 'Hey I am a person'
-          location:
-            type: string
-            description: Simple string that vaguely describes where the user is
-            example: 'The Netherlands'
-          profilePicture:
-            type: string
-            description: URL of an image
-            example: 'https://server.net/image.jpg'
-          favoriteBook:
-            type: string
-            description: Name of favorite book
-            example: 'Harry Potter'
-          favoriteGenres:
-            type: array
-            items:
-              type: string
-              description: Name of the genre
-              example: 'Horror'
+            description: Name of the genre
+            example: 'Horror'
 
-      UserInfo:
-        type: object
-        properties:
-          username:
-            type: string
-            example: username
-          firstName:
-            type: string
-            example: John
-          lastName:
-            type: string
-            example: James
-          email:
-            type: string
-            example: john@email.com
-          password:
-            type: string
-            example: '12345'
+    UserInfo:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
 
 
   requestBodies:
