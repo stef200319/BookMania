@@ -338,56 +338,17 @@ public class BookController {
      */
     @GetMapping("/search")
     public ResponseEntity bookSearchGet(
-        String author,
-        String genre,
-        String title,
-        String description,
-        String series,
-        String sortBy
+        @RequestParam(required = false) String author,
+        @RequestParam(required = false) String genre,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String description,
+        @RequestParam(required = false) String series,
+        @RequestParam String sortBy
     ) {
-        Book book = new Book();
-        List<String> genres = new ArrayList<>();
-        genres.add(genre);
-        book.setGenres(genres);
-        book.setAuthor(author);
-        book.setTitle(title);
-        book.setDescription(description);
-        book.setSeries(series);
-        BookAuthorValidator bookHandler = new BookAuthorValidator(bookRepo);
-        BookTitleValidator v2 = new BookTitleValidator(bookRepo);
-        BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
-        BookSeriesValidator v4 = new BookSeriesValidator(bookRepo);
-        BookGenresValidator v5 = new BookGenresValidator(bookRepo);
-        v4.setNext(v5);
-        v3.setNext(v4);
-        v2.setNext(v3);
-        bookHandler.setNext(v2);
-        try {
-            bookHandler.handle(book);
+        if (author == null && genre == null && title == null && description == null && series == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        catch (InvalidBookException | InvalidBookIdException e){
-            if(e.getMessage().equals("Book must have a description")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
-            }
-            if(e.getMessage().equals("Book must have at least one genre")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have at least one genre");
-            }
-            if(e.getMessage().equals("Book must have a series associated to it")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a series associated to it");
-            }
-            if(e.getMessage().equals("Book must have a title")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a title");
-            }
-        }
-        catch (InvalidAuthorException e){
-            if(e.getMessage().equals("Book must have an author")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            }
-            if(e.getMessage().equals("The author name contains illegal characters.")){
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
-            }
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(bookService.findBook(author, genre, title, description, series, sortBy));
+        return ResponseEntity.status(HttpStatus.OK)
+            .body(bookService.findBook(author, genre, title, description, series, sortBy));
     }
 }
