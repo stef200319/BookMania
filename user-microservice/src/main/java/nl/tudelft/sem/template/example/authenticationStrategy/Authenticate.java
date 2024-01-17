@@ -1,5 +1,8 @@
 package nl.tudelft.sem.template.example.authenticationStrategy;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public interface Authenticate {
-    public boolean auth(String username);
+    boolean auth(String username);
 }
