@@ -6,7 +6,7 @@ import nl.tudelft.sem.template.example.services.UserService;
 import java.util.NoSuchElementException;
 
 public class AdminAuthentication implements Authenticate{
-    private UserService userService;
+    private final UserService userService;
 
     public AdminAuthentication(UserService userService) {
         this.userService = userService;
