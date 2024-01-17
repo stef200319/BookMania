@@ -36,7 +36,7 @@ public class BookController {
     BookRepository bookRepo;
     BookService bookService;
     UserService userService;
-    AuthorAuthentication authenticator;
+    Authenticate authenticator;
 
     /**
      * Create a new book controller.

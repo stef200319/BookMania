@@ -20,7 +20,7 @@ public class UserController {
 
     private final UserRepository userRepo;
     private final UserService userService;
-    private final AdminAuthentication authenticator;
+    private final Authenticate authenticator;
 
     /**
      * Create a user controller.
