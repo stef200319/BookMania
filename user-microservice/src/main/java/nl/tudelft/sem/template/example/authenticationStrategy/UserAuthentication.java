@@ -23,6 +23,6 @@ public class UserAuthentication implements Authenticate{
         } catch (NoSuchElementException e) {
             return false;
         }
-        return (user.getUserStatus().getUserRole().equals("Regular") || user.getUserStatus().getUserRole().equals("Author"));
+        return (user.getUserStatus().getUserRole().getValue().equals("Regular") || user.getUserStatus().getUserRole().getValue().equals("Author"));
     }
 }

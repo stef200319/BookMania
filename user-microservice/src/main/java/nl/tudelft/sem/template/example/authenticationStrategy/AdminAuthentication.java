@@ -22,6 +22,6 @@ public class AdminAuthentication implements Authenticate{
         } catch (NoSuchElementException e) {
             return false;
         }
-        return (user.getUserStatus().getUserRole().equals("Admin"));
+        return (user.getUserStatus().getUserRole().getValue().equals("Admin"));
     }
 }

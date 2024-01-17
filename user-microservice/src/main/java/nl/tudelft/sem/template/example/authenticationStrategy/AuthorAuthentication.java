@@ -22,6 +22,6 @@ public class AuthorAuthentication implements Authenticate{
         } catch (NoSuchElementException e) {
             return false;
         }
-        return user.getUserStatus().getUserRole().equals("Author");
+        return user.getUserStatus().getUserRole().getValue().equals("Author");
     }
 }
