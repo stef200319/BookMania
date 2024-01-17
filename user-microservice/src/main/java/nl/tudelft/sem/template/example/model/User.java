@@ -1,16 +1,19 @@
 package nl.tudelft.sem.template.example.model;
 
-import java.net.URI;
-import java.util.Objects;
-
-import com.fasterxml.jackson.annotation.*;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import java.util.Objects;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.Valid;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import nl.tudelft.sem.template.example.userUtilities.UserInfo;
 import nl.tudelft.sem.template.example.userUtilities.UserProfile;
 import nl.tudelft.sem.template.example.userUtilities.UserStatus;
@@ -23,14 +26,6 @@ public class User {
     @Id
     private String username;
 
-//    private String firstName;
-//
-//    private String lastName;
-//
-//    private String email;
-//
-//    private String password;
-
     @OneToOne
     private UserInfo userInfo;
 
@@ -41,7 +36,7 @@ public class User {
     private UserProfile userProfile;
 
     /**
-     * User role (Regular or Author or Admin)
+     * User role (Regular or Author or Admin).
      */
     public enum UserRoleEnum {
         REGULAR("Regular"),
@@ -54,6 +49,7 @@ public class User {
 
         /**
          * Creates a UserRoleEnum.
+         *
          * @param value Either "Regular", "Admin", or "Author"
          */
         UserRoleEnum(String value) {
@@ -62,6 +58,7 @@ public class User {
 
         /**
          * Get the value of the enum.
+         *
          * @return The value of the enum.
          */
         @JsonValue
@@ -71,6 +68,7 @@ public class User {
 
         /**
          * Returns the enum as a string.
+         *
          * @return The enum as a string.
          */
         @Override
@@ -80,6 +78,7 @@ public class User {
 
         /**
          * Creates a UserRoleEnum from a value string.
+         *
          * @param value The value string.
          * @return The UserRoleEnum.
          */
@@ -104,8 +103,12 @@ public class User {
     private List<String> following;
 
     /**
-     * Get the user's username
-     * @return The username
+     * Constructs a new User object with default user status, user profile, and user information.
+     *
+     * <p>
+     * This constructor initializes a new User instance with default values for user status, user profile,
+     * and user information. It ensures that these components are initialized and ready for further customization.
+     * </p>
      */
 
     public User() {
@@ -124,67 +127,78 @@ public class User {
         this.username = username;
     }
 
-//    /**
-//     * Get firstName
-//     * @return firstName
-//     */
-//
-//    @Schema(name = "firstName", example = "John", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-//    @JsonProperty("firstName")
-//    public String getFirstName() {
-//        return firstName;
-//    }
-//
-//    public void setFirstName(String firstName) {
-//        this.firstName = firstName;
-//    }
-//
-//    /**
-//     * Get lastName
-//     * @return lastName
-//     */
-//
-//    @Schema(name = "lastName", example = "James", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-//    @JsonProperty("lastName")
-//    public String getLastName() {
-//        return lastName;
-//    }
-//
-//    public void setLastName(String lastName) {
-//        this.lastName = lastName;
-//    }
-//
-//    /**
-//     * Get email
-//     * @return email
-//     */
-//
-//    @Schema(name = "email", example = "john@email.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-//    @JsonProperty("email")
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
-//
-//    /**
-//     * Get password
-//     * @return password
-//     */
-//
-//    @Schema(name = "password", example = "12345", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-//    @JsonProperty("password")
-//    public String getPassword() {
-//        return password;
-//    }
-//
-//    public void setPassword(String password) {
-//        this.password = password;
-//    }
+    //    /**
+    //     * Get firstName
+    //     * @return firstName
+    //     */
+    //
+    //    @Schema(name = "firstName", example = "John", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    //    @JsonProperty("firstName")
+    //    public String getFirstName() {
+    //        return firstName;
+    //    }
+    //
+    //    public void setFirstName(String firstName) {
+    //        this.firstName = firstName;
+    //    }
+    //
+    //    /**
+    //     * Get lastName
+    //     * @return lastName
+    //     */
+    //
+    //    @Schema(name = "lastName", example = "James", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    //    @JsonProperty("lastName")
+    //    public String getLastName() {
+    //        return lastName;
+    //    }
+    //
+    //    public void setLastName(String lastName) {
+    //        this.lastName = lastName;
+    //    }
+    //
+    //    /**
+    //     * Get email
+    //     * @return email
+    //     */
+    //
+    //    @Schema(name = "email", example = "john@email.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    //    @JsonProperty("email")
+    //    public String getEmail() {
+    //        return email;
+    //    }
+    //
+    //    public void setEmail(String email) {
+    //        this.email = email;
+    //    }
+    //
+    //    /**
+    //     * Get password
+    //     * @return password
+    //     */
+    //
+    //    @Schema(name = "password", example = "12345", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    //    @JsonProperty("password")
+    //    public String getPassword() {
+    //        return password;
+    //    }
+    //
+    //    public void setPassword(String password) {
+    //        this.password = password;
+    //    }
 
-
+    /**
+     * Adds a user to the list of followers for the current user.
+     *
+     * <p>
+     * This method adds the specified user to the list of followers for the current user.
+     * If the followers list is null, it is initialized as a new ArrayList. The modified
+     * user object is returned to support method chaining.
+     * </p>
+     *
+     * @param followersItem The user to be added to the list of followers.
+     * @return The modified user object with the updated list of followers.
+     */
 
     public User addFollowersItem(User followersItem) {
         if (this.followers == null) {
@@ -195,7 +209,8 @@ public class User {
     }
 
     /**
-     * Get followers
+     * Get followers.
+     *
      * @return followers
      */
     @Valid
@@ -209,6 +224,19 @@ public class User {
         this.followers = followers;
     }
 
+    /**
+     * Adds a user to the list of users being followed by the current user.
+     *
+     * <p>
+     * This method adds the specified user to the list of users being followed by the current user.
+     * If the following list is null, it is initialized as a new ArrayList. The modified user object
+     * is returned to support method chaining.
+     * </p>
+     *
+     * @param followingItem The user to be added to the list of users being followed.
+     * @return The modified user object with the updated list of users being followed.
+     */
+
     public User addFollowingItem(User followingItem) {
         if (this.following == null) {
             this.following = new ArrayList<>();
@@ -218,7 +246,8 @@ public class User {
     }
 
     /**
-     * Get following
+     * Get following.
+     *
      * @return following
      */
     @Valid
@@ -234,14 +263,24 @@ public class User {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         User user = (User) o;
-        return Objects.equals(username, user.username) && Objects.equals(userInfo, user.userInfo) && Objects.equals(userStatus, user.userStatus) && Objects.equals(userProfile, user.userProfile) && Objects.equals(followers, user.followers) && Objects.equals(following, user.following);
+        return Objects.equals(username, user.username)
+                && Objects.equals(userInfo, user.userInfo)
+                && Objects.equals(userStatus, user.userStatus)
+                && Objects.equals(userProfile, user.userProfile)
+                && Objects.equals(followers, user.followers)
+                && Objects.equals(following, user.following);
     }
 
     /**
      * Return the hashCode of the user.
+     *
      * @return The hash code.
      */
     @Override
@@ -251,18 +290,19 @@ public class User {
 
     /**
      * Returns the user as a string.
+     *
      * @return The user string.
      */
     @Override
     public String toString() {
-        return "User{" +
-                "username='" + username + '\'' +
-                ", userInfo=" + userInfo +
-                ", userStatus=" + userStatus +
-                ", userProfile=" + userProfile +
-                ", followers=" + followers +
-                ", following=" + following +
-                '}';
+        return "User{"
+                + "username='" + username + '\''
+                + ", userInfo=" + userInfo
+                + ", userStatus=" + userStatus
+                + ", userProfile=" + userProfile
+                + ", followers=" + followers
+                + ", following=" + following
+                + '}';
     }
 }
 
