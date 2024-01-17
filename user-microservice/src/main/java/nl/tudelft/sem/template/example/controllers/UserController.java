@@ -406,8 +406,8 @@ public class UserController {
                 case "User is not logged in" -> {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
                 }
-                case "User is inactive" -> {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User account is already inactive");
+                case "User is active" -> {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User account is already active");
                 }
                 default -> {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server error");
@@ -449,10 +449,10 @@ public class UserController {
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
             switch (e.getMessage()) {
                 case "User does not exist" -> {
-                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username is not valid");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the admin is not valid");
                 }
                 case "User is not logged in" -> {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Admin is not logged in");
                 }
                 case "User is not an admin" -> {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
@@ -500,10 +500,10 @@ public class UserController {
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
             switch (e.getMessage()) {
                 case "User does not exist" -> {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is not valid");
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the admin is not valid");
                 }
                 case "User is not logged in" -> {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Admin is not logged in");
                 }
                 case "User is not an admin" -> {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");

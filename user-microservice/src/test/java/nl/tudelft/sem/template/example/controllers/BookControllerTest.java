@@ -46,6 +46,7 @@ public class BookControllerTest {
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setIsLoggedIn(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
@@ -71,6 +72,7 @@ public class BookControllerTest {
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setIsLoggedIn(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
@@ -95,6 +97,7 @@ public class BookControllerTest {
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setIsLoggedIn(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
@@ -120,6 +123,7 @@ public class BookControllerTest {
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setIsLoggedIn(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
@@ -145,6 +149,7 @@ public class BookControllerTest {
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setIsLoggedIn(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
@@ -170,6 +175,7 @@ public class BookControllerTest {
         User adminUser = new User();
         adminUser.setUsername("testUsername");
         adminUser.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
+        adminUser.getUserStatus().setIsLoggedIn(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
