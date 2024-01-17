@@ -14,8 +14,9 @@ public class UserBannedValidator extends BaseUserValidator {
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        if(user.getUserStatus().getIsBanned() == null || user.getUserStatus().getIsBanned())
+        if (user.getUserStatus().getIsBanned() == null || user.getUserStatus().getIsBanned()) {
             throw new InvalidUserException("User is banned");
+        }
 
         return super.checkNext(user);
     }

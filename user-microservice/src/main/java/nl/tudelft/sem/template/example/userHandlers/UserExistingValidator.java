@@ -19,8 +19,10 @@ public class UserExistingValidator extends BaseUserValidator {
         String username = user.getUsername();
 
 
-        if(!userRepository.existsById(username))
+        if (!userRepository.existsById(username)) {
             throw new InvalidUserException("User does not exist");
+        }
+
         User userInRepo = userRepository.findById(username).get();
 
         return super.checkNext(userInRepo);

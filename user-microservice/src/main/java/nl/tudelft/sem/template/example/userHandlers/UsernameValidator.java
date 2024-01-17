@@ -17,11 +17,13 @@ public class UsernameValidator extends  BaseUserValidator {
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
         String username = user.getUsername();
 
-        if(userRepository.existsById(username))
+        if (userRepository.existsById(username)) {
             throw new InvalidUsernameException("Username already in use");
+        }
 
-        if(!username.matches("^[a-zA-Z][a-zA-Z0-9]*"))
+        if (!username.matches("^[a-zA-Z][a-zA-Z0-9]*")) {
             throw new InvalidUsernameException("Invalid username format");
+        }
 
         return super.checkNext(user);
     }
