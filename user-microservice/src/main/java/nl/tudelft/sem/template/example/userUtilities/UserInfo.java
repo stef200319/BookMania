@@ -1,13 +1,12 @@
 package nl.tudelft.sem.template.example.userUtilities;
 
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Objects;
 
 @Setter
 @Getter
@@ -29,10 +28,18 @@ public class UserInfo {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UserInfo userInfo = (UserInfo) o;
-        return Objects.equals(username, userInfo.username) && Objects.equals(firstName, userInfo.firstName) && Objects.equals(lastName, userInfo.lastName) && Objects.equals(email, userInfo.email) && Objects.equals(password, userInfo.password);
+        return Objects.equals(username, userInfo.username)
+                && Objects.equals(firstName, userInfo.firstName)
+                && Objects.equals(lastName, userInfo.lastName)
+                && Objects.equals(email, userInfo.email)
+                && Objects.equals(password, userInfo.password);
     }
 
     @Override
@@ -42,12 +49,12 @@ public class UserInfo {
 
     @Override
     public String toString() {
-        return "UserInfo{" +
-                "username='" + username + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+        return "UserInfo{"
+                + "username='" + username + '\''
+                + ", firstName='" + firstName + '\''
+                + ", lastName='" + lastName + '\''
+                + ", email='" + email + '\''
+                + ", password='" + password + '\''
+                + '}';
     }
 }

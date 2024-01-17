@@ -14,8 +14,9 @@ public class AdminValidator extends BaseUserValidator {
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        if(!user.getUserStatus().getUserRole().equals(User.UserRoleEnum.ADMIN))
+        if (!user.getUserStatus().getUserRole().equals(User.UserRoleEnum.ADMIN)) {
             throw new InvalidUserException("User is not an admin");
+        }
 
         return super.checkNext(user);
     }

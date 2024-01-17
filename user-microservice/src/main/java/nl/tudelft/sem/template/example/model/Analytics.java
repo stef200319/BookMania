@@ -2,14 +2,13 @@ package nl.tudelft.sem.template.example.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
@@ -60,7 +59,8 @@ public class Analytics {
 
 
     /**
-     * Get userUsername
+     * Get userUsername.
+     *
      * @return userUsername
      */
 
@@ -71,8 +71,9 @@ public class Analytics {
     }
 
     /**
-     * Set username
-     * @param userUsername
+     * Set username.
+     *
+     * @param userUsername username of the user
      */
     public void setUserUsername(String userUsername) {
         this.userUsername = userUsername;
@@ -80,7 +81,8 @@ public class Analytics {
 
 
     /**
-     * Get reviewsNumber
+     * Get reviewsNumber.
+     *
      * @return reviewsNumber
      */
 
@@ -91,8 +93,9 @@ public class Analytics {
     }
 
     /**
-     * Set user's reviews number
-     * @param reviewsNumber
+     * Set user's reviews number.
+     *
+     * @param reviewsNumber review number that will be set
      */
     public void setReviewsNumber(Long reviewsNumber) {
         this.reviewsNumber = reviewsNumber;
@@ -100,7 +103,8 @@ public class Analytics {
 
 
     /**
-     * Get commentsNumber
+     * Get commentsNumber.
+     *
      * @return commentsNumber
      */
 
@@ -111,8 +115,9 @@ public class Analytics {
     }
 
     /**
-     * Set user's commentsNumber
-     * @param commentsNumber
+     * Set user's commentsNumber.
+     *
+     * @param commentsNumber comment number that will be set
      */
     public void setCommentsNumber(Long commentsNumber) {
         this.commentsNumber = commentsNumber;
@@ -120,7 +125,8 @@ public class Analytics {
 
 
     /**
-     * Get lastLoginDate
+     * Get lastLoginDate.
+     *
      * @return lastLoginDate
      */
 
@@ -131,8 +137,9 @@ public class Analytics {
     }
 
     /**
-     * Set user's lastLoginDate
-     * @param lastLoginDate
+     * Set user's lastLoginDate.
+     *
+     * @param lastLoginDate last login date of the user
      */
     public void setLastLoginDate(String lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
@@ -140,7 +147,8 @@ public class Analytics {
 
 
     /**
-     * Get followersNumber
+     * Get followersNumber.
+     *
      * @return followersNumber
      */
 
@@ -151,8 +159,9 @@ public class Analytics {
     }
 
     /**
-     * Set user's followers number
-     * @param followersNumber
+     * Set user's followers number.
+     *
+     * @param followersNumber followers number that will be set
      */
     public void setFollowersNumber(Long followersNumber) {
         this.followersNumber = followersNumber;
@@ -160,7 +169,8 @@ public class Analytics {
 
 
     /**
-     * Get followingNumber
+     * Get followingNumber.
+     *
      * @return followingNumber
      */
 
@@ -171,8 +181,9 @@ public class Analytics {
     }
 
     /**
-     * Set user's following number
-     * @param followingNumber
+     * Set user's following number.
+     *
+     * @param followingNumber following number that will be set
      */
     public void setFollowingNumber(Long followingNumber) {
         this.followingNumber = followingNumber;
@@ -193,12 +204,12 @@ public class Analytics {
             return false;
         }
         Analytics analytics = (Analytics) o;
-        return Objects.equals(this.userUsername, analytics.userUsername) &&
-                Objects.equals(this.reviewsNumber, analytics.reviewsNumber) &&
-                Objects.equals(this.commentsNumber, analytics.commentsNumber) &&
-                Objects.equals(this.lastLoginDate, analytics.lastLoginDate) &&
-                Objects.equals(this.followersNumber, analytics.followersNumber) &&
-                Objects.equals(this.followingNumber, analytics.followingNumber);
+        return Objects.equals(this.userUsername, analytics.userUsername)
+                && Objects.equals(this.reviewsNumber, analytics.reviewsNumber)
+                && Objects.equals(this.commentsNumber, analytics.commentsNumber)
+                && Objects.equals(this.lastLoginDate, analytics.lastLoginDate)
+                && Objects.equals(this.followersNumber, analytics.followersNumber)
+                && Objects.equals(this.followingNumber, analytics.followingNumber);
     }
 
     /**

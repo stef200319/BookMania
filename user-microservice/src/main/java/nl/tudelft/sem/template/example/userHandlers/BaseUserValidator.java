@@ -20,8 +20,10 @@ public abstract class BaseUserValidator implements UserValidator {
 
     protected boolean checkNext(User user)
         throws InvalidUserException, InvalidUsernameException, InvalidEmailException {
-        if(next == null)
+        if (next == null) {
             return true;
+        }
+
         return next.handle(user);
     }
 

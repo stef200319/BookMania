@@ -6,16 +6,17 @@ import nl.tudelft.sem.template.example.exceptions.InvalidBookException;
 import nl.tudelft.sem.template.example.exceptions.InvalidBookIdException;
 import nl.tudelft.sem.template.example.model.Book;
 
-public class BookSeriesValidator extends BaseBookValidator{
-    public BookSeriesValidator(BookRepository bookRepository){
+public class BookSeriesValidator extends BaseBookValidator {
+    public BookSeriesValidator(BookRepository bookRepository) {
         super(bookRepository);
     }
+
     @Override
     public boolean handle(Book book) throws InvalidBookException, InvalidAuthorException, InvalidBookIdException {
         if (book.getSeries() == null) {
             throw new InvalidBookException("Book must have a series associated to it");
         }
-        if(book.getSeries().isBlank()){
+        if (book.getSeries().isBlank()) {
             throw new InvalidBookException("Book must have a series associated to it");
         }
         return this.checkNext(book);

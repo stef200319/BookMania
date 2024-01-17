@@ -18,8 +18,9 @@ public class PasswordValidator extends BaseUserValidator {
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
 
-        if(!user.getUserInfo().getPassword().equals(loggingIn.getUserInfo().getPassword()))
+        if (!user.getUserInfo().getPassword().equals(loggingIn.getUserInfo().getPassword())) {
             throw new InvalidUserException("Wrong password");
+        }
 
         return super.checkNext(user);
     }

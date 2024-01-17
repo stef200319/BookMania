@@ -13,8 +13,10 @@ public class UserDifferentProfileUsernameValidator extends BaseUserValidator {
     }
 
     @Override
-    public boolean handle(User user) throws InvalidUserException, InvalidEmailException, InvalidUsernameException{
-        if(!user.getUsername().equals(user.getUserProfile().getUsername())) throw new InvalidUserException("The usernames of the user do not match with the ones of the profile.");
+    public boolean handle(User user) throws InvalidUserException, InvalidEmailException, InvalidUsernameException {
+        if (!user.getUsername().equals(user.getUserProfile().getUsername())) {
+            throw new InvalidUserException("The usernames of the user do not match with the ones of the profile.");
+        }
         return super.checkNext(user);
     }
 }
