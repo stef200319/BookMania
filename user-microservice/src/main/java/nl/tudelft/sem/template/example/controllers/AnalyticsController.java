@@ -1,6 +1,13 @@
 package nl.tudelft.sem.template.example.controllers;
 
-import nl.tudelft.sem.template.example.analyticsHandlers.*;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsCommentValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsCreationUsernameValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsFollowersValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsFollowingValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsIDExistsValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsLoginDateValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsReviewValidator;
+import nl.tudelft.sem.template.example.analyticsHandlers.AnalyticsUsernameValidator;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
@@ -11,13 +18,17 @@ import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.services.AnalyticsService;
 import nl.tudelft.sem.template.example.userHandlers.UserExistingValidator;
-import nl.tudelft.sem.template.example.userHandlers.UsernameValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.logging.Handler;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/analytics")
@@ -29,12 +40,17 @@ public class AnalyticsController {
 
     /**
      * Creates an analytics controller.
+     *
      * @param userRepository The user repository.
      * @param analyticsRepository The analytics repository.
      * @param analyticsService The analytics service to handle all the logic.
      */
     @Autowired
-    public AnalyticsController(UserRepository userRepository, AnalyticsRepository analyticsRepository, AnalyticsService analyticsService) {
+    public AnalyticsController(
+        UserRepository userRepository,
+        AnalyticsRepository analyticsRepository,
+        AnalyticsService analyticsService
+    ) {
         this.userRepository = userRepository;
         this.analyticsRepository = analyticsRepository;
         this.analyticsService = analyticsService;
@@ -42,15 +58,23 @@ public class AnalyticsController {
 
     /**
      * Creates an analytics entity from an existing entity.
+     *
      * @param username The user for which to create the analytics entity.
      * @param analytics The entity to create.
      * @return Either an error message or the created entity.
      */
     @PostMapping("/{username}")
-    public ResponseEntity createAnalyticsEntity(@PathVariable String username, @RequestBody Analytics analytics) {
-        if(!userRepository.existsById(username)) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
+    public ResponseEntity createAnalyticsEntity(
+        @PathVariable String username,
+        @RequestBody Analytics analytics
+    ) {
+        if (!userRepository.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
+        }
 
-        if(analyticsRepository.existsById(username)) return ResponseEntity.status(HttpStatus.CONFLICT).body("Analytics entity already exists.");
+        if (analyticsRepository.existsById(username)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Analytics entity already exists.");
+        }
 
         Analytics savedAnalytics = analyticsService.createAnalytics(analytics);
         return ResponseEntity.status(HttpStatus.OK).body(savedAnalytics);
@@ -58,6 +82,7 @@ public class AnalyticsController {
 
     /**
      * Creates a new analytics entity.
+     *
      * @param username The user for which to create the analytics entity.
      * @return Either an error message or the created entity.
      */
@@ -67,7 +92,7 @@ public class AnalyticsController {
         User dummy = new User();
         dummy.setUsername(username);
 
-        try{
+        try {
             h1.handle(dummy);
         } catch (InvalidUsernameException  | InvalidUserException  | InvalidEmailException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
@@ -88,6 +113,7 @@ public class AnalyticsController {
 
     /**
      * Edit an existing analytics entity.
+     *
      * @param username The user for which the entity exists.
      * @param editedAnalytics The modified version of the entity.
      * @return The new entity values.
@@ -98,7 +124,7 @@ public class AnalyticsController {
         User dummy = new User();
         dummy.setUsername(username);
 
-        try{
+        try {
             h1.handle(dummy);
         } catch (InvalidUsernameException  | InvalidUserException  | InvalidEmailException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
@@ -115,14 +141,14 @@ public class AnalyticsController {
 
         AnalyticsUsernameValidator h2 = new AnalyticsUsernameValidator(username, userRepository);
         AnalyticsReviewValidator h3 = new AnalyticsReviewValidator();
-        AnalyticsCommentValidator h4 = new AnalyticsCommentValidator();
-        AnalyticsFollowersValidator h5 = new AnalyticsFollowersValidator();
-        AnalyticsFollowingValidator h6 = new AnalyticsFollowingValidator();
-        AnalyticsLoginDateValidator h7 = new AnalyticsLoginDateValidator();
         h2.setNext(h3);
+        AnalyticsCommentValidator h4 = new AnalyticsCommentValidator();
         h3.setNext(h4);
+        AnalyticsFollowersValidator h5 = new AnalyticsFollowersValidator();
         h4.setNext(h5);
+        AnalyticsFollowingValidator h6 = new AnalyticsFollowingValidator();
         h5.setNext(h6);
+        AnalyticsLoginDateValidator h7 = new AnalyticsLoginDateValidator();
         h6.setNext(h7);
 
         try {
@@ -130,11 +156,14 @@ public class AnalyticsController {
         } catch (InvalidAnalyticsException e) {
             return switch (e.getMessage()) {
                 case "The username of the edited data does not exist in the database." ->
-                    ResponseEntity.status(HttpStatus.NOT_FOUND).body("Username does not exist.");
+                    ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Username does not exist.");
                 case "The username of the analytics entity does not match with the one passed as a parameter." ->
-                    ResponseEntity.status(HttpStatus.CONFLICT).body("The username of the analytics entity does not match with the one passed as a parameter.");
+                    ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("The username of the analytics entity does not match with the one passed as a parameter.");
                 default ->
-                    ResponseEntity.status(HttpStatus.BAD_REQUEST).body("A field of the analytics entity passed as a parameter is illegal.");
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("A field of the analytics entity passed as a parameter is illegal.");
             };
         }
 
@@ -144,6 +173,7 @@ public class AnalyticsController {
 
     /**
      * Get an existing analytics entity.
+     *
      * @param username The user for which the entity exists.
      * @return Either an error or the entity for the user.
      */
@@ -164,6 +194,7 @@ public class AnalyticsController {
 
     /**
      * Delete an analytics entity.
+     *
      * @param username The user of the analytics entity.
      * @return Either an error or deleted analytics entity.
      */
