@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.example;
+package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.controllers.AnalyticsController;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
