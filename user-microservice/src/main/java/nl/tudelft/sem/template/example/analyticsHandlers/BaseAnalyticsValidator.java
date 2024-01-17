@@ -6,18 +6,18 @@ import nl.tudelft.sem.template.example.model.Analytics;
 
 public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
     private AnalyticsValidator next;
-    protected AnalyticsRepository analyticsRepository;
+
     /**
-     * Creates an instance of this class
+     * Creates an instance of this class.
      */
     public BaseAnalyticsValidator() {
         this.next = null;
     }
 
     /**
-     * Sets the next handler in the chain
+     * Sets the next handler in the chain.
      *
-     * @param handler
+     * @param handler validator
      */
     public void setNext(AnalyticsValidator handler) {
         this.next = handler;
@@ -27,13 +27,15 @@ public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
      * Handles the request given as a parameter, in this case checks if a condition for
      * the analytics is met.
      *
-     * @param analytics
-     * @return
-     * @throws InvalidAnalyticsException
+     * @param analytics that will be checked
+     * @return validation result
+     * @throws InvalidAnalyticsException can be thrown if the validator is null
      */
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
-        if(next == null)
+        if (next == null) {
             return true;
+        }
+
         return next.handle(analytics);
     }
 }

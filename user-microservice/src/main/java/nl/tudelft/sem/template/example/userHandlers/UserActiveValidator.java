@@ -14,8 +14,9 @@ public class UserActiveValidator extends BaseUserValidator {
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        if(!user.getUserStatus().getIsActive())
+        if (!user.getUserStatus().getIsActive()) {
             throw new InvalidUserException("User is inactive");
+        }
 
         return super.checkNext(user);
     }

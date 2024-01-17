@@ -18,8 +18,9 @@ public class EmailValidator extends BaseUserValidator {
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
         String email = user.getUserInfo().getEmail();
 
-        if(!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$"))
+        if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
             throw new InvalidEmailException("Invalid email format");
+        }
 
         return super.checkNext(user);
     }

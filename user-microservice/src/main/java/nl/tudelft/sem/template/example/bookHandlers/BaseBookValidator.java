@@ -6,17 +6,22 @@ import nl.tudelft.sem.template.example.exceptions.InvalidBookException;
 import nl.tudelft.sem.template.example.exceptions.InvalidBookIdException;
 import nl.tudelft.sem.template.example.model.Book;
 
-public abstract class BaseBookValidator implements BookValidator{
+public abstract class BaseBookValidator implements BookValidator {
     private BookValidator next;
     protected BookRepository bookRepository;
 
-    public BaseBookValidator(BookRepository bookRepository){
-        this.bookRepository=bookRepository;
+    public BaseBookValidator(BookRepository bookRepository) {
+        this.bookRepository =   bookRepository;
     }
-    public void setNext(BookValidator handler){this.next=handler;}
+
+    public void setNext(BookValidator handler) {
+        this.next = handler;
+    }
 
     protected boolean checkNext(Book book) throws InvalidBookException, InvalidAuthorException, InvalidBookIdException {
-        if(this.next==null){return true;}
+        if (this.next == null) {
+            return true;
+        }
         return next.handle(book);
     }
 }

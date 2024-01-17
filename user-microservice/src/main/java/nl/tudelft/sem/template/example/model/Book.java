@@ -1,16 +1,8 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package nl.tudelft.sem.template.example.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,11 +10,11 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.Valid;
+import lombok.AllArgsConstructor;
 
 @Entity
 @AllArgsConstructor
-public class
-Book {
+public class Book {
     @Id
     private Long id;
     private String title;
@@ -48,6 +40,7 @@ Book {
 
     /**
      * Get the id of the book.
+     *
      * @return The id of the book.
      */
     @Schema(
@@ -62,6 +55,7 @@ Book {
 
     /**
      * Set the id of the book.
+     *
      * @param id The id of the book.
      */
     public void setId(Long id) {
@@ -70,6 +64,7 @@ Book {
 
     /**
      * Get the title of the book.
+     *
      * @return The title of the book.
      */
     @Schema(
@@ -84,6 +79,7 @@ Book {
 
     /**
      * Set the title of the book.
+     *
      * @param title The title of the book.
      */
     public void setTitle(String title) {
@@ -92,6 +88,7 @@ Book {
 
     /**
      * Get the description of the book.
+     *
      * @return The description of the book.
      */
     @Schema(
@@ -106,6 +103,7 @@ Book {
 
     /**
      * Set the description of the book.
+     *
      * @param description The description of the book.
      */
     public void setDescription(String description) {
@@ -114,6 +112,7 @@ Book {
 
     /**
      * Get the author of the book.
+     *
      * @return The author of the book.
      */
     @Schema(
@@ -128,6 +127,7 @@ Book {
 
     /**
      * Set the author of the book.
+     *
      * @param author The author of the book.
      */
     public void setAuthor(String author) {
@@ -136,6 +136,7 @@ Book {
 
     /**
      * Get the number of reads of the book.
+     *
      * @return The number of reads of the book.
      */
     @Schema(
@@ -150,6 +151,7 @@ Book {
 
     /**
      * Set the reads for the book.
+     *
      * @param reads Number of reads.
      */
     public void setReads(Long reads) {
@@ -158,6 +160,7 @@ Book {
 
     /**
      * Get the series the book is in.
+     *
      * @return The series the book is in.
      */
     @Schema(
@@ -172,6 +175,7 @@ Book {
 
     /**
      * Set the series of the book.
+     *
      * @param series The series.
      */
     public void setSeries(String series) {
@@ -180,6 +184,7 @@ Book {
 
     /**
      * Add a genre to the list of genres.
+     *
      * @param genresItem The genre to add.
      */
     public void addGenresItem(String genresItem) {
@@ -192,6 +197,7 @@ Book {
 
     /**
      * Get the list of genres.
+     *
      * @return The list of genres.
      */
     @Schema(
@@ -206,6 +212,7 @@ Book {
 
     /**
      * Set the list of genres.
+     *
      * @param genres The list of genres.
      */
     public void setGenres(List<String> genres) {
@@ -214,6 +221,7 @@ Book {
 
     /**
      * Checks the equality of two books.
+     *
      * @param o The other object to compare with.
      * @return Whether the books are equal.
      */
@@ -221,8 +229,11 @@ Book {
         if (this == o) {
             return true;
         } else if (o != null && this.getClass() == o.getClass()) {
-            Book book = (Book)o;
-            return Objects.equals(this.id, book.id) && Objects.equals(this.title, book.title) && Objects.equals(this.description, book.description) && Objects.equals(this.author, book.author) && Objects.equals(this.reads, book.reads) && Objects.equals(this.series, book.series) && Objects.equals(this.genres, book.genres);
+            Book book = (Book) o;
+            return Objects.equals(this.id, book.id) && Objects.equals(this.title, book.title)
+                    && Objects.equals(this.description, book.description)
+                    && Objects.equals(this.author, book.author) && Objects.equals(this.reads, book.reads)
+                    && Objects.equals(this.series, book.series) && Objects.equals(this.genres, book.genres);
         } else {
             return false;
         }
@@ -230,6 +241,7 @@ Book {
 
     /**
      * Compute the hash of the book.
+     *
      * @return The hash code of the book.
      */
     public int hashCode() {
@@ -238,6 +250,7 @@ Book {
 
     /**
      * Get the book's string representation.
+     *
      * @return The book as a string.
      */
     public String toString() {
@@ -256,6 +269,7 @@ Book {
 
     /**
      * Return the book as an indented string.
+     *
      * @param o The book.
      * @return The book as an indented string.
      */

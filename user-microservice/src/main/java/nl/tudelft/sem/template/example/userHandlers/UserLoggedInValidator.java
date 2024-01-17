@@ -14,8 +14,9 @@ public class UserLoggedInValidator extends BaseUserValidator {
     @Override
     public boolean handle(User user)
         throws InvalidUsernameException, InvalidUserException, InvalidEmailException {
-        if(user.getUserStatus().getIsLoggedIn() == null || !user.getUserStatus().getIsLoggedIn())
+        if (user.getUserStatus().getIsLoggedIn() == null || !user.getUserStatus().getIsLoggedIn()) {
             throw new InvalidUserException("User is not logged in");
+        }
 
         return super.checkNext(user);
     }
