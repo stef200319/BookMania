@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.example.bookHandlers.BookExistingValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookGenresValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookIdValidator;
 import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
+import nl.tudelft.sem.template.example.authenticationStrategy.AuthorAuthentication;
 import nl.tudelft.sem.template.example.bookHandlers.*;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -50,6 +51,7 @@ public class BookController {
     @Autowired
     BookRepository bookRepo;
     BookService bookService;
+    UserService userService;
     Authenticate authenticator;
 
     /**
@@ -59,10 +61,11 @@ public class BookController {
      * @param bookService The service that handles book logic.
      */
     @Autowired
-    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo, Authenticate authenticator) {
+    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo, UserService userService, AuthorAuthentication authenticator) {
         this.bookRepo = bookRepo;
         this.bookService = bookService;
         this.userRepo = userRepo;
+        this.userService = userService;
         this.authenticator=authenticator;
     }
 
@@ -81,12 +84,19 @@ public class BookController {
         av.setNext(ulv);
         userHandler.setNext(av);
 
-        // Authorize the user
-        if(!authenticator.auth(username)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
-        }
         User user = new User();
         user.setUsername(username);
+
+        if(authenticator.auth(username)){
+            User author = userService.fetchUser(username);
+            String authorFirstName = author.getUserInfo().getFirstName();
+            String authorLastName = author.getUserInfo().getLastName();
+            String authorName = newBook.getAuthor();
+            if(!authorName.equals(authorFirstName+" "+authorLastName)){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("An author can add one's book only");
+            }
+        }
+
         try {
             userHandler.handle(user);
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
@@ -99,6 +109,11 @@ public class BookController {
                 }
                 default -> {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
+            }
+            if(e.getMessage().equals("User is not an admin")){
+                if(!authenticator.auth(username)){
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
                 }
             }
         }
@@ -179,9 +194,16 @@ public class BookController {
         userHandler.setNext(av);
 
         // Authorize the user
-        if(!authenticator.auth(username)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        if(authenticator.auth(username)){
+            User author = userService.fetchUser(username);
+            String authorFirstName = author.getUserInfo().getFirstName();
+            String authorLastName = author.getUserInfo().getLastName();
+            String authorName = updatedBook.getAuthor();
+            if(!authorName.equals(authorFirstName+" "+authorLastName)){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("An author can add one's book only");
+            }
         }
+
 
         User user = new User();
         user.setUsername(username);
@@ -198,6 +220,11 @@ public class BookController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+            if(e.getMessage().equals("User is not an admin")){
+                if(!authenticator.auth(username)){
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+                }
             }
         }
 

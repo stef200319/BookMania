@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import java.util.List;
+import nl.tudelft.sem.template.example.authenticationStrategy.AdminAuthentication;
 import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
@@ -48,7 +49,7 @@ public class UserController {
      * @param userService The service that handles all the logic.
      */
     @Autowired
-    public UserController(UserRepository userRepo, UserService userService, Authenticate authenticator) {
+    public UserController(UserRepository userRepo, UserService userService, AdminAuthentication authenticator) {
         this.userRepo = userRepo;
         this.userService = userService;
         this.authenticator = authenticator;
