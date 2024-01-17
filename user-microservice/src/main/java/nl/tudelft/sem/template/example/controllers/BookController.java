@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
 import nl.tudelft.sem.template.example.bookHandlers.*;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -33,6 +34,7 @@ public class BookController {
     @Autowired
     BookRepository bookRepo;
     BookService bookService;
+    Authenticate authenticator;
 
     /**
      * Create a new book controller.
@@ -40,10 +42,11 @@ public class BookController {
      * @param bookService The service that handles book logic.
      */
     @Autowired
-    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo) {
+    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo, Authenticate authenticator) {
         this.bookRepo = bookRepo;
         this.bookService = bookService;
         this.userRepo = userRepo;
+        this.authenticator=authenticator;
     }
 
     /**
@@ -59,6 +62,11 @@ public class BookController {
         UserLoggedInValidator ulv = new UserLoggedInValidator(userRepo);
         av.setNext(ulv);
         userHandler.setNext(av);
+
+        // Authorize the user
+        if(!authenticator.auth(username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        }
         User user = new User();
         user.setUsername(username);
         try {
@@ -67,9 +75,6 @@ public class BookController {
         catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e){
             if(e.getMessage().equals("User does not exist")){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-            }
-            if(e.getMessage().equals("User is not an admin")){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             }
         }
 
@@ -139,6 +144,11 @@ public class BookController {
         AdminValidator av = new AdminValidator(userRepo);
         userHandler.setNext(av);
 
+        // Authorize the user
+        if(!authenticator.auth(username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        }
+
         User user = new User();
         user.setUsername(username);
 
@@ -151,9 +161,6 @@ public class BookController {
         catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e){
             if(e.getMessage().equals("User does not exist")){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
-            }
-            if(e.getMessage().equals("User is not an admin")){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             }
         }
 
@@ -266,15 +273,17 @@ public class BookController {
         user.setUsername(username);
         Book book = new Book();
         book.setId(id);
+
+        // Authorize the user
+        if(!authenticator.auth(username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        }
         try {
             userHandler.handle(user);
         }
         catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e){
             if(e.getMessage().equals("User does not exist")){
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
-            }
-            if(e.getMessage().equals("User is not an admin")){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             }
         }
         try {
