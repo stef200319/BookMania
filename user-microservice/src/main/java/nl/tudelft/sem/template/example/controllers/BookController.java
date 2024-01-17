@@ -5,6 +5,11 @@ import nl.tudelft.sem.template.example.bookHandlers.BookDescriptionValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookExistingValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookGenresValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookIdValidator;
+import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
+import nl.tudelft.sem.template.example.bookHandlers.*;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import javax.validation.Valid;
 import nl.tudelft.sem.template.example.bookHandlers.BookNotNullValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookSeriesValidator;
 import nl.tudelft.sem.template.example.bookHandlers.BookTitleValidator;
@@ -45,6 +50,7 @@ public class BookController {
     @Autowired
     BookRepository bookRepo;
     BookService bookService;
+    Authenticate authenticator;
 
     /**
      * Create a new book controller.
@@ -53,10 +59,11 @@ public class BookController {
      * @param bookService The service that handles book logic.
      */
     @Autowired
-    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo) {
+    public BookController(BookRepository bookRepo, BookService bookService, UserRepository userRepo, Authenticate authenticator) {
         this.bookRepo = bookRepo;
         this.bookService = bookService;
         this.userRepo = userRepo;
+        this.authenticator=authenticator;
     }
 
     /**
@@ -73,6 +80,11 @@ public class BookController {
         UserLoggedInValidator ulv = new UserLoggedInValidator(userRepo);
         av.setNext(ulv);
         userHandler.setNext(av);
+
+        // Authorize the user
+        if(!authenticator.auth(username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        }
         User user = new User();
         user.setUsername(username);
         try {
@@ -94,8 +106,9 @@ public class BookController {
         BookNotNullValidator bookNotNullHandler = new BookNotNullValidator(bookRepo);
         try {
             bookNotNullHandler.handle(newBook);
-        } catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book cannot be null");
+        }
+        catch(InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Book cannot be null");
         }
 
 
@@ -164,6 +177,11 @@ public class BookController {
         UserExistingValidator userHandler = new UserExistingValidator(userRepo);
         AdminValidator av = new AdminValidator(userRepo);
         userHandler.setNext(av);
+
+        // Authorize the user
+        if(!authenticator.auth(username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        }
 
         User user = new User();
         user.setUsername(username);
@@ -235,8 +253,8 @@ public class BookController {
         BookNotNullValidator bookNotNullValidator = new BookNotNullValidator(bookRepo);
         try {
             bookNotNullValidator.handle(updatedBook);
-        } catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book cannot be null");
+        } catch (InvalidBookException | InvalidAuthorException | InvalidBookIdException e){
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("Book cannot be null");
         }
 
         bookService.updateBook(updatedBook, id);
@@ -252,6 +270,12 @@ public class BookController {
      */
     @GetMapping("/{id}")
     public ResponseEntity getBook(@PathVariable Long id) {
+    public ResponseEntity getBook(@PathVariable Long id){
+
+        if (id == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an id");
+        }
+
         BookExistingValidator bookHandler = new BookExistingValidator(bookRepo);
         BookIdValidator bookIdValidator = new BookIdValidator(bookRepo);
         bookHandler.setNext(bookIdValidator);
@@ -288,6 +312,11 @@ public class BookController {
         user.setUsername(username);
         Book book = new Book();
         book.setId(id);
+
+        // Authorize the user
+        if(!authenticator.auth(username)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+        }
         try {
             userHandler.handle(user);
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
@@ -343,7 +372,7 @@ public class BookController {
      * @param ids The list of ids.
      * @return The list of books.
      */
-    @GetMapping("")
+    @PostMapping("")
     public ResponseEntity getBooks(@RequestBody List<String> ids) {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getBooks(ids));
     }
@@ -363,64 +392,16 @@ public class BookController {
      */
     @GetMapping("/search")
     public ResponseEntity bookSearchGet(
-        String author,
-        String genre,
-        String title,
-        String description,
-        String series,
-        String sortBy
+        @RequestParam(required = false) String author,
+        @RequestParam(required = false) String genre,
+        @RequestParam(required = false) String title,
+        @RequestParam(required = false) String description,
+        @RequestParam(required = false) String series,
+        @RequestParam String sortBy
     ) {
-        Book book = new Book();
-        List<String> genres = new ArrayList<>();
-        genres.add(genre);
-        book.setGenres(genres);
-        book.setAuthor(author);
-        book.setTitle(title);
-        book.setDescription(description);
-        book.setSeries(series);
-
-
-
-        BookGenresValidator v5 = new BookGenresValidator(bookRepo);
-        BookSeriesValidator v4 = new BookSeriesValidator(bookRepo);
-        v4.setNext(v5);
-        BookDescriptionValidator v3 = new BookDescriptionValidator(bookRepo);
-        v3.setNext(v4);
-        BookTitleValidator v2 = new BookTitleValidator(bookRepo);
-        v2.setNext(v3);
-        BookAuthorValidator bookHandler = new BookAuthorValidator(bookRepo);
-        bookHandler.setNext(v2);
-
-        try {
-            bookHandler.handle(book);
-        } catch (InvalidBookException | InvalidBookIdException e) {
-            switch (e.getMessage()) {
-                case "Book must have a description" -> {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a description");
-                }
-                case "Book must have at least one genre" -> {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have at least one genre");
-                }
-                case "Book must have a series associated to it" -> {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a series associated to it");
-                }
-                case "Book must have a title" -> {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have a title");
-                }
-                default -> {
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-                }
-            }
-        } catch (InvalidAuthorException e) {
-            if (e.getMessage().equals("Book must have an author")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book must have an author");
-            } else if (e.getMessage().equals("The author name contains illegal characters.")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("The author name contains illegal characters.");
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-            }
+        if (author == null && genre == null && title == null && description == null && series == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-
         return ResponseEntity.status(HttpStatus.OK)
             .body(bookService.findBook(author, genre, title, description, series, sortBy));
     }

@@ -1,12 +1,9 @@
 package nl.tudelft.sem.template.example.services;
 
+import java.util.Optional;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-
-import java.util.Optional;
 
 @Service
 public class AnalyticsService {
@@ -20,6 +17,20 @@ public class AnalyticsService {
         return analyticsRepository.saveAndFlush(analytics);
     }
 
+    /**
+     * Edits and updates the analytics information for a user.
+     *
+     * <p>
+     * This method retrieves the current analytics data for the specified user,
+     * applies the changes from the provided edited analytics, and saves the updated
+     * information back to the data repository. The updated analytics object is then
+     * returned.
+     * </p>
+     *
+     * @param username The username of the user whose analytics are to be edited.
+     * @param editedAnalytics The updated analytics object containing the changes to be applied.
+     * @return The updated analytics object after the changes have been applied and saved.
+     */
     public Analytics editAnalytics(String username, Analytics editedAnalytics) {
         Analytics currentAnalytics = this.analyticsRepository.findById(username).get();
 
@@ -39,6 +50,17 @@ public class AnalyticsService {
         return op.get();
     }
 
+    /**
+     * Deletes the analytics information for a user.
+     *
+     * <p>
+     * This method retrieves the current analytics data for the specified user,
+     * deletes it from the data repository, and returns the deleted analytics object.
+     * </p>
+     *
+     * @param username The username of the user whose analytics are to be deleted.
+     * @return The analytics object that has been deleted.
+     */
     public Analytics deleteAnalytics(String username) {
         Analytics deletedAnalytics = this.analyticsRepository.findById(username).get();
         this.analyticsRepository.deleteById(username);

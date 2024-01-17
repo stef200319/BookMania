@@ -2,8 +2,8 @@ openapi: 3.0.3
 info:
   title: BookMania User Microservice - OpenAPI 3.0
   description: |-
-   We want to develop a social media platform dedicated to book enthusiasts and readers of all kinds, called BookMania. It serves as a virtual library where users can catalog and review the books they've read, as well as discover new titles based on their interests and reading history. The platform allows members to create personalized bookshelves, join discussion groups, and participate in reading challenges. It also provides a space for users to connect with friends, see their recommendations, and follow authors.
-  
+    We want to develop a social media platform dedicated to book enthusiasts and readers of all kinds, called BookMania. It serves as a virtual library where users can catalog and review the books they've read, as well as discover new titles based on their interests and reading history. The platform allows members to create personalized bookshelves, join discussion groups, and participate in reading challenges. It also provides a space for users to connect with friends, see their recommendations, and follow authors.
+
   version: 0.0.1
 servers:
   - url: https://localhost:8080
@@ -15,7 +15,7 @@ tags:
     description: Operations that the user can do
   - name: admin
     description: Operations that the admin can do
-  
+
 paths:
   /book/{username}:
     post:
@@ -45,17 +45,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Book'          
-        '405':
-          description: Validation exception
+                $ref: '#/components/schemas/Book'
+        '404':
+          description: User not found
         '403':
-          description: Unauthorised user
-          
+          description: User is not an admin
+        '406':
+          description: Book cannot be null
+        '400':
+          description: Book fields are not valid
+
   /book/search:
     get:
-      tags: 
+      tags:
         - book
-      summary: Search books by author, genre, title, description, series and sort by read_count, alphabetical 
+      summary: Search books by author, genre, title, description, series and sort by read_count, alphabetical
       description: Retrieve books based on specified criteria
       parameters:
         - name: author
@@ -104,8 +108,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
-        '400':
-          description: Invalid search parameters
   /book/{id}:
     get:
       tags:
@@ -167,11 +169,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/Book'
         '400':
-          description: Invalid ID supplied
+          description: Invalid fields of the updated book
         '403':
           description: Unauthorised user
         '404':
-          description: Book not found
+          description: This book does not exist
+        '406':
+          description: Updated book can not be null
     delete:
       tags:
         - book
@@ -195,10 +199,6 @@ paths:
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
         '400':
           description: Invalid ID supplied
         '403':
@@ -221,28 +221,26 @@ paths:
             type: string
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Book'
+          description: Book successfully read
         '404':
           description: Book not found
+        '400':
+          description: Book must have an id
   /book:
-    get:
-      tags: 
+    post:
+      tags:
         - book
       summary: Get Books by IDs
       description: Retrieve books based on provided IDs
-      parameters:
-        - name: bookIds
-          in: query
-          description: Array of book IDs
-          required: true
-          schema:
-            type: array
-            items:
-              type: string
+      requestBody:
+        description: List of book IDs
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+        required: true
       responses:
         '200':
           description: Successful operation
@@ -252,8 +250,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
-        '400':
-          description: Invalid search parameters
 
   /user/login:
     post:
@@ -276,22 +272,21 @@ paths:
                   example: 'SafePassword1234'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: string
-                example: '130390fasflsd98740815019287aslkfjaskf'
-                description: Session ID
+          description: User logged in successfully
         '401':
           description: Invalid username/password supplied
-  /user/logout/:
+  /user/logout/{username}:
     post:
-      security:
-        - jwt: []
       tags:
         - user
       summary: Logs out current logged in user session
+      parameters:
+        - name: username
+          in: path
+          description: 'The name of the user to log out.'
+          required: true
+          schema:
+            type: string
       description: ''
       operationId: logoutUser
       responses:
@@ -314,26 +309,22 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: successfuly created user
+          description: User created successfully
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  sessionToken:
-                    type: string
-                  user: 
+                  user:
                     $ref: '#/components/schemas/User'
         '400':
           description: Invalid user object
         '409':
-          description: Username/Email already in use
+          description: Username already in use
     put:
       tags:
         - user
       summary: Update user
-      security:
-        - jwt: []
       description: This can only be done by the logged in user.
       operationId: updateUser
       requestBody:
@@ -344,33 +335,48 @@ paths:
               $ref: '#/components/schemas/User'
       responses:
         '200':
-          description: successful operation
+          description: Account updated successfully
         '401':
-          description: not logged in
+          description: User is not logged in
+        '404':
+          description: The user does not exist
+  /user/delete/{username}:
     delete:
       tags:
         - user
       summary: Delete user
-      description: This is only done by the user themselves
-      operationId: deleteSelf
-      security:
-        - jwt: []
-      responses:
-        '200':
-          description: successful operation
-        '401':
-          description: Not logged in
-  /user/setActive/{username}:
-    put:
-      tags:
-        - admin
-      security:
-        - jwt: []
-      summary: Change user activation
       parameters:
         - name: username
           in: path
           description: 'The name of the user to edit.'
+          required: true
+          schema:
+            type: string
+      description: This is only done by the user themselves
+      operationId: deleteSelf
+      responses:
+        '200':
+          description: Account deleted successfully
+        '401':
+          description: User is not logged in
+        '404':
+          description: Username is not valid
+
+  /user/setActive/{adminUsername}/{username}:
+    put:
+      tags:
+        - admin
+      summary: Change the activation status of the user
+      parameters:
+        - name: username
+          in: path
+          description: 'The username of the user to edit.'
+          required: true
+          schema:
+            type: string
+        - name: adminUsername
+          in: path
+          description: 'The username of the admin.'
           required: true
           schema:
             type: string
@@ -385,9 +391,47 @@ paths:
               example: true
       responses:
         '200':
-          description: successful operation
+          description: Activation status changed successfully
+        '400':
+          description: Username of the admin is not valid
         '401':
-          description: Not logged in
+          description: Admin is not logged in
+        '403':
+          description: Only an admin can perform this operation
+        '404':
+          description: User not found
+  /user/delete/{adminUsername}/{username}:
+    delete:
+      tags:
+        - admin
+      summary: Delete user
+      description: This can only be done by a logged in admin.
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user that must be deleted
+          required: true
+          schema:
+            type: string
+        - name: adminUsername
+          in: path
+          description: 'The username of the admin.'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User account deleted successfully
+        '400':
+          description: Username of the admin is not valid
+        '401':
+          description: User is not logged in
+        '403':
+          description: Only an admin can perform this operation
+        '404':
+          description: User not found
+
   /user/{username}:
     get:
       tags:
@@ -409,36 +453,9 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
         '404':
           description: User not found
-    delete:
-      tags:
-        - admin
-      security:
-        - jwt: []
-      summary: Delete user
-      description: This can only be done by a logged in admin.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-        '400':
-          description: Invalid username supplied
-        '401':
-          description: Not logged in
-        '403':
-          description: Only an admin can remove a user
-        '404':
-          description: User not found
+
   /user/search:
     get:
       tags:
@@ -478,51 +495,67 @@ paths:
                   $ref: '#/components/schemas/User'
         '400':
           description: Invalid search parameters
-
-  /user/deactivate:
+  /user/deactivate/{username}:
     put:
       tags:
         - user
-      security:
-        - jwt: []
       summary: Deactivate user
+      parameters:
+        - name: username
+          in: path
+          description: 'The username of the user to edit.'
+          required: true
+          schema:
+            type: string
       description: This can only be done by a user to themselves
       operationId: deactivateSelf
       responses:
         '200':
-          description: successful operation
+          description: User account deactivated successfully
         '400':
-          description: User already inactive
+          description: User account is already inactive
         '401':
-          description: Not logged in
-  /user/reactivate:
+          description: User is not logged in
+        '404':
+          description: Username is not valid
+  /user/reactivate/{username}:
     put:
       tags:
         - user
-      security:
-        - jwt: []
       summary: Reactivate user
+      parameters:
+        - name: username
+          in: path
+          description: 'The name of the user to edit.'
+          required: true
+          schema:
+            type: string
       description: This can only be done by a user to themselves
       operationId: reactivateSelf
       responses:
         '200':
-          description: successful operation
+          description: User account reactivated successfully
         '400':
-          description: User already active
+          description: User account is already active
         '401':
-          description: Not logged in  
-  /user/follow/{username}:
+          description: User is not logged in
+        '404':
+          description: Username is not valid
+  /user/follow/{username1}/{username2}:
     post:
       tags:
         - user
       summary: Follows a user
-      
       description: ''
       operationId: followUser
-      security:
-        - jwt: []
       parameters:
-        - name: username
+        - name: username1
+          in: path
+          description: The user that will follow
+          required: true
+          schema:
+            type: string
+        - name: username2
           in: path
           description: The user that will be followed
           required: true
@@ -541,10 +574,14 @@ paths:
       summary: Unfollows a user
       description: ''
       operationId: unfollowUser
-      security:
-        - jwt: []
       parameters:
-        - name: username
+        - name: username1
+          in: path
+          description: The user that will unfollow
+          required: true
+          schema:
+            type: string
+        - name: username2
           in: path
           description: The user that will be unfollowed
           required: true
@@ -605,7 +642,7 @@ paths:
                   $ref: '#/components/schemas/User'
         '404':
           description: User not found
-    
+
   /analytics/{username}:
     post:
       tags:
@@ -613,48 +650,54 @@ paths:
       summary: Create analytics entity
       description: Create new analytics entity
       parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Successful response
+          description: Successful response.
         '404':
-          description: User not found
-    
+          description: User not found.
+        '409':
+          description: Analytics entity already exists.
+
     put:
       tags:
         - analytics
       summary: Update analytics
       description: Update analytics
       parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Successful response
+          description: Successful response.
+        '400':
+          description: A field of the analytics entity passed as a parameter is illegal.
         '404':
-          description: User not found
-    
+          description: User not found.
+        '409':
+          description: The username of the analytics entity does not match with the one passed as a parameter.
+
     get:
       tags:
         - analytics
       summary: Get analytics
       description: Get analytics for a user
       parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response
@@ -664,33 +707,47 @@ paths:
                 $ref: '#/components/schemas/Analytics'
         '404':
           description: User not found
-          
+
     delete:
       tags:
         - analytics
       summary: Update analytics
       description: Update analytics
       parameters:
-      - name: username
-        in: path
-        description: The username of the user that the analytics are for
-        required: true
-        schema:
-          type: string
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Successful response
         '404':
-          description: User not found    
-    
-      
+          description: User not found
+  /analytics/{username}/new:
+    post:
+      tags:
+        - analytics
+      summary: Create analytics entity
+      description: Create new analytics entity with only username present.
+      parameters:
+        - name: username
+          in: path
+          description: The username of the user that the analytics are for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response.
+        '404':
+          description: User not found.
+        '409':
+          description: Analytics entity already exists.
+
 
 components:
-  securitySchemes:
-    jwt:        # arbitrary name for the security scheme
-      type: http
-      scheme: bearer       # can be "header", "query" or "cookie"
-      bearerFormat: JWT
   schemas:
     Book:
       type: object
@@ -719,75 +776,37 @@ components:
           type: array
           items:
             type: string
-          example: 
+          example:
             - 'Horror'
             - 'Sci-fi'
             - 'Thriller'
+
     User:
       type: object
       properties:
         username:
           type: string
           example: theUser
-        firstName:
-          type: string
-          example: John
-        lastName:
-          type: string
-          example: James
-        email:
-          type: string
-          example: john@email.com
-        password:
-          type: string
-          example: '12345'
-        userRole:
-          type: string
-          enum:
-            - 'Regular'
-            - 'Admin'
-            - 'Author'
-          description: User role (Regular or Author or Admin)
-          example: 'Regular'
-        isActive:
-          type: boolean
-          description: Whether the user account is activated (not deactivated)
-          example: true
-        isBanned:
-          type: boolean
-          description: Whether the user account is banned
-          example: true
-        bio:
-          type: string
-          description: User Bio
-          example: 'Hey I am a person'
-        location:
-          type: string
-          description: Simple string that vaguely describes where the user is
-          example: 'The Netherlands'
-        profilePicture:
-          type: string
-          description: URL of an image
-          example: 'https://server.net/image.jpg'
-        favoriteBook:
-          type: string
-          description: Name of favorite book
-          example: 'Harry Potter'
-        favoriteGenres:
-          type: array
-          items:
-            type: string
-            description: Name of the genre
-            example: 'Horror'
+        userInfo:
+          type: object
+          example: 'username: "username", firstName: "John", lastName: "Doe", email: "johndoe@mail.com", password: "password"'
+        userProfile:
+          type: object
+          example: 'username: "username", bio:"Hello!", location: "Den Haag", profilePicture: "https://server.net/image.jpg", favoriteBook: true, favoriteGenres: ["Horror"]'
+        userStatus:
+          type: object
+          example: 'username: "username", userRole: Admin, isLoggedIn: true, isActive: true, isBanned: false'
         followers:
           type: array
           items:
-            $ref: '#/components/schemas/User'
+            type: string
+            example: 'Mary'
         following:
           type: array
           items:
-            $ref: '#/components/schemas/User'
-            
+            type: string
+            example: 'Stefan'
+
     Analytics:
       type: object
       properties:
@@ -813,7 +832,81 @@ components:
           type: integer
           format: int64
           example: '13'
-        
+
+    UserStatus:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        userRole:
+          type: string
+          enum:
+            - 'Regular'
+            - 'Admin'
+            - 'Author'
+          description: User role (Regular or Author or Admin)
+          example: 'Regular'
+        isLoggedIn:
+          type: boolean
+          description: Whether the user account is logged in
+          example: true
+        isActive:
+          type: boolean
+          description: Whether the user account is activated (not deactivated)
+          example: true
+        isBanned:
+          type: boolean
+          description: Whether the user account is banned
+          example: true
+
+    UserProfile:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        bio:
+          type: string
+          description: User Bio
+          example: 'Hey I am a person'
+        location:
+          type: string
+          description: Simple string that vaguely describes where the user is
+          example: 'The Netherlands'
+        profilePicture:
+          type: string
+          description: URL of an image
+          example: 'https://server.net/image.jpg'
+        favoriteBook:
+          type: string
+          description: Name of favorite book
+          example: 'Harry Potter'
+        favoriteGenres:
+          type: array
+          items:
+            type: string
+            description: Name of the genre
+            example: 'Horror'
+
+    UserInfo:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        email:
+          type: string
+          example: john@email.com
+        password:
+          type: string
+          example: '12345'
 
 
   requestBodies:
@@ -823,18 +916,17 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/User'
-    
+
     Book:
       description: Book object
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Book'
-            
+
     Analytics:
       description: Analytics object
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Analytics'
-
