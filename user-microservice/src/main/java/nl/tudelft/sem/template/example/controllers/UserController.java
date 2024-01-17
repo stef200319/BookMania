@@ -444,7 +444,7 @@ public class UserController {
         handler.setNext(liv);
 
         // Authorize the admin
-        if(!authenticator.auth(adminUsername)){
+        if (!authenticator.auth(adminUsername)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
         }
 
@@ -500,7 +500,7 @@ public class UserController {
         handler.setNext(liv);
 
         // Authorize the admin
-        if(!authenticator.auth(adminUsername)){
+        if (!authenticator.auth(adminUsername)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
         }
         User admin = new User();
