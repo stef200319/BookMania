@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.authenticationStrategy.AdminAuthentication;
 import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
+import nl.tudelft.sem.template.example.authenticationStrategy.AuthorAuthentication;
 import nl.tudelft.sem.template.example.database.BookRepository;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
@@ -29,18 +30,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BookControllerTest {
 
     private UserRepository userRepository;
+    private UserService userService;
     private BookRepository bookRepository;
     private BookService bookService;
     private BookController bookController;
-    private Authenticate authenticator;
+    private AuthorAuthentication authenticator;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         bookRepository = Mockito.mock(BookRepository.class);
         bookService = Mockito.mock(BookService.class);
-        authenticator = Mockito.mock(AdminAuthentication.class);
-        bookController = new BookController(bookRepository, bookService, userRepository,authenticator);
+        authenticator = Mockito.mock(AuthorAuthentication.class);
+        userService = Mockito.mock(UserService.class);
+        bookController = new BookController(bookRepository, bookService, userRepository,userService,authenticator);
     }
 
     @Test
@@ -52,7 +55,7 @@ public class BookControllerTest {
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
         ResponseEntity response = bookController.createBook("testUsername", nullBook);
 
         assertEquals(HttpStatus.NOT_ACCEPTABLE, response.getStatusCode());
@@ -78,7 +81,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -103,7 +106,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -129,7 +132,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -155,7 +158,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -181,7 +184,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -208,7 +211,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -232,7 +235,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -258,7 +261,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -285,7 +288,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -312,7 +315,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -338,7 +341,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookService.createBook(book)).thenReturn(book);
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.createBook("testUsername", book);
 
@@ -393,7 +396,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -420,7 +423,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -448,7 +451,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -475,7 +478,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -503,7 +506,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -529,7 +532,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -554,7 +557,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -582,7 +585,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -609,7 +612,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -637,7 +640,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
@@ -664,7 +667,7 @@ public class BookControllerTest {
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(adminUser));
         Mockito.when(bookRepository.existsById(1L)).thenReturn(true);
         Mockito.when(bookRepository.findById(1L)).thenReturn(Optional.of(book));
-        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(true);
+        Mockito.when(authenticator.auth(adminUser.getUsername())).thenReturn(false);
 
         ResponseEntity response = bookController.updateBook(1L, "testUsername", book);
 
