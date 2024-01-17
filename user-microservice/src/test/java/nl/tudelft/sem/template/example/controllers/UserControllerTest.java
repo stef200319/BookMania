@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import nl.tudelft.sem.template.example.authenticationStrategy.AdminAuthentication;
+import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.User;
 
@@ -7,7 +9,6 @@ import nl.tudelft.sem.template.example.services.UserService;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import org.springframework.http.HttpStatus;
@@ -22,12 +23,14 @@ public class UserControllerTest {
     private UserRepository userRepository;
     private UserService userService;
     private UserController userController;
+    private Authenticate authenticator;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         userService = Mockito.mock(UserService.class);
-        userController = new UserController(userRepository, userService);
+        authenticator = Mockito.mock(AdminAuthentication.class);
+        userController = new UserController(userRepository, userService, authenticator);
     }
     @Test
     public void testInvalidLogInWithInvalidUsername() {
@@ -927,6 +930,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         user.getUserStatus().setIsActive(false);
@@ -945,6 +949,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         user.getUserStatus().setIsActive(false);
@@ -961,6 +966,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(false);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         user.getUserStatus().setIsActive(false);
@@ -979,6 +985,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(false);
         User user = new User();
         user.setUsername("user");
         user.getUserStatus().setIsActive(false);
@@ -995,6 +1002,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         user.getUserStatus().setIsActive(false);
@@ -1013,6 +1021,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(true);
@@ -1030,6 +1039,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
@@ -1044,6 +1054,7 @@ public class UserControllerTest {
         admin.getUserStatus().setIsLoggedIn(true);
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(false);
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
@@ -1059,6 +1070,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.REGULAR);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(false);
         User user = new User();
         user.setUsername("user");
         ResponseEntity response = userController.deleteUser(admin.getUsername(),user.getUsername());
@@ -1074,6 +1086,7 @@ public class UserControllerTest {
         admin.getUserStatus().setUserRole(User.UserRoleEnum.ADMIN);
         Mockito.when(userRepository.existsById(admin.getUsername())).thenReturn(true);
         Mockito.when(userRepository.findById(admin.getUsername())).thenReturn(Optional.of(admin));
+        Mockito.when(authenticator.auth(admin.getUsername())).thenReturn(true);
         User user = new User();
         user.setUsername("user");
         Mockito.when(userRepository.existsById(user.getUsername())).thenReturn(false);

@@ -9,14 +9,11 @@ public class UserAuthentication implements Authenticate{
 
     private UserService userService;
 
-    private String username;
-
-    public UserAuthentication(UserService userService, String username) {
+    public UserAuthentication(UserService userService) {
         this.userService = userService;
-        this.username = username;
     }
     @Override
-    public boolean auth() {
+    public boolean auth(String username) {
         User user;
         try {
             user = userService.fetchUser(username);

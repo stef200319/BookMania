@@ -1,4 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
+import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
@@ -18,6 +19,7 @@ public class UserController {
 
     private final UserRepository userRepo;
     private final UserService userService;
+    private final Authenticate authenticator;
 
     /**
      * Create a user controller.
@@ -25,9 +27,10 @@ public class UserController {
      * @param userService The service that handles all the logic.
      */
     @Autowired
-    public UserController(UserRepository userRepo, UserService userService) {
+    public UserController(UserRepository userRepo, UserService userService, Authenticate authenticator) {
         this.userRepo = userRepo;
         this.userService = userService;
+        this.authenticator = authenticator;
     }
 
     /**
@@ -45,7 +48,6 @@ public class UserController {
         av.setNext(ali);
         pv.setNext(av);
         handler.setNext(pv);
-
         try {
             handler.handle(loginRequest);
         }
@@ -352,10 +354,13 @@ public class UserController {
         liv.setNext(new AdminValidator(userRepo));
         handler.setNext(liv);
 
+        // Authorize the admin
+        if(!authenticator.auth(adminUsername)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
+        }
+
         User admin = new User();
         admin.setUsername(adminUsername);
-        User u = new User();
-        u.setUsername(username);
 
         try {
             handler.handle(admin);
@@ -365,11 +370,11 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the admin is not valid");
             if(e.getMessage().equals("User is not logged in"))
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Admin is not logged in");
-            if(e.getMessage().equals("User is not an admin"))
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
         }
 
         UserExistingValidator handlerUser = new UserExistingValidator(userRepo);
+        User u = new User();
+        u.setUsername(username);
 
         try {
             handlerUser.handle(u);
@@ -396,10 +401,12 @@ public class UserController {
         liv.setNext(new AdminValidator(userRepo));
         handler.setNext(liv);
 
+        // Authorize the admin
+        if(!authenticator.auth(adminUsername)){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
+        }
         User admin = new User();
         admin.setUsername(adminUsername);
-        User u = new User();
-        u.setUsername(username);
 
         try {
             handler.handle(admin);
@@ -409,11 +416,11 @@ public class UserController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username of the admin is not valid");
             if(e.getMessage().equals("User is not logged in"))
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Admin is not logged in");
-            if(e.getMessage().equals("User is not an admin"))
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only an admin can perform this operation");
         }
 
         UserExistingValidator handlerUser = new UserExistingValidator(userRepo);
+        User u = new User();
+        u.setUsername(username);
 
         try {
             handlerUser.handle(u);
@@ -442,7 +449,6 @@ public class UserController {
         u2.setUsername(username2);
 
         UserExistingValidator handler = new UserExistingValidator(userRepo);
-
         try {
             handler.handle(u2);
         }
@@ -527,7 +533,6 @@ public class UserController {
         u.setUsername(username);
 
         UserExistingValidator handler = new UserExistingValidator(userRepo);
-
         try {
             handler.handle(u);
         }
@@ -552,7 +557,6 @@ public class UserController {
         u.setUsername(username);
 
         UserExistingValidator handler = new UserExistingValidator(userRepo);
-
         try {
             handler.handle(u);
         }

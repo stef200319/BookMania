@@ -16,46 +16,46 @@ public class UserAuthenticationTest {
     public void testNotValidUsername(){
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        UserAuthentication userAuthentication = new UserAuthentication(userService,username);
+        UserAuthentication userAuthentication = new UserAuthentication(userService);
         Mockito.when(userService.fetchUser(username)).thenThrow(NoSuchElementException.class);
-        assertFalse(userAuthentication.auth());
+        assertFalse(userAuthentication.auth(username));
     }
     @Test
     public void testUserIsAdmin(){
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        UserAuthentication userAuthentication = new UserAuthentication(userService,username);
+        UserAuthentication userAuthentication = new UserAuthentication(userService);
         User user = new User();
         UserStatus userStatus = new UserStatus();
         userStatus.setUserRole(User.UserRoleEnum.ADMIN);
         user.setUserStatus(userStatus);
         Mockito.when(userService.fetchUser(username)).thenReturn(user);
-        assertFalse(userAuthentication.auth());
+        assertFalse(userAuthentication.auth(username));
     }
     @Test
     public void testUserIsRegular(){
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        UserAuthentication userAuthentication = new UserAuthentication(userService,username);
+        UserAuthentication userAuthentication = new UserAuthentication(userService);
         User user = new User();
         UserStatus userStatus = new UserStatus();
         userStatus.setUserRole(User.UserRoleEnum.REGULAR);
         user.setUserStatus(userStatus);
         Mockito.when(userService.fetchUser(username)).thenReturn(user);
-        assertTrue(userAuthentication.auth());
+        assertTrue(userAuthentication.auth(username));
 
     }
     @Test
     public void testUserIsAuthor(){
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        UserAuthentication userAuthentication = new UserAuthentication(userService,username);
+        UserAuthentication userAuthentication = new UserAuthentication(userService);
         User user = new User();
         UserStatus userStatus = new UserStatus();
         userStatus.setUserRole(User.UserRoleEnum.AUTHOR);
         user.setUserStatus(userStatus);
         Mockito.when(userService.fetchUser(username)).thenReturn(user);
-        assertTrue(userAuthentication.auth());
+        assertTrue(userAuthentication.auth(username));
     }
 
 }

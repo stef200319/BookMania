@@ -16,34 +16,34 @@ public class AuthorAuthenticationTest {
     public void testNotValidUsername() {
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        AuthorAuthentication authorAuthentication = new AuthorAuthentication(userService, username);
+        AuthorAuthentication authorAuthentication = new AuthorAuthentication(userService);
         Mockito.when(userService.fetchUser(username)).thenThrow(NoSuchElementException.class);
-        assertFalse(authorAuthentication.auth());
+        assertFalse(authorAuthentication.auth(username));
     }
 
     @Test
     public void testUserIsAuthor() {
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        AuthorAuthentication authorAuthentication = new AuthorAuthentication(userService, username);
+        AuthorAuthentication authorAuthentication = new AuthorAuthentication(userService);
         User user = new User();
         UserStatus userStatus = new UserStatus();
         userStatus.setUserRole(User.UserRoleEnum.AUTHOR);
         user.setUserStatus(userStatus);
         Mockito.when(userService.fetchUser(username)).thenReturn(user);
-        assertTrue(authorAuthentication.auth());
+        assertTrue(authorAuthentication.auth(username));
     }
 
     @Test
     public void testUserIsNotAuthor() {
         UserService userService = Mockito.mock(UserService.class);
         String username = "username";
-        AuthorAuthentication authorAuthentication = new AuthorAuthentication(userService, username);
+        AuthorAuthentication authorAuthentication = new AuthorAuthentication(userService);
         User user = new User();
         UserStatus userStatus = new UserStatus();
         userStatus.setUserRole(User.UserRoleEnum.REGULAR);
         user.setUserStatus(userStatus);
         Mockito.when(userService.fetchUser(username)).thenReturn(user);
-        assertFalse(authorAuthentication.auth());
+        assertFalse(authorAuthentication.auth(username));
     }
 }
