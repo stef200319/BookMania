@@ -23,7 +23,7 @@ public class UserControllerTest {
     private UserRepository userRepository;
     private UserService userService;
     private UserController userController;
-    private Authenticate authenticator;
+    private AdminAuthentication authenticator;
 
     @BeforeEach
     void setUp() {

@@ -1,4 +1,5 @@
 package nl.tudelft.sem.template.example.controllers;
+import nl.tudelft.sem.template.example.authenticationStrategy.AdminAuthentication;
 import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
@@ -19,7 +20,7 @@ public class UserController {
 
     private final UserRepository userRepo;
     private final UserService userService;
-    private final Authenticate authenticator;
+    private final AdminAuthentication authenticator;
 
     /**
      * Create a user controller.
@@ -27,7 +28,7 @@ public class UserController {
      * @param userService The service that handles all the logic.
      */
     @Autowired
-    public UserController(UserRepository userRepo, UserService userService, Authenticate authenticator) {
+    public UserController(UserRepository userRepo, UserService userService, AdminAuthentication authenticator) {
         this.userRepo = userRepo;
         this.userService = userService;
         this.authenticator = authenticator;
