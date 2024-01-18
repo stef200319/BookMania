@@ -192,6 +192,7 @@ public class UserService {
         }
 
         userRepository.deleteById(username);
+        analyticsService.deleteAnalytics(username);
         userStatusService.deleteUserStatus(username);
         userProfileService.deleteUserProfile(username);
         userInfoService.deleteUserInfo(username);
