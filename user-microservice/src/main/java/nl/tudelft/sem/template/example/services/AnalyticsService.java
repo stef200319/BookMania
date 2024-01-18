@@ -3,7 +3,9 @@ package nl.tudelft.sem.template.example.services;
 import java.util.Optional;
 import nl.tudelft.sem.template.example.database.AnalyticsRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class AnalyticsService {
@@ -47,7 +49,13 @@ public class AnalyticsService {
 
     public Analytics getAnalytics(String username) {
         Optional<Analytics> op = analyticsRepository.findById(username);
-        return op.get();
+        Analytics analytics = op.get();
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "http://localhost:8082/analytics/review/count/reviews?countUsers=false&username=" + username;
+        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+        long number = Integer.parseInt(response.getBody());
+        analytics.setReviewsNumber(number);
+        return analytics;
     }
 
     /**
