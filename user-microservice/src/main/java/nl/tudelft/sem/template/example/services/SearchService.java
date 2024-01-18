@@ -46,7 +46,7 @@ public class SearchService {
         exampleUser.getUserInfo().setFirstName(name);
         exampleUser.getUserInfo().setLastName(name);
         exampleUser.setUsername(name);
-
+        exampleUser.getUserStatus().setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
         ExampleMatcher matcher = ExampleMatcher.matchingAny()
             .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
             .withIgnoreCase()
@@ -137,7 +137,7 @@ public class SearchService {
         exampleUser.getUserInfo().setFirstName(name);
         exampleUser.getUserInfo().setLastName(name);
         exampleUser.setUsername(name);
-
+        exampleUser.getUserStatus().setUserRole(isAuthor ? User.UserRoleEnum.AUTHOR : User.UserRoleEnum.REGULAR);
         ExampleMatcher matcher = ExampleMatcher.matchingAny()
             .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING)
             .withIgnoreCase()
