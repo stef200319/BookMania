@@ -5,6 +5,7 @@ import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.database.UserRepository;
+import nl.tudelft.sem.template.example.model.LoginRequest;
 import nl.tudelft.sem.template.example.model.User;
 import nl.tudelft.sem.template.example.services.SearchService;
 import nl.tudelft.sem.template.example.services.UserService;
@@ -56,11 +57,16 @@ public class UserController {
     /**
      * Log in the user.
      *
-     * @param loginRequest Username and password of the user.
+     * @param request Username and password of the user.
      * @return Whether the user was successfuly logged in.
      */
     @PostMapping("/login")
-    public ResponseEntity logInUser(@RequestBody User loginRequest) {
+    public ResponseEntity logInUser(@RequestBody LoginRequest request) {
+        User loginRequest = new User();
+        loginRequest.setUsername(request.getUsername());
+        loginRequest.getUserInfo().setPassword(request.getPassword());
+        loginRequest.getUserStatus().setIsActive(true);
+
         UserExistingValidator handler = new UserExistingValidator(userRepo);
         PasswordValidator pv = new PasswordValidator(userRepo, loginRequest);
         UserActiveValidator av = new UserActiveValidator(userRepo);
