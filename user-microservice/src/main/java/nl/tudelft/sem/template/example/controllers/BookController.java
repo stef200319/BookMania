@@ -103,17 +103,13 @@ public class BookController {
         try {
             userHandler.handle(user);
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
-            if (e.getMessage().equals("User is not an admin")) {
-                if (!authenticator.auth(username)) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
-                }
-            }
             switch (e.getMessage()) {
                 case "User does not exist" -> {
                     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
                 }
                 case "User is not an admin" -> {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+                    if (!authenticator.auth(username)) {
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");}
                 }
                 default -> {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -202,7 +198,7 @@ public class BookController {
             String authorLastName = author.getUserInfo().getLastName();
             String authorName = updatedBook.getAuthor();
             if (!authorName.equals(authorFirstName + " " + authorLastName)) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("An author can add one's book only");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("An author can update one's book only");
             }
         }
 
@@ -216,15 +212,12 @@ public class BookController {
         try {
             userHandler.handle(user);
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
-            if (e.getMessage().equals("User is not an admin")) {
-                if (!authenticator.auth(username)) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
-                }
-            }
             if (e.getMessage().equals("User does not exist")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
             } else if (e.getMessage().equals("User is not an admin")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+                if (!authenticator.auth(username)) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
@@ -351,7 +344,9 @@ public class BookController {
             if (e.getMessage().equals("User does not exist")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
             } else if (e.getMessage().equals("User is not an admin")) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+                if (!authenticator.auth(username)) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
+                }
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
