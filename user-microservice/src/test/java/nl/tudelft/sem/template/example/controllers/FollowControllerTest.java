@@ -1,9 +1,8 @@
 package nl.tudelft.sem.template.example.controllers;
 
-import nl.tudelft.sem.template.example.authenticationStrategy.AdminAuthentication;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.User;
-import nl.tudelft.sem.template.example.services.UserService;
+import nl.tudelft.sem.template.example.services.FollowService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FollowControllerTest {
     private UserRepository userRepository;
-    private UserService userService;
+    private FollowService userService;
     private FollowController userController;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
-        userService = Mockito.mock(UserService.class);
+        userService = Mockito.mock(FollowService.class);
         userController = new FollowController(userRepository, userService);
     }
 

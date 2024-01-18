@@ -1,15 +1,13 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import java.util.List;
-import nl.tudelft.sem.template.example.authenticationStrategy.AdminAuthentication;
-import nl.tudelft.sem.template.example.authenticationStrategy.Authenticate;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.User;
+import nl.tudelft.sem.template.example.services.SearchService;
 import nl.tudelft.sem.template.example.services.UserService;
-import nl.tudelft.sem.template.example.userHandlers.AdminValidator;
 import nl.tudelft.sem.template.example.userHandlers.EmailValidator;
 import nl.tudelft.sem.template.example.userHandlers.PasswordValidator;
 import nl.tudelft.sem.template.example.userHandlers.UserActiveValidator;
@@ -40,6 +38,7 @@ public class UserController {
 
     private final UserRepository userRepo;
     private final UserService userService;
+    private final SearchService searchService;
 
     /**
      * Create a user controller.
@@ -48,9 +47,10 @@ public class UserController {
      * @param userService The service that handles all the logic.
      */
     @Autowired
-    public UserController(UserRepository userRepo, UserService userService) {
+    public UserController(UserRepository userRepo, UserService userService, SearchService searchService) {
         this.userRepo = userRepo;
         this.userService = userService;
+        this.searchService = searchService;
     }
 
     /**
@@ -322,16 +322,16 @@ public class UserController {
         List<User> foundUsers;
         switch (searchBy) {
             case "name" -> {
-                foundUsers = userService.findUsersByName(query, isAuthor);
+                foundUsers = searchService.findUsersByName(query, isAuthor);
             }
             case "genre" -> {
-                foundUsers = userService.findUsersByGenre(query, isAuthor);
+                foundUsers = searchService.findUsersByGenre(query, isAuthor);
             }
             case "favorite_book" -> {
-                foundUsers = userService.findUsersByFavoriteBook(query, isAuthor);
+                foundUsers = searchService.findUsersByFavoriteBook(query, isAuthor);
             }
             case "follows" -> {
-                foundUsers = userService.findUsersByFollows(query, isAuthor);
+                foundUsers = searchService.findUsersByFollows(query, isAuthor);
             }
 
             default -> {

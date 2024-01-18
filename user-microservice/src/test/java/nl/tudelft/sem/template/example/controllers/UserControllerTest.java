@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.example.controllers;
 import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.User;
 
+import nl.tudelft.sem.template.example.services.SearchService;
 import nl.tudelft.sem.template.example.services.UserService;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,13 +21,15 @@ public class UserControllerTest {
 
     private UserRepository userRepository;
     private UserService userService;
+    private SearchService searchService;
     private UserController userController;
 
     @BeforeEach
     void setUp() {
         userRepository = Mockito.mock(UserRepository.class);
         userService = Mockito.mock(UserService.class);
-        userController = new UserController(userRepository, userService);
+        searchService = Mockito.mock(SearchService.class);
+        userController = new UserController(userRepository, userService, searchService);
     }
     @Test
     public void testInvalidLogInWithInvalidUsername() {
@@ -645,7 +648,7 @@ public class UserControllerTest {
         List<User> ans = new LinkedList<>();
         ans.add(u);
 
-        Mockito.when(userService.findUsersByName(query, true)).thenReturn(ans);
+        Mockito.when(searchService.findUsersByName(query, true)).thenReturn(ans);
 
         ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
@@ -676,12 +679,12 @@ public class UserControllerTest {
         List<User> ans = new LinkedList<>();
         ans.add(u);
 
-        Mockito.when(userService.findUsersByName(query, true)).thenReturn(ans);
+        Mockito.when(searchService.findUsersByName(query, true)).thenReturn(ans);
 
         ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),ans);
-        Mockito.verify(userService,Mockito.times(1)).findUsersByName(query, true);
+        Mockito.verify(searchService,Mockito.times(1)).findUsersByName(query, true);
     }
 
     @Test
@@ -694,12 +697,12 @@ public class UserControllerTest {
         List<User> ans = new LinkedList<>();
         ans.add(u);
 
-        Mockito.when(userService.findUsersByGenre(query, true)).thenReturn(ans);
+        Mockito.when(searchService.findUsersByGenre(query, true)).thenReturn(ans);
 
         ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),ans);
-        Mockito.verify(userService,Mockito.times(1)).findUsersByGenre(query, true);
+        Mockito.verify(searchService,Mockito.times(1)).findUsersByGenre(query, true);
     }
 
     @Test
@@ -712,12 +715,12 @@ public class UserControllerTest {
         List<User> ans = new LinkedList<>();
         ans.add(u);
 
-        Mockito.when(userService.findUsersByFavoriteBook(query, true)).thenReturn(ans);
+        Mockito.when(searchService.findUsersByFavoriteBook(query, true)).thenReturn(ans);
 
         ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),ans);
-        Mockito.verify(userService,Mockito.times(1)).findUsersByFavoriteBook(query, true);
+        Mockito.verify(searchService,Mockito.times(1)).findUsersByFavoriteBook(query, true);
     }
 
     @Test
@@ -730,12 +733,12 @@ public class UserControllerTest {
         List<User> ans = new LinkedList<>();
         ans.add(u);
 
-        Mockito.when(userService.findUsersByFollows(query, true)).thenReturn(ans);
+        Mockito.when(searchService.findUsersByFollows(query, true)).thenReturn(ans);
 
         ResponseEntity response = userController.searchUser(query, searchBy, isAuthor);
         assertEquals(response.getStatusCode(),HttpStatus.OK);
         assertEquals(response.getBody(),ans);
-        Mockito.verify(userService,Mockito.times(1)).findUsersByFollows(query, true);
+        Mockito.verify(searchService,Mockito.times(1)).findUsersByFollows(query, true);
     }
 
 

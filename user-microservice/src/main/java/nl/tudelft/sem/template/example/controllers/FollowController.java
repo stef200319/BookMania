@@ -5,7 +5,7 @@ import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.model.User;
-import nl.tudelft.sem.template.example.services.UserService;
+import nl.tudelft.sem.template.example.services.FollowService;
 import nl.tudelft.sem.template.example.userHandlers.UserExistingValidator;
 import nl.tudelft.sem.template.example.userHandlers.UserLoggedInValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,18 +19,18 @@ import java.util.List;
 @RequestMapping("/user")
 public class FollowController {
     private final UserRepository userRepo;
-    private final UserService userService;
+    private final FollowService followService;
 
     /**
      * Create a user controller.
      *
      * @param userRepo The repository to save the user to.
-     * @param userService The service that handles all the logic.
+     * @param followService The service that handles follow logic
      */
     @Autowired
-    public FollowController(UserRepository userRepo, UserService userService) {
+    public FollowController(UserRepository userRepo, FollowService followService) {
         this.userRepo = userRepo;
-        this.userService = userService;
+        this.followService = followService;
     }
 
     /**
@@ -73,7 +73,7 @@ public class FollowController {
         User user1 = userRepo.findById(username1).get();
         User user2 = userRepo.findById(username2).get();
 
-        userService.followUser(user1, user2);
+        followService.followUser(user1, user2);
 
         return ResponseEntity.status(HttpStatus.OK).body("User account followed successfully");
     }
@@ -118,7 +118,7 @@ public class FollowController {
 
         User user1 = userRepo.findById(username1).get();
         User user2 = userRepo.findById(username2).get();
-        User newUser1 = userService.unfollowUser(user1, user2);
+        User newUser1 = followService.unfollowUser(user1, user2);
 
         if (newUser1 == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User does not follow the second user");
@@ -147,7 +147,7 @@ public class FollowController {
         }
 
         User user = userRepo.findById(username).get();
-        List<User> followers = userService.getFollowers(user);
+        List<User> followers = followService.getFollowers(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(followers);
     }
@@ -172,7 +172,7 @@ public class FollowController {
         }
 
         User user = userRepo.findById(username).get();
-        List<User> following = userService.getFollowing(user);
+        List<User> following = followService.getFollowing(user);
 
         return ResponseEntity.status(HttpStatus.OK).body(following);
     }
