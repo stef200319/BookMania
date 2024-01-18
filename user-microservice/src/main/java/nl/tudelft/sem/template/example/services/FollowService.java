@@ -4,7 +4,6 @@ import nl.tudelft.sem.template.example.database.UserRepository;
 import nl.tudelft.sem.template.example.model.Analytics;
 import nl.tudelft.sem.template.example.model.User;
 import org.springframework.stereotype.Service;
-
 import java.util.LinkedList;
 import java.util.List;
 

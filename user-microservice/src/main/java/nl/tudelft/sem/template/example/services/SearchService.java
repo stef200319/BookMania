@@ -5,7 +5,6 @@ import nl.tudelft.sem.template.example.model.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
