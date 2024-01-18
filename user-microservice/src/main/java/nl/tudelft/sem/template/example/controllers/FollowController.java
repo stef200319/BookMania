@@ -21,9 +21,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.DataflowAnomalyAnalysis"})
 public class FollowController {
-    private final UserRepository userRepo;
-    private final FollowService followService;
+    private transient final UserRepository userRepo;
+    private transient final FollowService followService;
 
     /**
      * Create a user controller.

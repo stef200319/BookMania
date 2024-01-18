@@ -6,8 +6,8 @@ import nl.tudelft.sem.template.example.exceptions.InvalidDataException;
 import nl.tudelft.sem.template.example.model.Analytics;
 
 public class AnalyticsUsernameValidator extends BaseAnalyticsValidator {
-    private final String actualUsername;
-    private final UserRepository userRepository;
+    private transient final String actualUsername;
+    private transient final UserRepository userRepository;
 
     /**
      * Creates an instance of this class.

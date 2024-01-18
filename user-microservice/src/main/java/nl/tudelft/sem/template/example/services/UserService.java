@@ -20,11 +20,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private UserRepository userRepository;
-    private AnalyticsService analyticsService;
-    private UserStatusService userStatusService;
-    private UserProfileService userProfileService;
-    private UserInfoService userInfoService;
+    private final transient UserRepository userRepository;
+    private final transient AnalyticsService analyticsService;
+    private final transient UserStatusService userStatusService;
+    private final transient UserProfileService userProfileService;
+    private final transient UserInfoService userInfoService;
 
     /**
      * Constructs a new UserService with the specified dependencies.

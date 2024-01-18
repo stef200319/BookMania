@@ -7,7 +7,7 @@ import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.model.User;
 
 public class PasswordValidator extends BaseUserValidator {
-    private User loggingIn;
+    private final transient User loggingIn;
 
     public PasswordValidator(UserRepository userRepository, User loggingIn) {
         super(userRepository);

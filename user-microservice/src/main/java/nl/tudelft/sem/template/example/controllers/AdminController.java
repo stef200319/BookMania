@@ -23,10 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class AdminController {
-    private final UserRepository userRepo;
-    private final UserService userService;
-    private final Authenticate authenticator;
+    private transient final UserRepository userRepo;
+    private transient final UserService userService;
+    private transient final Authenticate authenticator;
 
     /**
      * Create a user controller.

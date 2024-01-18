@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserInfoService {
-    private UserInfoRepository userInfoRepository;
+    private final transient UserInfoRepository userInfoRepository;
 
     public UserInfoService(UserInfoRepository userInfoRepository) {
         this.userInfoRepository = userInfoRepository;

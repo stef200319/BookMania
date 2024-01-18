@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class SearchService {
 
-    private UserRepository userRepository;
+    private final transient UserRepository userRepository;
 
     /**
      * Constructs a new UserService with the specified dependencies.

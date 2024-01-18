@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BookService {
-    private BookRepository bookRepository;
+    private final transient BookRepository bookRepository;
 
     public BookService(BookRepository bookRepository) {
         this.bookRepository = bookRepository;

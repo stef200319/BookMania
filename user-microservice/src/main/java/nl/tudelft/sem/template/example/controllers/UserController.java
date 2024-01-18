@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.example.controllers;
 
+import java.util.LinkedList;
 import java.util.List;
 import nl.tudelft.sem.template.example.exceptions.InvalidEmailException;
 import nl.tudelft.sem.template.example.exceptions.InvalidUserException;
@@ -35,11 +36,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.DataflowAnomalyAnalysis"})
 public class UserController {
 
-    private final UserRepository userRepo;
-    private final UserService userService;
-    private final SearchService searchService;
+    private transient final UserRepository userRepo;
+    private transient final UserService userService;
+    private transient final SearchService searchService;
 
     /**
      * Create a user controller.
