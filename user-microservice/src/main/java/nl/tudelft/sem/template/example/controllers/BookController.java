@@ -334,19 +334,13 @@ public class BookController {
         Book book = new Book();
         book.setId(id);
 
-        // Authorize the user
-        if (!authenticator.auth(username)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
-        }
         try {
             userHandler.handle(user);
         } catch (InvalidUserException | InvalidUsernameException | InvalidEmailException e) {
             if (e.getMessage().equals("User does not exist")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User does not exist");
             } else if (e.getMessage().equals("User is not an admin")) {
-                if (!authenticator.auth(username)) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
-                }
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not an admin");
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
