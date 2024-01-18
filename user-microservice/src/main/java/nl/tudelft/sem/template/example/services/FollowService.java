@@ -10,8 +10,8 @@ import java.util.List;
 @Service
 public class FollowService {
 
-    private final UserRepository userRepository;
-    private final AnalyticsService analyticsService;
+    private transient final UserRepository userRepository;
+    private transient final AnalyticsService analyticsService;
 
     /**
      * Constructs a new UserService with the specified dependencies.

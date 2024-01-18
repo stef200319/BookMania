@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
 @Service
 public class UserAuthentication implements Authenticate {
 
-    private final UserService userService;
+    private transient final UserService userService;
 
     public UserAuthentication(UserService userService) {
         this.userService = userService;

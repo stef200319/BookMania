@@ -41,15 +41,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/book")
+@SuppressWarnings({"PMD.AvoidDuplicateLiterals", "PMD.DataflowAnomalyAnalysis"})
 public class BookController {
 
     @Autowired
-    UserRepository userRepo;
+    private final transient UserRepository userRepo;
     @Autowired
-    BookRepository bookRepo;
-    BookService bookService;
-    UserService userService;
-    Authenticate authenticator;
+    private final transient BookRepository bookRepo;
+    private final transient BookService bookService;
+    private final transient UserService userService;
+    private final transient Authenticate authenticator;
 
     /**
      * Create a new book controller.

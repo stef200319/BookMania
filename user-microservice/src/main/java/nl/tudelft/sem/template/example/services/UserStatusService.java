@@ -8,7 +8,7 @@ import org.yaml.snakeyaml.external.com.google.gdata.util.common.base.UnicodeEsca
 @Service
 public class UserStatusService {
 
-    private UserStatusRepository userStatusRepository;
+    private final transient UserStatusRepository userStatusRepository;
 
     public UserStatusService(UserStatusRepository userStatusRepository) {
         this.userStatusRepository = userStatusRepository;

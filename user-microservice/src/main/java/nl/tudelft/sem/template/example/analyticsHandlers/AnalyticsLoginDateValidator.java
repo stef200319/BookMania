@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
 import nl.tudelft.sem.template.example.exceptions.InvalidDataException;
 import nl.tudelft.sem.template.example.model.Analytics;
@@ -24,7 +26,7 @@ public class AnalyticsLoginDateValidator extends BaseAnalyticsValidator {
      */
     @Override
     public boolean handle(Analytics analytics) throws InvalidAnalyticsException {
-        SimpleDateFormat sdformat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        SimpleDateFormat sdformat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.ENGLISH);
         try {
             if (sdformat.parse(analytics.getLastLoginDate())
                     .compareTo(sdformat.parse(DateTimeFormatter

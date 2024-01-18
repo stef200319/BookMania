@@ -7,8 +7,8 @@ import nl.tudelft.sem.template.example.exceptions.InvalidUsernameException;
 import nl.tudelft.sem.template.example.model.User;
 
 public abstract class BaseUserValidator implements UserValidator {
-    private UserValidator next;
-    protected UserRepository userRepository;
+    private transient UserValidator next;
+    protected transient UserRepository userRepository;
 
     public BaseUserValidator(UserRepository userRepository) {
         this.userRepository = userRepository;

@@ -5,14 +5,12 @@ import nl.tudelft.sem.template.example.exceptions.InvalidAnalyticsException;
 import nl.tudelft.sem.template.example.model.Analytics;
 
 public abstract class BaseAnalyticsValidator implements AnalyticsValidator {
-    private AnalyticsValidator next;
+    private transient AnalyticsValidator next;
 
     /**
      * Creates an instance of this class.
      */
-    public BaseAnalyticsValidator() {
-        this.next = null;
-    }
+    public BaseAnalyticsValidator() {}
 
     /**
      * Sets the next handler in the chain.

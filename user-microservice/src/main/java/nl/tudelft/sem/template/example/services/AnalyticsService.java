@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AnalyticsService {
-    private AnalyticsRepository analyticsRepository;
+    private final transient AnalyticsRepository analyticsRepository;
 
     public AnalyticsService(AnalyticsRepository analyticsRepository) {
         this.analyticsRepository = analyticsRepository;

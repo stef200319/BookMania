@@ -32,11 +32,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/analytics")
-public class AnalyticsController {
-    private final UserRepository userRepository;
-    private final AnalyticsRepository analyticsRepository;
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 
-    private final AnalyticsService analyticsService;
+public class AnalyticsController {
+    private transient final UserRepository userRepository;
+    private transient final AnalyticsRepository analyticsRepository;
+
+    private transient final AnalyticsService analyticsService;
 
     /**
      * Creates an analytics controller.

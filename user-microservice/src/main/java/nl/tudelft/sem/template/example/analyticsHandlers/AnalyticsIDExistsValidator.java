@@ -6,7 +6,7 @@ import nl.tudelft.sem.template.example.model.Analytics;
 
 public class AnalyticsIDExistsValidator extends BaseAnalyticsValidator {
 
-    private final AnalyticsRepository analyticsRepository;
+    private transient final AnalyticsRepository analyticsRepository;
     /**
      * Creates an instance of this class.
      */
