@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 
 @Entity
 @AllArgsConstructor
-public class    Book {
+public class Book {
     @Id
     private Long id;
     private String title;

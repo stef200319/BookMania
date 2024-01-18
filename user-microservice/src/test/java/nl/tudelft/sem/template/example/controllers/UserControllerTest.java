@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.example.controllers;
 
 import nl.tudelft.sem.template.example.database.UserRepository;
+import nl.tudelft.sem.template.example.model.LoginRequest;
 import nl.tudelft.sem.template.example.model.User;
 
 import nl.tudelft.sem.template.example.services.SearchService;
@@ -33,10 +34,10 @@ public class UserControllerTest {
     }
     @Test
     public void testInvalidLogInWithInvalidUsername() {
-        User validUser = new User();
-        validUser.setUsername("testUsername");
-        validUser.getUserInfo().setPassword("testPassword");
-        validUser.getUserStatus().setIsActive(true);
+        LoginRequest validUser = new LoginRequest("testUsername", "testPassword");
+//        validUser.setUsername("testUsername");
+//        validUser.getUserInfo().setPassword("testPassword");
+//        validUser.getUserStatus().setIsActive(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(false);
 
@@ -50,13 +51,18 @@ public class UserControllerTest {
 
     @Test
     public void testInvalidLogInWithInvalidIsActive() {
-        User validUser = new User();
-        validUser.setUsername("testUsername");
-        validUser.getUserInfo().setPassword("testPassword");
-        validUser.getUserStatus().setIsActive(false);
+        User validUser1 = new User();
+        validUser1.setUsername("testUsername");
+        validUser1.getUserInfo().setPassword("testPassword");
+        validUser1.getUserStatus().setIsActive(false);
+
+        LoginRequest validUser = new LoginRequest("testUsername", "testPassword");
+//        validUser.setUsername("testUsername");
+//        validUser.getUserInfo().setPassword("testPassword");
+//        validUser.getUserStatus().setIsActive(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
-        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser));
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser1));
 
         ResponseEntity response = userController.logInUser(validUser);
 
@@ -69,20 +75,21 @@ public class UserControllerTest {
 
     @Test
     public void testInvalidLogInWithInvalidPassword() {
-        User validUser = new User();
-        validUser.setUsername("testUsername");
-        validUser.getUserInfo().setPassword("testPassword");
-        validUser.getUserStatus().setIsActive(true);
+        User validUser1 = new User();
+        validUser1.setUsername("testUsername");
+        validUser1.getUserInfo().setPassword("testPassword");
+        validUser1.getUserStatus().setIsActive(true);
 
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
-        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser));
+        Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser1));
 
         User user2 = new User();
+        LoginRequest validUser = new LoginRequest("testUsername", "wrongPassword");
         user2.setUsername("testUsername");
         user2.getUserInfo().setPassword("wrongPassword");
         user2.getUserStatus().setIsActive(true);
 
-        ResponseEntity response = userController.logInUser(user2);
+        ResponseEntity response = userController.logInUser(validUser);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
         assertEquals("Invalid password supplied", response.getBody());
@@ -93,7 +100,9 @@ public class UserControllerTest {
 
     @Test
     public void testAlreadyLoggedIn() {
+
         User validUser = new User();
+        LoginRequest validUser1 = new LoginRequest("testUsername", "testPassword");
         validUser.setUsername("testUsername");
         validUser.getUserInfo().setPassword("testPassword");
         validUser.getUserStatus().setIsActive(true);
@@ -102,7 +111,7 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser));
 
-        ResponseEntity response = userController.logInUser(validUser);
+        ResponseEntity response = userController.logInUser(validUser1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("User already logged in", response.getBody());
@@ -113,6 +122,7 @@ public class UserControllerTest {
 
     @Test
     public void testValidLogIn() {
+        LoginRequest validUser1 = new LoginRequest("testUsername", "testPassword");
         User validUser = new User();
         validUser.setUsername("testUsername");
         validUser.getUserInfo().setPassword("testPassword");
@@ -121,7 +131,7 @@ public class UserControllerTest {
         Mockito.when(userRepository.existsById("testUsername")).thenReturn(true);
         Mockito.when(userRepository.findById("testUsername")).thenReturn(Optional.of(validUser));
 
-        ResponseEntity response = userController.logInUser(validUser);
+        ResponseEntity response = userController.logInUser(validUser1);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("User logged in successfully", response.getBody());
