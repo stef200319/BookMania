@@ -46,14 +46,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Book'
+        '400':
+          description: Book fields are not valid
         '404':
           description: User not found
-        '403':
+        '401':
           description: User is not an admin
         '406':
           description: Book cannot be null
-        '400':
-          description: Book fields are not valid
+        '500':
+          description: Internal server error
 
   /book/search:
     get:
@@ -108,6 +110,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Book'
+        '400':
+          description: One field is null.
   /book/{id}:
     get:
       tags:
@@ -133,6 +137,7 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Book not found
+    
   /book/{id}/{username}:
     put:
       tags:
@@ -170,12 +175,13 @@ paths:
                 $ref: '#/components/schemas/Book'
         '400':
           description: Invalid fields of the updated book
-        '403':
-          description: Unauthorised user
         '404':
           description: This book does not exist
         '406':
           description: Updated book can not be null
+        '500':
+          description: Internal server error
+
     delete:
       tags:
         - book
@@ -200,11 +206,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '403':
-          description: Unauthorised user
+          description: Invalid fields of the updated book
         '404':
-          description: Book not found
+          description: This book does not exist
+        '406':
+          description: Updated book can not be null
+        '500':
+          description: Internal server error
+
   /book/read/{id}:
     put:
       tags:
@@ -259,22 +268,20 @@ paths:
       description: ''
       operationId: loginUser
       requestBody:
+        description: User object
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: 'MyUsername'
-                password:
-                  type: string
-                  example: 'SafePassword1234'
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
           description: User logged in successfully
         '401':
           description: Invalid username/password supplied
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
   /user/logout/{username}:
     post:
       tags:
@@ -291,9 +298,13 @@ paths:
       operationId: logoutUser
       responses:
         '200':
-          description: successful operation
+          description: User logged in successfully
         '401':
-          description: Not logged in
+          description: Invalid username/password supplied
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
   /user/:
     post:
       tags:
@@ -336,6 +347,8 @@ paths:
       responses:
         '200':
           description: Account updated successfully
+        '400':
+          description: Bad request
         '401':
           description: User is not logged in
         '404':
@@ -400,6 +413,8 @@ paths:
           description: Only an admin can perform this operation
         '404':
           description: User not found
+        '500':
+          description: Server error
   /user/delete/{adminUsername}/{username}:
     delete:
       tags:
@@ -422,15 +437,17 @@ paths:
             type: string
       responses:
         '200':
-          description: User account deleted successfully
+          description: Activation status changed successfully
         '400':
           description: Username of the admin is not valid
         '401':
-          description: User is not logged in
+          description: Admin is not logged in
         '403':
           description: Only an admin can perform this operation
         '404':
           description: User not found
+        '500':
+          description: Server error
 
   /user/{username}:
     get:
@@ -518,6 +535,8 @@ paths:
           description: User is not logged in
         '404':
           description: Username is not valid
+        '500':
+          description: Internal server error
   /user/reactivate/{username}:
     put:
       tags:
@@ -541,6 +560,8 @@ paths:
           description: User is not logged in
         '404':
           description: Username is not valid
+        '500':
+          description: Internal server error
   /user/follow/{username1}/{username2}:
     post:
       tags:
@@ -566,7 +587,7 @@ paths:
           description: successful operation
         '401':
           description: Not logged in
-        '404':
+        '400':
           description: User not found
     delete:
       tags:
@@ -616,7 +637,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-        '404':
+        '400':
           description: User not found
   /user/following/{username}:
     get:
@@ -640,7 +661,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
-        '404':
+        '400':
           description: User not found
 
   /analytics/{username}:
@@ -707,7 +728,7 @@ paths:
                 $ref: '#/components/schemas/Analytics'
         '404':
           description: User not found
-
+  
     delete:
       tags:
         - analytics
@@ -907,7 +928,16 @@ components:
         password:
           type: string
           example: '12345'
-
+    
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          example: username
+        password:
+          type: string
+          example: '12345'
 
   requestBodies:
     User:
@@ -930,3 +960,10 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Analytics'
+
+    LoginRequest:
+      description: LoginRequest object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginRequest'
